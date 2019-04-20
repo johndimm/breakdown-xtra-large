@@ -1,0 +1,128 @@
+body {
+  font-family: sans-serif;
+}
+
+.dimensions_div {
+  min-width: 100px;
+  float: left;
+}
+
+.report_div {
+  max-width: 800px;
+  margin-top: 10px;
+  float: left;
+}
+
+.dimension {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid black;
+}
+
+
+.dim_groupby, .dim_normal {
+  margin: 1px;
+  padding: 3px;
+  color:white;
+  font-weight:600;
+  height: 18px;
+
+}
+
+.dim_groupby {
+  background-color: #772211;
+}
+
+.dim_normal {
+  background-color: #221177;
+  cursor:pointer;
+}
+
+.selected_value {
+  float: left;
+  margin:5px;
+  padding:5px;
+  background-color: #EEEEEE;
+  font-weight:bold;
+  border:1px solid #BBBBBB;
+  cursor:pointer;
+}
+
+.selected_value_div {
+  height: 30px;
+  vertical-align: baseline;
+}
+.prev_dim, .next_dim {
+  margin-top:10px;
+  float:left;
+  cursor: pointer;
+}
+
+.prev_dim {
+  margin-top: 7px;
+  margin-right: 7px;
+}
+
+.prev_dim_div {
+  float:left;
+}
+
+th {
+  background-color: #DDDDDD;
+}
+th,
+td {
+  border: 1px solid #888888;
+  padding: 4px;
+}
+table {
+  margin-bottom: 20px;
+  border-collapse: collapse;
+}
+td.measure {
+  text-align: right;
+}
+
+.bar {
+  background-color: #777788;
+}
+
+.report_line {
+  color: #000077;
+  cursor:pointer;
+}
+
+.report_heading {
+  cursor:pointer;
+}
+
+.dim_name {
+  float: left;
+//  width: 100px;
+}
+
+.dim_count {
+  float: right;
+  margin-left: 10px;
+
+//  width: 20px;
+}
+
+.download_link {
+  cursor:pointer;
+  color: #112244;
+  margin-bottom: 8px;
+}
+
+.download_button {
+  margin-left: 4px;
+}
+
+#detail_div {
+  max-width: 800px;
+}
+
+.measure_cell {
+  text-align: right;
+  font-size: 90%;
+}
