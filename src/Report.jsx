@@ -34,6 +34,10 @@ class Report extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.componentWillReceiveProps(this.props);
+  }
+
   componentWillReceiveProps(newProps) {
     //
     // Run summary query to get data for this report.
@@ -45,6 +49,7 @@ class Report extends React.Component {
     data.append( 'proc', 'breakdown' );
     data.append( 'whereClause', newProps.whereClause);
     data.append( 'groupBy', newProps.groupBy);
+    data.append('source', this.props.source);
 
     var orderBy = this.state.orderBy;
     if (orderBy != '')
@@ -221,7 +226,6 @@ class Report extends React.Component {
 
              </tbody>
            </table>
-           <Detail whereClause={this.props.whereClause} />
        </div>
      )
   }

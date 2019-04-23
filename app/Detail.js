@@ -4,15 +4,20 @@ class Detail extends React.Component {
 
     this.state = {
       header: [],
-      body: []
+      body: [],
+      limit: 30
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    this.getData(10, newProps);
+  componentDidMount() {
+    this.getData(this.props);
   }
 
-  getData(limit, newProps) {
+  componentWillReceiveProps(newProps) {
+    this.getData(newProps);
+  }
+
+  getData(newProps) {
     //
     // Run detail query to get data for this report.
     //
@@ -20,7 +25,8 @@ class Detail extends React.Component {
     data.append('proc', 'detail');
     data.append('whereClause', newProps.whereClause);
     data.append('format', 'csv');
-    data.append('limit', ' limit ' + limit);
+    data.append('limit', ' limit ' + this.state.limit);
+    data.append('source', this.props.source);
 
     fetch("mysql.php", {
       method: "POST",
@@ -39,12 +45,14 @@ class Detail extends React.Component {
   }
 
   downloadAll() {
-    this.getData(2000, this.props);
+    this.setState({ limit: this.state.limit + 100 });
+
+    setTimeout(function () {
+      this.getData(this.props);
+    }.bind(this), 0);
   }
 
   render() {
-    if (this.state.body.length == 0) return null;
-
     var header = this.state.header.map(function (key, i) {
       return React.createElement(
         'th',
@@ -54,16 +62,13 @@ class Detail extends React.Component {
     });
 
     var rows = this.state.body.map(function (key, i) {
-      //     if (i == 0)
-      //       return null;
-
       var cols = key.split("\t");
       var columns = cols.map(function (key2, i2) {
         var value = key2;
         if (this.state.header[i2] == 'poster_path') {
           var src = 'https://image.tmdb.org/t/p/w200/' + value;
 
-          value = React.createElement('img', { src: src });
+          value = React.createElement('img', { width: '100', src: src });
         }
         return React.createElement(
           'td',
@@ -83,16 +88,6 @@ class Detail extends React.Component {
       'div',
       { id: 'detail_div' },
       React.createElement(
-        'div',
-        { className: 'download_link' },
-        'Sample 10 lines',
-        React.createElement(
-          'button',
-          { className: 'download_button', onClick: this.downloadAll.bind(this) },
-          'get all'
-        )
-      ),
-      React.createElement(
         'table',
         null,
         React.createElement(
@@ -104,6 +99,15 @@ class Detail extends React.Component {
             header
           ),
           rows
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'download_link' },
+        React.createElement(
+          'button',
+          { className: 'download_button', onClick: this.downloadAll.bind(this) },
+          '+100'
         )
       )
     );

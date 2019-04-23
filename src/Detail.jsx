@@ -4,15 +4,20 @@ class Detail extends React.Component {
 
     this.state = {
         header: [],
-        body: []
+        body: [],
+        limit: 30
     };
   }
 
-  componentWillReceiveProps(newProps) {
-    this.getData(10, newProps);
+  componentDidMount() {
+    this.getData(this.props);
   }
 
-  getData(limit, newProps) {
+  componentWillReceiveProps(newProps) {
+    this.getData(newProps);
+  }
+
+  getData(newProps) {
     //
     // Run detail query to get data for this report.
     //
@@ -20,7 +25,8 @@ class Detail extends React.Component {
     data.append( 'proc', 'detail' );
     data.append( 'whereClause', newProps.whereClause);
     data.append( 'format', 'csv' );
-    data.append( 'limit', ' limit ' + limit );
+    data.append( 'limit', ' limit ' + this.state.limit );
+    data.append('source', this.props.source);
 
     fetch("mysql.php",{
       method: "POST",
@@ -40,13 +46,12 @@ class Detail extends React.Component {
   }
 
   downloadAll() {
-     this.getData(2000, this.props);
+     this.setState({limit: this.state.limit + 100});
+
+     setTimeout(function() {this.getData(this.props);}.bind(this),0);
   }
 
   render() {
-    if (this.state.body.length == 0)
-      return null;
-
     var header = this.state.header.map(function(key, i) {
       return (
         <th key={i}>{key}</th>
@@ -54,9 +59,6 @@ class Detail extends React.Component {
     });
 
     var rows = this.state.body.map(function(key, i) {
- //     if (i == 0)
- //       return null;
-
       var cols = key.split("\t");
       var columns = cols.map(function(key2, i2) {
         var value = key2;
@@ -64,7 +66,7 @@ class Detail extends React.Component {
           var src = 'https://image.tmdb.org/t/p/w200/' + value;
 
           value = (
-            <img src={src} />
+            <img width="100" src={src} />
             );
         }
         return (
@@ -83,16 +85,17 @@ class Detail extends React.Component {
 
     return (
       <div id="detail_div">
-        <div className="download_link" >
-        Sample 10 lines
-          <button className="download_button" onClick={this.downloadAll.bind(this)}>get all</button>
-        </div>
       <table>
         <tbody>
           <tr>{header}</tr>
           {rows}
         </tbody>
       </table>
+
+        <div className="download_link" >
+          <button className="download_button" onClick={this.downloadAll.bind(this)}>+100</button>
+        </div>
+
       </div>
     );
   }

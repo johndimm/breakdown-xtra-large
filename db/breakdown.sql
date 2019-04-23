@@ -3,13 +3,16 @@ use olympics;
 drop table if exists breakdown_settings;
 create table breakdown_settings
 (
+  name varchar(64),
   fact_table varchar(255),
   summary_table varchar(255),
   dimensions varchar(255),
   measures varchar(255),
   aggregates varchar(255),
   detail_columns varchar(255),
-  page_title varchar(255)
+  page_title varchar(255),
+  description varchar(255),
+  url varchar(255)
 );
 
 
@@ -40,14 +43,19 @@ delimiter ;
 
 drop procedure if exists breakdown;
 delimiter //
-create procedure breakdown (_where varchar(1024), _group_by varchar(255), _order_by varchar(255))
+create procedure breakdown (
+  _source varchar(64),
+  _where varchar(1024),
+  _group_by varchar(255),
+  _order_by varchar(255))
 begin
   #
   # Same for all queries.
   #
   select fact_table, summary_table, aggregates
     into @fact_table, @summary_table, @aggregates
-  from breakdown_settings;
+  from breakdown_settings
+  where name = _source;
 
   #
   # Define this breakdown.
@@ -63,8 +71,9 @@ begin
 		" from ", @summary_table, ' ',
 		@where_clause,
 		@group_by_clause,
-        @order_by_clause) as 'cmd'
+        @order_by_clause, ' limit 2000') as 'cmd'
     from breakdown_settings
+    where name = _source
   );
 
 #  select @cmd;
@@ -79,14 +88,15 @@ delimiter ;
 
 drop procedure if exists dim_counts;
 delimiter //
-create procedure dim_counts (_where varchar(1024), _count_distinct varchar(255))
+create procedure dim_counts (_source varchar(64), _where varchar(1024), _count_distinct varchar(1024))
 begin
   #
   # Same for all queries.
   #
   select fact_table, summary_table, aggregates
     into @fact_table, @summary_table, @aggregates
-  from breakdown_settings;
+  from breakdown_settings
+  where name = _source;
 
   set @where_clause = (select clause(' where ', _where));
 
@@ -94,11 +104,12 @@ begin
     select concat(
 		"select ", _count_distinct,
 		" from ", @summary_table,
-		' ', @where_clause) as 'cmd'
+		' ', @where_clause, ';') as 'cmd'
     from breakdown_settings
+    where name = _source
   );
 
-#  select @cmd;
+  # select @cmd; #  _where, _count_distinct;
 
   PREPARE stmt FROM @cmd;
   EXECUTE stmt;
@@ -109,14 +120,15 @@ delimiter ;
 
 drop procedure if exists detail;
 delimiter //
-create procedure detail (_where varchar(1024), _limit varchar(32))
+create procedure detail (_source varchar(64), _where varchar(1024), _limit varchar(32))
 begin
   #
   # Same for all queries.
   #
   select fact_table, fact_table, detail_columns
     into @fact_table, @fact_table, @detail_columns
-  from breakdown_settings;
+  from breakdown_settings
+  where name = _source;
 
 
   #
@@ -131,6 +143,7 @@ begin
 		' ', @where_clause,
 		_limit) as 'cmd'
     from breakdown_settings
+    where name = _source
   );
 
 #  select @cmd;

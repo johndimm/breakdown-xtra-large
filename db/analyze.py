@@ -14,6 +14,8 @@ def allNumbers(inputString):
 
 def analyzeLine(line):
      cols = line.split("\t")
+#     if len(cols) != 24:
+#        print len(cols)
      for col in cols:
          maxWidth.append(0)
          uniques.append(dict())

@@ -5,6 +5,11 @@ body {
 .dimensions_div {
   min-width: 100px;
   float: left;
+  text-align: center;
+}
+
+.dimensions_div button {
+  font-size:14pt;
 }
 
 .report_div {
@@ -72,16 +77,16 @@ th {
 }
 th,
 td {
-  border: 1px solid #888888;
   padding: 4px;
+  border: 1px solid #888888;
 }
 table {
-  margin-bottom: 20px;
   border-collapse: collapse;
 }
 td.measure {
   text-align: right;
 }
+
 
 .bar {
   background-color: #777788;
@@ -93,6 +98,7 @@ td.measure {
 }
 
 .report_heading {
+  white-space: nowrap;
   cursor:pointer;
 }
 
@@ -112,6 +118,7 @@ td.measure {
   cursor:pointer;
   color: #112244;
   margin-bottom: 8px;
+  margin-top: 10px;
 }
 
 .download_button {
@@ -119,10 +126,38 @@ td.measure {
 }
 
 #detail_div {
+  float: left;
   max-width: 800px;
+  margin-top: 10px;
+  font-size: 80%;
 }
 
 .measure_cell {
   text-align: right;
   font-size: 90%;
+}
+
+.title_cell {
+  font-size:32pt;
+}
+
+.source_li {
+  cursor: pointer;
+}
+
+.banner {
+  width: 900px;
+}
+
+.title_cell, .menu_cell, .toggle_cell {
+  border: none;
+}
+
+.toggle_cell {
+  padding-left: 50px;
+}
+
+.subtitle_div {
+  font-size: 10pt;
+  font-style: italic;
 }
