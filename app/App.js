@@ -4,9 +4,9 @@ const ReactDOM = window.ReactDOM;
 class Banner extends React.Component {
   render() {
 
-    if (this.props.current_settings == null) return React.createElement('div', null);
+    if (this.props.current_source == null) return React.createElement('div', null);
 
-    var settings = this.props.settings_sets[this.props.current_settings];
+    var sources = this.props.source_set[this.props.current_source];
 
     var cell1 = React.createElement(
       'div',
@@ -14,20 +14,20 @@ class Banner extends React.Component {
       React.createElement(
         'div',
         { className: 'title_div' },
-        settings.page_title
+        sources.page_title
       ),
       React.createElement(
         'div',
         { className: 'subtitle_div' },
-        settings.description
+        sources.description
       )
     );
 
-    var cell2 = Object.keys(this.props.settings_sets).map(function (key, i) {
+    var cell2 = Object.keys(this.props.source_set).map(function (key, i) {
 
-      var page_title = this.props.settings_sets[key].page_title;
-      var description = this.props.settings_sets[key].description;
-      var url = this.props.settings_sets[key].url;
+      var page_title = this.props.source_set[key].page_title;
+      var description = this.props.source_set[key].description;
+      var url = this.props.source_set[key].url;
       return React.createElement(
         'li',
         { key: i },
@@ -35,7 +35,7 @@ class Banner extends React.Component {
           'span',
           { className: 'source_li',
             onClick: function () {
-              this.props.setSettings(key);
+              this.props.setSource(key);
             }.bind(this) },
           page_title
         ),
@@ -96,11 +96,11 @@ class App extends React.Component {
 
     this.dimValues = {};
     this.filterStack = [];
-    this.settings_sets = [];
+    this.source_set = [];
 
     this.state = {
-      current_setting: 'olympic_medals',
-      settings: {
+      current_setting: 'olympics',
+      sources: {
         name: '',
         fact_table: '',
         summary_table: '',
@@ -121,7 +121,7 @@ class App extends React.Component {
 
   componentWillMount() {
     //
-    // Get global settings.
+    // Get global sources.
     //
     var data = new FormData();
     data.append('proc', 'get_breakdown_sources');
@@ -136,21 +136,21 @@ class App extends React.Component {
       var name = '';
       for (var i = 0; i < result.length; i++) {
         var r = result[i];
-        this.settings_sets[r.name] = r;
+        this.source_set[r.name] = r;
         name = r.name;
       }
 
-      if (name != '') this.setSettings(name);
+      if (name != '') this.setSource(name);
     }.bind(this));
   }
 
-  setSettings(name) {
-    var settings = this.state.settings;
-    settings = this.settings_sets[name];
+  setSource(name) {
+    var sources = this.state.sources;
+    sources = this.source_set[name];
     var report = this.state.report;
     report.filters = {};
-    this.setState({ settings: settings, current_settings: name, report: report }, function () {
-      this.setGroupby(this.state.settings.dimensions.split(',')[0]);
+    this.setState({ sources: sources, current_source: name, report: report }, function () {
+      this.setGroupby(this.state.sources.dimensions.split(',')[0]);
       this.getDimCounts();
     }.bind(this));
   }
@@ -180,7 +180,7 @@ class App extends React.Component {
     //
     // Find the next dimension, wrapping around.
     //
-    var acol = this.state.settings.dimensions.split(',');
+    var acol = this.state.sources.dimensions.split(',');
     var i = acol.indexOf(dim);
     i = (i + 1) % acol.length;
     return acol[i];
@@ -225,7 +225,7 @@ class App extends React.Component {
   }
 
   getDimCounts() {
-    var dims = this.state.settings.dimensions.split(',');
+    var dims = this.state.sources.dimensions.split(',');
     dims.map(function (key, i) {
       dims[i] = "count(distinct " + key + ") as " + key;
     });
@@ -237,7 +237,7 @@ class App extends React.Component {
     data.append('proc', 'dim_counts');
     data.append('countDistinct', countDistinct);
     data.append('whereClause', whereClause);
-    data.append('source', this.state.current_settings);
+    data.append('source', this.state.current_source);
 
     fetch("mysql.php", {
       method: "POST",
@@ -271,7 +271,7 @@ class App extends React.Component {
     //
     // Create the dimension bar on the left side of the page.
     //
-    var dimensions = this.state.settings.dimensions.split(',').map(function (row, i) {
+    var dimensions = this.state.sources.dimensions.split(',').map(function (row, i) {
       var selectedValue = this.state.report.filters[row];
       var isGroupby = row == this.state.report.groupBy;
       var count = '';
@@ -300,7 +300,7 @@ class App extends React.Component {
         addFilter: this.addFilter.bind(this),
         slideDim: this.slideDim.bind(this),
         lastFilter: this.filterStack[this.filterStack.length - 1],
-        source: this.state.current_settings
+        source: this.state.current_source
       });
     }.bind(this));
 
@@ -310,16 +310,16 @@ class App extends React.Component {
     var report = React.createElement(Report, { groupBy: this.state.report.groupBy,
       whereClause: whereClause,
       orderBy: orderBy,
-      measures: this.state.settings.measures,
-      summary_table: this.state.settings.summary_table,
-      measures: this.state.settings.measures,
+      measures: this.state.sources.measures,
+      summary_table: this.state.sources.summary_table,
+      measures: this.state.sources.measures,
       addFilter: this.addFilter.bind(this),
       storeDimValues: this.storeDimValues.bind(this),
       clearDimValues: this.clearDimValues.bind(this),
-      source: this.state.current_settings
+      source: this.state.current_source
     });
 
-    var detail = React.createElement(Detail, { whereClause: whereClause, orderBy: orderBy, source: this.state.current_settings });
+    var detail = React.createElement(Detail, { whereClause: whereClause, orderBy: orderBy, source: this.state.current_source });
 
     var right_side = this.state.report.show_summary ? report : detail;
 
@@ -329,9 +329,9 @@ class App extends React.Component {
     return React.createElement(
       'div',
       null,
-      React.createElement(Banner, { current_settings: this.state.current_settings,
-        settings_sets: this.settings_sets,
-        setSettings: this.setSettings.bind(this),
+      React.createElement(Banner, { current_source: this.state.current_source,
+        source_set: this.source_set,
+        setSource: this.setSource.bind(this),
         toggleSummary: this.toggleSummary.bind(this),
         show_summary: this.state.report.show_summary
       }),
