@@ -20,6 +20,22 @@ class Banner extends React.Component {
         'div',
         { className: 'subtitle_div' },
         source.description
+      ),
+      React.createElement(
+        'div',
+        { className: 'about_div' },
+        'About:\xA0',
+        React.createElement(
+          'a',
+          { target: '_blank', href: source.url },
+          'datasource'
+        ),
+        '\xA0|\xA0',
+        React.createElement(
+          'a',
+          { target: '_blank', href: 'https://github.com/johndimm/breakdown' },
+          'code'
+        )
       )
     );
 
@@ -38,12 +54,6 @@ class Banner extends React.Component {
               this.props.setSource(key);
             }.bind(this) },
           page_title
-        ),
-        ': ',
-        React.createElement(
-          'a',
-          { href: url },
-          'source'
         )
       );
     }.bind(this));

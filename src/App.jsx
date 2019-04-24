@@ -14,6 +14,11 @@ class Banner extends React.Component {
       <div>
         <div className='title_div'>{source.page_title}</div>
         <div className='subtitle_div'>{source.description}</div>
+        <div className='about_div'>About:&nbsp;
+           <a target="_blank" href={source.url}>datasource</a>
+           &nbsp;|&nbsp;
+           <a target="_blank" href="https://github.com/johndimm/breakdown">code</a>
+         </div>
       </div>
     );
 
@@ -26,7 +31,6 @@ class Banner extends React.Component {
         <li key={i}>
         <span className='source_li'
           onClick={function() { this.props.setSource(key);}.bind(this)}>{page_title}</span>
-          : <a href={url}>source</a>
         </li>
       )
     }.bind(this));
@@ -300,7 +304,6 @@ class App extends React.Component {
     )
 
     var right_side = this.state.report.show_summary ? report : detail;
-
 
     //
     // Assemble the page.
