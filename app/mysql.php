@@ -135,7 +135,7 @@ function  outputX($sth) {
 
 function main() {
   $db = dbInit();
-  $proc = postParam('proc', 'breakdown');
+  $proc = postParam('proc', 'get_breakdown_sources');
   $source = postParam('source', 'oscars');
 
   switch ($proc) {
