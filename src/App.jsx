@@ -111,7 +111,7 @@ class App extends React.Component {
     var report = this.state.report;
 
     this.dimValues = {};
-    this.filterStack = {};
+    this.filterStack = [];
 
     report.filters = {};
     report.dimCounts = {};
