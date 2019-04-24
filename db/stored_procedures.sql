@@ -49,8 +49,8 @@ begin
 
   set @cmd = (
     select concat(
-		"select ", _group_by,
-		", ", @aggregates,
+		"select `", _group_by,
+		"`, ", @aggregates,
 		" from ", @summary_table, ' ',
 		@where_clause,
 		@group_by_clause,
