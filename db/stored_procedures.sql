@@ -43,14 +43,16 @@ begin
   #
   # Define this breakdown.
   #
+  set @group_by = concat("`", _group_by, "`");
+
   set @where_clause = (select clause(' where ', _where));
-  set @group_by_clause = (select clause(' group by ', _group_by));
+  set @group_by_clause = (select clause(' group by ', @group_by));
   set @order_by_clause = (select clause(' order by ', _order_by));
 
   set @cmd = (
     select concat(
-		"select `", _group_by,
-		"`, ", @aggregates,
+		"select ", @group_by,
+		", ", @aggregates,
 		" from ", @summary_table, ' ',
 		@where_clause,
 		@group_by_clause,
