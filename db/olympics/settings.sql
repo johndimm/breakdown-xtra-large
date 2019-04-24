@@ -1,11 +1,11 @@
-use olympics;
+use breakdown;
 
-insert into breakdown_settings
+insert into breakdown_sources
 (name, fact_table, summary_table, dimensions, measures, aggregates, detail_columns, page_title, description, url)
 values
-(  'olympic_medals'
-  ,'olympic_medals_fact'
-  , 'olympic_medals_summary'
+(  'olympics'
+  ,'olympics_fact'
+  , 'olympics_summary'
   , 'Sport,Event,Country,Medal,Year,Season,Gender,City'
   , 'Medals'
   , 'sum(Medals) as Medals'

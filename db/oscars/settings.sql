@@ -1,6 +1,6 @@
-use olympics;
+use breakdown;
 
-insert into breakdown_settings
+insert into breakdown_sources
 (name, fact_table, summary_table, dimensions, measures, aggregates, detail_columns, page_title, description, url)
 values
 (   'oscars'

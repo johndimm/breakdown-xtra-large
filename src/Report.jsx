@@ -64,7 +64,7 @@ class Report extends React.Component {
       .then(function (response) {
           return response.ok ? response.text() : Promise.reject(response.status);
     }.bind(this)).then(function (result) {
-          console.log(result);
+          // console.log(result);
 
           // var json = csvJSON(result);
           this.setState({lines: eval(result)});
@@ -75,13 +75,13 @@ class Report extends React.Component {
     //
     // Don't do a render unless the info is here.
     //
-    return true;
-    /*(
+    // return true;
+    return (
          nextProps.groupBy != null
-      // && nextState.lines.length != 0
+      && nextState.lines.length != 0
       && nextProps.groupBy in nextState.lines[0]
       );
-      */
+
   }
 
   sortReport(measure) {
@@ -90,12 +90,8 @@ class Report extends React.Component {
        //
        var sameMeasure = measure == this.state.orderBy;
        var newDir = (sameMeasure && this.state.sortDir == 'DESC') ? 'ASC' : 'DESC';
-       this.setState({orderBy: measure, sortDir: newDir});
-
-       //
-       // Get new data, once state is actually set.
-       //
-       setTimeout(function() {this.componentWillReceiveProps(this.props)}.bind(this), 0);
+       this.setState({orderBy: measure, sortDir: newDir},
+          function() {this.componentWillReceiveProps(this.props)}.bind(this));
   }
 
   sortByMeasure(measure) {
@@ -176,8 +172,8 @@ class Report extends React.Component {
 
   render() {
 
-     if (this.state.lines.length == 0)
-       return (<div></div>);
+ //    if (this.state.lines.length == 0)
+ //      return (<div></div>);
 
      var minmax = this.scanMeasures();
      var rows = this.generateReportRows(minmax);

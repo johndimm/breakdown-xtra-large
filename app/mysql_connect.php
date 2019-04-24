@@ -3,5 +3,5 @@
     $mysql_host = "127.0.0.1";
     $mysql_user = "jdimm";
     $mysql_password = "Leucate1";
-    $mysql_database = "olympics";
+    $mysql_database = "breakdown";
 ?>

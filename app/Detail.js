@@ -34,7 +34,7 @@ class Detail extends React.Component {
     }).then(function (response) {
       return response.ok ? response.text() : Promise.reject(response.status);
     }.bind(this)).then(function (result) {
-      console.log(result);
+      // console.log(result);
 
       var lines = result.split("\n");
 
@@ -45,11 +45,9 @@ class Detail extends React.Component {
   }
 
   downloadAll() {
-    this.setState({ limit: this.state.limit + 100 });
-
-    setTimeout(function () {
+    this.setState({ limit: this.state.limit + 100 }, function () {
       this.getData(this.props);
-    }.bind(this), 0);
+    }.bind(this));
   }
 
   render() {

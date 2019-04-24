@@ -2,6 +2,6 @@ mysql < breakdown.sql
 cd oscars
 mysql < settings.sql
 cd ..
-cd olympic-games
+cd olympics
 mysql < settings.sql
 

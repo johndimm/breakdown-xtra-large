@@ -124,7 +124,7 @@ class App extends React.Component {
     // Get global settings.
     //
     var data = new FormData();
-    data.append('proc', 'get_breakdown_settings');
+    data.append('proc', 'get_breakdown_sources');
     data.append('param', '');
 
     fetch("mysql.php", {
@@ -149,12 +149,10 @@ class App extends React.Component {
     settings = this.settings_sets[name];
     var report = this.state.report;
     report.filters = {};
-    this.setState({ settings: settings, current_settings: name, report: report });
-    setTimeout(function () {
-
+    this.setState({ settings: settings, current_settings: name, report: report }, function () {
       this.setGroupby(this.state.settings.dimensions.split(',')[0]);
       this.getDimCounts();
-    }.bind(this), 0);
+    }.bind(this));
   }
 
   setGroupby(row) {
