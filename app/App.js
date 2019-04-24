@@ -115,7 +115,9 @@ class App extends React.Component {
         fact_table: '',
         summary_table: '',
         dimensions: '',
+        d_array: [],
         measures: '',
+        m_array: [],
         aggregates: '',
         page_title: ''
       },
@@ -146,7 +148,16 @@ class App extends React.Component {
       var name = '';
       for (var i = 0; i < result.length; i++) {
         var r = result[i];
+
+        // Fix measures to work as params.
+        r.m_array = r.measures.split(",");
+        r.d_array = r.dimensions.split(",");
+        r.d_array = r.d_array.map(function (key, i) {
+          return "'" + r.d_array[i].trim() + "'";
+        });
+
         this.source_set[r.name] = r;
+
         name = r.name;
       }
 
@@ -189,7 +200,7 @@ class App extends React.Component {
     //
     var filter_array = [];
     Object.getOwnPropertyNames(this.state.report.filters).forEach(function (row, i) {
-      filter_array.push(row + " = '" + this.state.report.filters[row].replace("'", "''") + "'");
+      filter_array.push("`" + row + "` = '" + this.state.report.filters[row].replace("'", "''") + "'");
     }.bind(this));
     return filter_array.join(' AND ');
   }
