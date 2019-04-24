@@ -29,7 +29,8 @@ class Report extends React.Component {
     this.state = {
       lines: [],
       orderBy: '2',
-      sortDir: 'DESC'
+      sortDir: 'DESC',
+      source: ''
     };
   }
 
@@ -43,6 +44,10 @@ class Report extends React.Component {
     //
     if (newProps.groupBy == null) return;
 
+    if (newProps.source != this.state.source) {
+      this.setState({ source: newProps.source, orderBy: '2', sortDir: 'DESC' });
+    }
+
     var data = new FormData();
     data.append('proc', 'breakdown');
     data.append('whereClause', newProps.whereClause);
@@ -52,6 +57,8 @@ class Report extends React.Component {
     var orderBy = this.state.orderBy;
     if (orderBy != '') orderBy += ' ' + this.state.sortDir;
     data.append('orderBy', orderBy);
+
+    console.log('breakdown: ' + newProps.whereClause + ' / ' + orderBy);
 
     fetch("mysql.php", {
       method: "POST",

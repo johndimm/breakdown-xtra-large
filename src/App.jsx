@@ -8,12 +8,12 @@ class Banner extends React.Component {
     if (this.props.current_source == null)
       return (<div></div>);
 
-    var sources = this.props.source_set[this.props.current_source];
+    var source = this.props.source_set[this.props.current_source];
 
     var cell1 = (
       <div>
-        <div className='title_div'>{sources.page_title}</div>
-        <div className='subtitle_div'>{sources.description}</div>
+        <div className='title_div'>{source.page_title}</div>
+        <div className='subtitle_div'>{source.description}</div>
       </div>
     );
 
@@ -58,7 +58,7 @@ class App extends React.Component {
 
     this.state = {
       current_setting: 'olympics',
-      sources: {
+      source: {
            name: '',
            fact_table: '',
            summary_table: '',
@@ -106,13 +106,21 @@ class App extends React.Component {
   }
 
   setSource(name) {
-    var sources = this.state.sources;
-    sources = this.source_set[name];
+    // var source = this.state.source;
+    var source = this.source_set[name];
     var report = this.state.report;
+
+    this.dimValues = {};
+    this.filterStack = {};
+
     report.filters = {};
-    this.setState({sources:sources, current_source:name, report: report},
+    report.dimCounts = {};
+    report.order_by = '';
+    report.group_by = '';
+
+    this.setState({source:source, current_source:name, report: report},
      function() {
-      this.setGroupby(this.state.sources.dimensions.split(',')[0]);
+      this.setGroupby(this.state.source.dimensions.split(',')[0]);
       this.getDimCounts();
     }.bind(this));
   }
@@ -142,7 +150,7 @@ class App extends React.Component {
     //
     // Find the next dimension, wrapping around.
     //
-    var acol = this.state.sources.dimensions.split(',');
+    var acol = this.state.source.dimensions.split(',');
     var i = acol.indexOf(dim);
     i = (i + 1) % acol.length;
     return acol[i];
@@ -188,7 +196,7 @@ class App extends React.Component {
   }
 
   getDimCounts() {
-    var dims = this.state.sources.dimensions.split(',');
+    var dims = this.state.source.dimensions.split(',');
     dims.map(function(key, i) {
       dims[i] = "count(distinct " + key + ") as " + key;
     });
@@ -236,7 +244,7 @@ class App extends React.Component {
     //
     // Create the dimension bar on the left side of the page.
     //
-    var dimensions = this.state.sources.dimensions.split(',').map (function(row, i) {
+    var dimensions = this.state.source.dimensions.split(',').map (function(row, i) {
       var selectedValue = this.state.report.filters[row];
       var isGroupby = row == this.state.report.groupBy;
       var count = '';
@@ -275,12 +283,14 @@ class App extends React.Component {
               <Report groupBy={this.state.report.groupBy}
                   whereClause={whereClause}
                   orderBy={orderBy}
-                  measures={this.state.sources.measures}
-                  summary_table={this.state.sources.summary_table}
-                  measures={this.state.sources.measures}
+
+                  measures={this.state.source.measures}
+                  summary_table={this.state.source.summary_table}
+
                   addFilter={this.addFilter.bind(this)}
                   storeDimValues={this.storeDimValues.bind(this)}
                   clearDimValues={this.clearDimValues.bind(this)}
+
                   source={this.state.current_source}
            />
     );
@@ -318,7 +328,7 @@ class App extends React.Component {
 
 function renderRoot() {
   var domContainerNode = window.document.getElementById('root');
-  ReactDOM.unmountComponentAtNode(domContainerNode);
+//  ReactDOM.unmountComponentAtNode(domContainerNode);
   ReactDOM.render(<App />, domContainerNode);
 }
 
