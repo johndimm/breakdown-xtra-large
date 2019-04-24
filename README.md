@@ -25,4 +25,4 @@ The app:
 
 Video demo:
 
-[![breakdown](https://img.youtube.com/vi/AJ-zmZ_7q50/0.jpg)](https://www.youtube.com/watch?v=AJ-zmZ_7q50)
+[![breakdown](https://img.youtube.com/vi/TbkgVzR4pUM/0.jpg)](https://youtu.be/TbkgVzR4pUM)
