@@ -1,4 +1,5 @@
-mysql < breakdown.sql
+mysql < breakdown_table.sql
+mysql < stored_procedures.sql
 cd oscars
 mysql < settings.sql
 cd ..

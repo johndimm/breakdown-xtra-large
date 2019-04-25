@@ -213,7 +213,7 @@ class App extends React.Component {
   getDimCounts() {
     var dims = this.state.source.dimensions.split(',');
     dims.map(function(key, i) {
-      dims[i] = "count(distinct " + key + ") as " + key;
+      dims[i] = "count(distinct `" + key + "`) as `" + key + "`";
     });
     var countDistinct = dims.join(",");
 
