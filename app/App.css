@@ -13,7 +13,7 @@ body {
 }
 
 .report_div {
-  max-width: 1000;
+  max-width: 1000px;
   margin-top: 10px;
   float: left;
 }
@@ -127,7 +127,7 @@ td.measure {
 
 #detail_div {
   float: left;
-  max-width: 1000;
+  max-width: 1000px;
   margin-top: 10px;
   font-size: 80%;
 }
