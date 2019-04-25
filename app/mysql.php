@@ -35,8 +35,10 @@ function dbUpdate($connection, $sql) {
 function breakdown($db, $source) {
     // The breakdown stored procedure has three params.
     $whereClause = postParam('whereClause', '');
-    $groupBy = postParam('groupBy', 'Directing');
+    $groupBy = postParam('groupBy', 'city');
     $orderBy = postParam('orderBy', '');
+
+    // echo $whereClause . "\n";
 
     $sql = "call breakdown(:source, :whereClause, :groupBy, :orderBy)";
 
@@ -135,8 +137,8 @@ function  outputX($sth) {
 
 function main() {
   $db = dbInit();
-  $proc = postParam('proc', 'get_breakdown_sources');
-  $source = postParam('source', 'oscars');
+  $proc = postParam('proc', 'breakdown');
+  $source = postParam('source', 'account');
 
   switch ($proc) {
     case 'breakdown':
