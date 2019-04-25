@@ -5,7 +5,9 @@ class Detail extends React.Component {
     this.state = {
         header: [],
         body: [],
-        limit: 30
+        limit: 30,
+        orderBy: '',
+        sortDir: 'DESC'
     };
   }
 
@@ -28,6 +30,11 @@ class Detail extends React.Component {
     data.append( 'limit', ' limit ' + this.state.limit );
     data.append('source', this.props.source);
 
+    var orderBy = this.state.orderBy;
+    if (orderBy != '')
+      orderBy += ' ' + this.state.sortDir;
+    data.append( 'orderBy', orderBy);
+
     fetch("mysql.php",{
       method: "POST",
       body: data
@@ -45,17 +52,53 @@ class Detail extends React.Component {
     }.bind(this));
   }
 
-  downloadAll() {
+  showNextChunk() {
      this.setState({limit: this.state.limit + 100},
        function() {this.getData(this.props);}.bind(this));
   }
 
+  downloadCSV() {
+        var filename = 'breakdown_' + this.props.source + '_' + this.props.whereClause + '.csv';
+
+        var header = '';
+        this.state.header.forEach(function(key, i) { header += key + "\t"});
+        var lines = this.state.body.map(function(key, i) { return key + "\n"; });
+
+        var csv = 'data:text/csv;charset=utf-8,' + header + "\n" + lines;
+        var data = encodeURI(csv);
+
+        var link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+  }
+  
+  sortBy(column) {
+       //
+       // Set sort field and direction of sort.
+       //
+       var sameColumn = column == this.state.orderBy;
+       var newDir = (sameColumn && this.state.sortDir == 'DESC') ? 'ASC' : 'DESC';
+       this.setState({orderBy: column, sortDir: newDir},
+          function() {this.componentWillReceiveProps(this.props)}.bind(this));
+  }
+
   render() {
+
+    const upArrow = "\u25B4";
+    const downArrow = "\u25Be";
+
     var header = this.state.header.map(function(key, i) {
+
+      var arrow = '';
+      if (this.state.orderBy == key) {
+        arrow = this.state.sortDir == 'ASC' ? upArrow : downArrow;
+      }
+
       return (
-        <th key={i}>{key}</th>
+        <th className="detail_heading" onClick={function() {this.sortBy(key)}.bind(this)} key={i}>{key} {arrow}</th>
       )
-    });
+    }.bind(this))
 
     var rows = this.state.body.map(function(key, i) {
       var cols = key.split("\t");
@@ -92,8 +135,12 @@ class Detail extends React.Component {
       </table>
 
         <div className="download_link" >
-          <button className="download_button" onClick={this.downloadAll.bind(this)}>+100</button>
+          <button className="download_button" onClick={this.showNextChunk.bind(this)}>+100</button>
+          |
+          <button className="download_button" onClick={this.downloadCSV.bind(this)}>Download</button>
         </div>
+
+
 
       </div>
     );

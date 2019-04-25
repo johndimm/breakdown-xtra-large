@@ -97,7 +97,7 @@ td.measure {
   cursor:pointer;
 }
 
-.report_heading {
+.report_heading, .detail_heading {
   white-space: nowrap;
   cursor:pointer;
 }

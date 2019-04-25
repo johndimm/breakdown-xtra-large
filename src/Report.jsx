@@ -199,7 +199,7 @@ class Report extends React.Component {
          }
          return (
            <th className='report_heading'
-             onClick={function() {this.sortByMeasure(measure)}.bind(this)}key={i}>{measure} {arrow} </th>
+             onClick={function() {this.sortByMeasure(measure)}.bind(this)} key={i}>{measure} {arrow} </th>
          )
      }.bind(this));
 

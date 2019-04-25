@@ -87,14 +87,16 @@ function dimCounts($db, $source) {
 
 function detail($db, $source) {
     $whereClause = postParam('whereClause', 'Country="Estonia" and Sport="Rowing"');
+    $orderBy = postParam('orderBy', '');
     $limit = postParam('limit', ' limit 20 ');
 
-    $sql = "call detail(:source, :whereClause, :limit)";
+    $sql = "call detail(:source, :whereClause, :orderBy, :limit)";
 
     $sth = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     $result = $sth->execute(array(
       ':source' => $source,
       ':whereClause' => $whereClause,
+      ':orderBy' => $orderBy,
       ':limit' => $limit
       )
     );
@@ -137,8 +139,8 @@ function  outputX($sth) {
 
 function main() {
   $db = dbInit();
-  $proc = postParam('proc', 'breakdown');
-  $source = postParam('source', 'account');
+  $proc = postParam('proc', 'detail');
+  $source = postParam('source', 'olympics');
 
   switch ($proc) {
     case 'breakdown':

@@ -105,7 +105,7 @@ delimiter ;
 
 drop procedure if exists detail;
 delimiter //
-create procedure detail (_source varchar(64), _where varchar(1024), _limit varchar(32))
+create procedure detail (_source varchar(64), _where varchar(1024), _orderBy varchar(64), _limit varchar(32))
 begin
   #
   # Same for all queries.
@@ -115,17 +115,18 @@ begin
   from breakdown_sources
   where name = _source;
 
-
   #
   # Define this breakdown.
   #
   set @where_clause = (select clause(' where ', _where));
+  set @order_by = (select clause(' order by ', _orderBy));
 
   set @cmd = (
     select concat(
 		'select ', @detail_columns,
 		' from ', @fact_table,
 		' ', @where_clause,
+		@order_by,
 		_limit) as 'cmd'
     from breakdown_sources
     where name = _source
