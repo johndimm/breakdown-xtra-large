@@ -200,8 +200,7 @@ class App extends React.Component {
     //
     var filter_array = [];
     Object.getOwnPropertyNames(this.state.report.filters).forEach(function (row, i) {
-      //        filter_array.push("`" + row + "` = '" + this.state.report.filters[row].replace("'","''") + "'")
-      filter_array.push(row + " = '" + this.state.report.filters[row].replace("'", "''") + "'");
+      filter_array.push("`" + row + "` = '" + this.state.report.filters[row].replace("'", "''") + "'");
     }.bind(this));
     return filter_array.join(' AND ');
   }
