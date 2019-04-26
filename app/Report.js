@@ -22,10 +22,8 @@ function csvJSON(csv) {
 }
 
 class Report extends React.Component {
-
   constructor(props, context) {
     super(props, context);
-
     this.state = {
       lines: [],
       orderBy: '2',
@@ -45,7 +43,11 @@ class Report extends React.Component {
     if (newProps.groupBy == null) return;
 
     if (newProps.source != this.state.source) {
-      this.setState({ source: newProps.source, orderBy: '2', sortDir: 'DESC' });
+      this.setState({
+        source: newProps.source,
+        orderBy: '2',
+        sortDir: 'DESC'
+      });
     }
 
     var data = new FormData();
@@ -53,13 +55,10 @@ class Report extends React.Component {
     data.append('whereClause', newProps.whereClause);
     data.append('groupBy', newProps.groupBy);
     data.append('source', this.props.source);
-
     var orderBy = this.state.orderBy;
     if (orderBy != '') orderBy += ' ' + this.state.sortDir;
     data.append('orderBy', orderBy);
-
     console.log('breakdown: ' + newProps.whereClause + ' / ' + orderBy);
-
     fetch("mysql.php", {
       method: "POST",
       body: data
@@ -67,9 +66,10 @@ class Report extends React.Component {
       return response.ok ? response.text() : Promise.reject(response.status);
     }.bind(this)).then(function (result) {
       // console.log(result);
-
       // var json = csvJSON(result);
-      this.setState({ lines: eval(result) });
+      this.setState({
+        lines: eval(result)
+      });
     }.bind(this));
   }
 
@@ -87,7 +87,10 @@ class Report extends React.Component {
     //
     var sameMeasure = measure == this.state.orderBy;
     var newDir = sameMeasure && this.state.sortDir == 'DESC' ? 'ASC' : 'DESC';
-    this.setState({ orderBy: measure, sortDir: newDir }, function () {
+    this.setState({
+      orderBy: measure,
+      sortDir: newDir
+    }, function () {
       this.componentWillReceiveProps(this.props);
     }.bind(this));
   }
@@ -106,7 +109,6 @@ class Report extends React.Component {
     //
     var minmax = {};
     this.state.lines.forEach(function (row, i) {
-
       this.props.measures.split(',').forEach(function (measure, i) {
         if (!(measure in minmax)) {
           minmax[measure] = {};
@@ -114,19 +116,17 @@ class Report extends React.Component {
           minmax[measure].max = Number.MAX_VALUE / 2 * -1;
           minmax[measure].total = 0;
         }
+
         minmax[measure].min = Math.min(minmax[measure].min, row[measure]);
         minmax[measure].max = Math.max(minmax[measure].max, row[measure]);
         minmax[measure].total += row[measure];
       });
     }.bind(this));
-
     return minmax;
   }
 
   generateReportRows(minmax) {
-
     this.props.clearDimValues(this.props.groupBy);
-
     return this.state.lines.map(function (row, i) {
       //
       // Generate table cells for the measures in a line.
@@ -136,108 +136,81 @@ class Report extends React.Component {
         var pc = 100 * row[measure] / minmax[measure].max;
         if (pc0 == -1) pc0 = pc;
         var measureValue = row[measure];
-        return React.createElement(
-          "td",
-          { className: "measure_cell", key: i },
-          measureValue
-        );
-      });
-
-      //
+        return React.createElement("td", {
+          className: "measure_cell",
+          key: i
+        }, measureValue);
+      }); //
       // Store list of values for next/prev in dimension bar.
       //
-      this.props.storeDimValues(this.props.groupBy, row[this.props.groupBy]);
 
-      //
+      this.props.storeDimValues(this.props.groupBy, row[this.props.groupBy]); //
       // Assemble a line of the report.
       //
-      return React.createElement(
-        "tr",
-        { key: i, className: "report_line", onClick: function () {
-            this.props.addFilter(this.props.groupBy, row[this.props.groupBy]);
-          }.bind(this) },
-        React.createElement(
-          "td",
-          null,
-          row[this.props.groupBy]
-        ),
-        React.createElement(
-          "td",
-          { className: "bar_holder" },
-          React.createElement("div", { style: { 'width': pc0 + '%', 'height': '18px' }, className: "bar" })
-        ),
-        measure_columns
-      );
+
+      return React.createElement("tr", {
+        key: i,
+        className: "report_line",
+        onClick: function () {
+          this.props.addFilter(this.props.groupBy, row[this.props.groupBy]);
+        }.bind(this)
+      }, React.createElement("td", null, row[this.props.groupBy]), React.createElement("td", {
+        className: "bar_holder"
+      }, React.createElement("div", {
+        style: {
+          'width': pc0 + '%',
+          'height': '18px'
+        },
+        className: "bar"
+      })), measure_columns);
     }.bind(this));
   }
 
   render() {
-
     //    if (this.state.lines.length == 0)
     //      return (<div></div>);
-
     var minmax = this.scanMeasures();
     var rows = this.generateReportRows(minmax);
-
     const upArrow = "\u25B4";
-    const downArrow = "\u25Be";
-
-    //
+    const downArrow = "\u25Be"; //
     // Create the column headers for metrics.
     //
-    var measure_header = this.props.measures.split(',').map(function (measure, i) {
 
+    var measure_header = this.props.measures.split(',').map(function (measure, i) {
       var arrow = '';
+
       if (this.state.orderBy == measure || i == 0 && this.state.orderBy == '2') {
         arrow = this.state.sortDir == 'ASC' ? upArrow : downArrow;
       }
-      return React.createElement(
-        "th",
-        { className: "report_heading",
-          onClick: function () {
-            this.sortByMeasure(measure);
-          }.bind(this), key: i },
-        measure,
-        " ",
-        arrow,
-        " "
-      );
-    }.bind(this));
 
+      return React.createElement("th", {
+        className: "report_heading",
+        onClick: function () {
+          this.sortByMeasure(measure);
+        }.bind(this),
+        key: i
+      }, measure, " ", arrow, " ");
+    }.bind(this));
     var arrow = '';
+
     if (this.state.orderBy == '1' || this.state.orderBy == this.props.groupBy) {
       arrow = this.state.sortDir == 'ASC' ? upArrow : downArrow;
-    }
-
-    //
+    } //
     // Assemble the report.
     //
-    return React.createElement(
-      "div",
-      { className: "report_div" },
-      React.createElement(
-        "table",
-        null,
-        React.createElement(
-          "tbody",
-          null,
-          React.createElement(
-            "tr",
-            null,
-            React.createElement(
-              "th",
-              { className: "report_heading", style: { 'minWidth': '300px' },
-                onClick: this.sortByGroupBy.bind(this) },
-              this.props.groupBy,
-              " ",
-              arrow
-            ),
-            React.createElement("th", { width: "200" }),
-            measure_header
-          ),
-          rows
-        )
-      )
-    );
+
+
+    return React.createElement("div", {
+      className: "report_div"
+    }, React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("th", {
+      className: "report_heading",
+      style: {
+        'minWidth': '300px'
+      },
+      onClick: this.sortByGroupBy.bind(this)
+    }, this.props.groupBy, " ", arrow), React.createElement("th", {
+      width: "200"
+    }), measure_header), rows)));
   }
+
 }
