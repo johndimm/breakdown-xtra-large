@@ -163,7 +163,7 @@ class Report extends React.Component {
         ),
         React.createElement(
           "td",
-          null,
+          { className: "bar_holder" },
           React.createElement("div", { style: { 'width': pc0 + '%', 'height': '18px' }, className: "bar" })
         ),
         measure_columns

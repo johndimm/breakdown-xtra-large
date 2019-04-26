@@ -165,7 +165,7 @@ class Report extends React.Component {
              this.props.addFilter(this.props.groupBy, row[this.props.groupBy])
            }.bind(this)}>
             <td>{row[this.props.groupBy]}</td>
-            <td><div style={{'width':pc0 + '%','height':'18px'}} className = 'bar'/></td>
+            <td className="bar_holder"><div style={{'width':pc0 + '%','height':'18px'}} className = 'bar'/></td>
 
             {measure_columns}
 

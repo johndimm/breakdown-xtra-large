@@ -39,24 +39,27 @@ class Banner extends React.Component {
       )
     );
 
-    var cell2 = Object.keys(this.props.source_set).map(function (key, i) {
+    var cell2 = React.createElement('div', null);
 
-      var page_title = this.props.source_set[key].page_title;
-      var description = this.props.source_set[key].description;
-      var url = this.props.source_set[key].url;
-      return React.createElement(
-        'li',
-        { key: i },
-        React.createElement(
-          'span',
-          { className: 'source_li',
-            onClick: function () {
-              this.props.setSource(key);
-            }.bind(this) },
-          page_title
-        )
-      );
-    }.bind(this));
+    if (this.props.source_set.length > 1) {
+      cell2 = Object.keys(this.props.source_set).map(function (key, i) {
+        var page_title = this.props.source_set[key].page_title;
+        var description = this.props.source_set[key].description;
+        var url = this.props.source_set[key].url;
+        return React.createElement(
+          'li',
+          { key: i },
+          React.createElement(
+            'span',
+            { className: 'source_li',
+              onClick: function () {
+                this.props.setSource(key);
+              }.bind(this) },
+            page_title
+          )
+        );
+      }.bind(this));
+    }
 
     var button_text = this.props.show_summary ? 'Detail' : 'Summary';
     var cell3 = React.createElement(

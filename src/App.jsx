@@ -22,18 +22,23 @@ class Banner extends React.Component {
       </div>
     );
 
-    var cell2 = Object.keys(this.props.source_set).map(function(key, i) {
+    var cell2 = ( <div></div>
+    );
 
-      var page_title = this.props.source_set[key].page_title;
-      var description = this.props.source_set[key].description;
-      var url = this.props.source_set[key].url;
-      return (
-        <li key={i}>
-        <span className='source_li'
-          onClick={function() { this.props.setSource(key);}.bind(this)}>{page_title}</span>
-        </li>
-      )
-    }.bind(this));
+    if (this.props.source_set.length > 1) {
+      cell2 =
+      Object.keys(this.props.source_set).map(function(key, i) {
+          var page_title = this.props.source_set[key].page_title;
+          var description = this.props.source_set[key].description;
+          var url = this.props.source_set[key].url;
+          return (
+            <li key={i}>
+            <span className='source_li'
+              onClick={function() { this.props.setSource(key);}.bind(this)}>{page_title}</span>
+            </li>
+          )
+        }.bind(this));
+    }
 
     var button_text = this.props.show_summary ? 'Detail' : 'Summary';
     var cell3 = (<button onClick={this.props.toggleSummary}>show {button_text}</button>);

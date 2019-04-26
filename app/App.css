@@ -4,6 +4,7 @@ body {
 
 .dimensions_div {
   min-width: 100px;
+  max-width: 400px;
   float: left;
   text-align: center;
 }
@@ -21,6 +22,8 @@ body {
 .dimension {
   margin: 10px;
   padding: 10px;
+  // padding-right: 10px;
+  max-width: 400px;
   border: 1px solid black;
 }
 
@@ -45,26 +48,30 @@ body {
 
 .selected_value {
   float: left;
-  margin:5px;
-  padding:5px;
-  background-color: #EEEEEE;
+  max-width: 200px;
+  padding: 5px;
+
+  margin-left:5px;
+  margin-right:5px;
+  background-color: #EFEFEF;
   font-weight:bold;
   border:1px solid #BBBBBB;
   cursor:pointer;
 }
 
 .selected_value_div {
-  height: 30px;
+//  height: 30px;
   vertical-align: baseline;
 }
 .prev_dim, .next_dim {
-  margin-top:10px;
+ // margin-top:10px;
   float:left;
   cursor: pointer;
 }
 
 .prev_dim {
-  margin-top: 7px;
+//  margin-top: 7px;
+  margin-top: -3px;
   margin-right: 7px;
 }
 
@@ -87,6 +94,14 @@ td.measure {
   text-align: right;
 }
 
+.selected_value_widget th, .selected_value_widget td {
+  border: none;
+}
+
+.selected_value_widget {
+  margin-top:7px;
+}
+
 
 .bar {
   background-color: #777788;
@@ -104,6 +119,7 @@ td.measure {
 
 .dim_name {
   float: left;
+  max-width: 170px;
 //  width: 100px;
 }
 
@@ -164,4 +180,8 @@ td.measure {
 
 .about_div {
   font-size: 12pt;
+}
+
+.bar_holder {
+  min-width: 100px;
 }

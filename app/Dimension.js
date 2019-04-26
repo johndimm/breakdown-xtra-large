@@ -55,20 +55,41 @@ class Dimension extends React.Component {
     var selectedValueDiv = React.createElement("div", null);
     if (this.props.selectedValue != null) {
       selectedValueDiv = React.createElement(
-        "div",
-        { className: "selected_value_div" },
-        prevNext,
+        "table",
+        { className: "selected_value_widget" },
         React.createElement(
-          "div",
-          { className: "selected_value", onClick: function () {
-              this.props.removeFilter(this.props.name);
-            }.bind(this) },
-          this.props.selectedValue
+          "tbody",
+          null,
+          React.createElement(
+            "tr",
+            null,
+            React.createElement(
+              "td",
+              null,
+              React.createElement(
+                "div",
+                { className: "selected_value_div" },
+                prevNext
+              )
+            ),
+            React.createElement(
+              "td",
+              null,
+              React.createElement(
+                "div",
+                { className: "selected_value", onClick: function () {
+                    this.props.removeFilter(this.props.name);
+                  }.bind(this) },
+                this.props.selectedValue
+              )
+            )
+          )
         )
       );
     }
 
     var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
+    var nameSpaced = this.props.name.replace(/_/g, ' ');
     return React.createElement(
       "div",
       { className: "dimension" },
@@ -78,7 +99,7 @@ class Dimension extends React.Component {
         React.createElement(
           "div",
           { className: "dim_name" },
-          this.props.name
+          nameSpaced
         ),
         React.createElement(
           "div",

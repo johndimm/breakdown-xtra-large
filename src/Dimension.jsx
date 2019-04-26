@@ -48,24 +48,31 @@ class Dimension extends React.Component {
      var selectedValueDiv = (<div></div>);
      if (this.props.selectedValue != null) {
        selectedValueDiv = (
-         <div className="selected_value_div">
 
-         {prevNext}
+         <table className='selected_value_widget'><tbody><tr>
+         <td>
+           <div className="selected_value_div">
+           {prevNext}
+           </div>
+         </td>
 
+         <td>
            <div className='selected_value' onClick={ function() {
-                 this.props.removeFilter(this.props.name)
-              }.bind(this)
-           }>{this.props.selectedValue}</div>
-
-         </div>
+                  this.props.removeFilter(this.props.name)
+               }.bind(this)
+             }>{this.props.selectedValue}
+           </div>
+          </td>
+          </tr></tbody></table>
        );
      }
 
      var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
+     var nameSpaced = this.props.name.replace(/_/g, ' ');
      return (
        <div className='dimension'>
          <div className={titleClass} onClick={this.props.setGroupby}>
-            <div className='dim_name'>{this.props.name}</div>
+            <div className='dim_name'>{nameSpaced}</div>
             <div className='dim_count'>{this.props.count}</div>
           </div>
           {selectedValueDiv}

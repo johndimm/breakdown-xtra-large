@@ -10,7 +10,7 @@ uniques = []
 isInt = []
 
 def allNumbers(inputString):
-     return all(char.isdigit() for char in inputString)
+     return inputString is None or all(char.isdigit() or char == '.' or char == '-' for char in inputString)
 
 def analyzeLine(line):
      cols = line.split("\t")
@@ -46,11 +46,33 @@ def main():
   types = []
 
   for i in range(len(header)):
-      if isInt[i]:
+      if (isInt[i] or header[i].find('quantity') != -1) and header[i].find('date') == -1 and header[i].find('match')  == -1:
           types.append('int')
       else:
           types.append("varchar(%s)" % maxWidth[i])
 
+  # Print stats.
+  print "/*---------"
+  for i in range(len(header)):
+    print "%s : %s" % (header[i], len(uniques[i]))
+
+  measures = []
+  dimensions = []
+  aggregates = []
+  for i in range(len(header)):
+    if types[i] == 'int':
+       measures.append(header[i])
+       aggregates.append("sum(%s) as %s" % (header[i],header[i]))
+    elif len(uniques[i]) < 2000:
+       dimensions.append(header[i])
+
+  print "\n, '" + ",".join(dimensions) + "'"
+  print "\n, '" + ",".join(measures) + "'"
+  print "\n. '" + ",".join(aggregates) + "'"
+
+
+  print "------------*/\n"
+     
 
   # Print table create for fact table.
   base_name = filename.replace(".tsv", "")
@@ -69,13 +91,13 @@ def main():
   print ",\n".join(fields);
   print ");\n\n"
 
-  print "load data local infile '%s' into table %s;\n" % (filename, fact_table)
+  print "load data local infile '%s' into table %s ignore 1 lines;\n" % (filename, fact_table)
 
   print "create table %s as select " % summary_table
 
   dimensions = []
   for i in range(len(header)):
-     if len(uniques[i]) < 1000 and types[i] != 'int':
+     if len(uniques[i]) < 2000 and types[i] != 'int':
           dimensions.append("%s" % (header[i]))
 
   measures = []
