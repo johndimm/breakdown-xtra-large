@@ -224,7 +224,15 @@ class Report extends React.Component {
         key: i
       }, formatNumber(minmax[measure].total));
     }.bind(this));
-    return React.createElement("tr", null, React.createElement("td", null), React.createElement("td", null, "Totals:"), measure_columns);
+    return React.createElement("tr", null, React.createElement("td", {
+      style: {
+        'borderRight': 'none'
+      }
+    }), React.createElement("td", {
+      style: {
+        'borderLeft': 'none'
+      }
+    }, "Totals:"), measure_columns);
   }
 
   render() {

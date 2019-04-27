@@ -238,7 +238,7 @@ class Report extends React.Component {
      }.bind(this));
 
      return (
-       <tr><td></td><td>Totals:</td>{measure_columns}</tr>
+       <tr><td style={{'borderRight':'none'}}></td><td style={{'borderLeft':'none'}}>Totals:</td>{measure_columns}</tr>
      );
 
    }
