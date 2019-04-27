@@ -12,14 +12,45 @@ class Detail extends React.Component {
   }
 
   componentDidMount() {
-    this.getData(this.props);
+    this.componentWillReceiveProps(this.props);
   }
 
   componentWillReceiveProps(newProps) {
-    this.getData(newProps);
+    this.getData(newProps, this.saveData.bind(this));
   }
 
-  getData(newProps) {
+  saveData(result) {
+          // console.log(result);
+
+          var lines = result.split("\n");
+          var header = lines[0].split("\t");
+          lines.splice(0,1);
+
+          this.setState({header: header, body: lines});
+  }
+
+  downloadData(result) {
+
+          var lines = result.split("\n");
+          var header = lines[0].split("\t");
+          lines.splice(0,1);
+
+        var filename = 'breakdown_' + this.props.source + '_' + this.props.whereClause + '.csv';
+
+        var header = '';
+        this.state.header.forEach(function(key, i) { header += key + "\t"});
+        var linesOut = lines.map(function(key, i) { return key + "\n"; });
+
+        var csv = 'data:text/csv;charset=utf-8,' + header + "\n" + linesOut;
+        var data = encodeURI(csv);
+
+        var link = document.createElement('a');
+        link.setAttribute('href', data);
+        link.setAttribute('download', filename);
+        link.click();
+  }
+
+  getData(newProps, fnSuccess) {
     //
     // Run detail query to get data for this report.
     //
@@ -42,13 +73,7 @@ class Detail extends React.Component {
       .then(function (response) {
           return response.ok ? response.text() : Promise.reject(response.status);
     }.bind(this)).then(function (result) {
-          // console.log(result);
-
-          var lines = result.split("\n");
-
-          var header = lines[0].split("\t");
-          lines.splice(0,1);
-          this.setState({header: header, body: lines});
+      fnSuccess(result);
     }.bind(this));
   }
 
@@ -58,19 +83,7 @@ class Detail extends React.Component {
   }
 
   downloadCSV() {
-        var filename = 'breakdown_' + this.props.source + '_' + this.props.whereClause + '.csv';
-
-        var header = '';
-        this.state.header.forEach(function(key, i) { header += key + "\t"});
-        var lines = this.state.body.map(function(key, i) { return key + "\n"; });
-
-        var csv = 'data:text/csv;charset=utf-8,' + header + "\n" + lines;
-        var data = encodeURI(csv);
-
-        var link = document.createElement('a');
-        link.setAttribute('href', data);
-        link.setAttribute('download', filename);
-        link.click();
+    this.getData(this.props, this.downloadData.bind(this));
   }
   
   sortBy(column) {

@@ -56,9 +56,9 @@ def main():
   for i in range(len(header)):
     print "%s : %s" % (header[i], len(uniques[i]))
 
-  measures = []
+  measures = ['count']
   dimensions = []
-  aggregates = []
+  aggregates = ['count(*) as count']
   for i in range(len(header)):
     if types[i] == 'int':
        measures.append(header[i])

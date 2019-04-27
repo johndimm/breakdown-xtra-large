@@ -50,10 +50,8 @@ class Dimension extends React.Component {
        selectedValueDiv = (
 
          <table className='selected_value_widget'><tbody><tr>
-         <td>
-           <div className="selected_value_div">
+         <td className="selected_value_div">
            {prevNext}
-           </div>
          </td>
 
          <td>

@@ -61,7 +61,7 @@ body {
 
 .selected_value_div {
 //  height: 30px;
-  vertical-align: baseline;
+  vertical-align: top;
 }
 .prev_dim, .next_dim {
  // margin-top:10px;
@@ -107,6 +107,15 @@ td.measure {
   background-color: #777788;
 }
 
+.bar_table {
+  width: 100%;
+}
+
+.bar_table th, .bar_table td {
+  margin:0;
+  padding:0;
+}
+
 .report_line {
   color: #000077;
   cursor:pointer;
@@ -119,7 +128,8 @@ td.measure {
 
 .dim_name {
   float: left;
-  max-width: 170px;
+//  max-width: 180px;
+  text-align: left;
 //  width: 100px;
 }
 
@@ -183,5 +193,5 @@ td.measure {
 }
 
 .bar_holder {
-  min-width: 100px;
+  min-width: 120px;
 }

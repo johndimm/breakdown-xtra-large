@@ -65,12 +65,8 @@ class Dimension extends React.Component {
             null,
             React.createElement(
               "td",
-              null,
-              React.createElement(
-                "div",
-                { className: "selected_value_div" },
-                prevNext
-              )
+              { className: "selected_value_div" },
+              prevNext
             ),
             React.createElement(
               "td",

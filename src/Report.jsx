@@ -21,6 +21,32 @@ function csvJSON(csv){
   return result;
 }
 
+function formatNumber(num) {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+}
+
+class Bar extends React.Component {
+  render() {
+
+    return (
+           <td className="bar_holder">
+              <table className='bar_table'><tbody><tr>
+
+                  <td   style={{'width':this.props.pcMaxNeg + "%"}}>
+                    <div style={{'width':this.props.pc0Neg + '%','height':'18px', 'backgroundColor':'red','float':'right'}} className = 'bar' />
+                  </td>
+
+                  <td   style={{'width':this.props.pcMaxPos + "%"}}>
+                    <div style={{'width':this.props.pc0Pos + '%','height':'18px'}} className = 'bar' />
+                  </td>
+
+              </tr></tbody></table>
+           </td>
+    );
+
+  }
+}
+
 
 class Report extends React.Component {
 
@@ -125,7 +151,7 @@ class Report extends React.Component {
          }
          minmax[measure].min = Math.min(minmax[measure].min, row[measure]);
          minmax[measure].max = Math.max(minmax[measure].max, row[measure]);
-         minmax[measure].total += row[measure];
+         minmax[measure].total += parseFloat(row[measure]);
        });
 
      }.bind(this));
@@ -141,13 +167,32 @@ class Report extends React.Component {
        //
        // Generate table cells for the measures in a line.
        //
-       var pc0 = -1;
+       var pc0Pos = -1;
+       var pc0Neg = -1;
+       var pcMaxPos = 0;
+       var pcMaxNeg = 0;
+
        var measure_columns = this.props.measures.split(',').map(function(measure, i) {
-         var pc = 100 * row[measure] / minmax[measure].max;
-         if (pc0 == -1) pc0 = pc;
-         var measureValue = row[measure];
+
+         var mval = row[measure];
+
+         //
+         // Calculate pc for first measure.
+         //
+         var pcPos = Math.max(0, 100 * mval / minmax[measure].max);
+         var pcNeg = 0;
+         if (row[measure] < 0)
+           pcNeg = Math.max(0, 100 * -1 * mval / (-1 * minmax[measure].min));
+
+         if (pc0Pos == -1)  {
+           pc0Pos = pcPos;
+           pc0Neg = pcNeg;
+           pcMaxPos = Math.max(1, 100 * minmax[measure].max / (minmax[measure].max - minmax[measure].min));
+           pcMaxNeg = 100 - pcMaxPos;
+         }
+
          return (
-           <td className='measure_cell' key={i}>{measureValue}</td>
+           <td className='measure_cell' key={i}>{formatNumber(mval)}</td>
          )
        });
 
@@ -160,12 +205,15 @@ class Report extends React.Component {
        //
        // Assemble a line of the report.
        //
+
        return (
          <tr key={i} className='report_line' onClick={function() {
              this.props.addFilter(this.props.groupBy, row[this.props.groupBy])
            }.bind(this)}>
             <td>{row[this.props.groupBy]}</td>
-            <td className="bar_holder"><div style={{'width':pc0 + '%','height':'18px'}} className = 'bar'/></td>
+
+            <Bar pc0Pos={pc0Pos} pc0Neg={pc0Neg} pcMaxPos={pcMaxPos} pcMaxNeg={pcMaxNeg} />
+
 
             {measure_columns}
 
@@ -175,6 +223,23 @@ class Report extends React.Component {
      }.bind(this));
   }
 
+  generateTotals(minmax) {
+
+     var measure_columns = this.props.measures.split(',').map(function(measure, i) {
+
+       if (measure == '')
+         return ( <td></td> )
+       else
+         return (
+         <td className='measure_cell'>{formatNumber(minmax[measure].total)}</td>
+       )
+     });
+
+     return (
+       <tr><td></td><td>Totals:</td>{measure_columns}</tr>
+     );
+
+   }
 
 
   render() {
@@ -184,6 +249,7 @@ class Report extends React.Component {
 
      var minmax = this.scanMeasures();
      var rows = this.generateReportRows(minmax);
+     var totals = this.generateTotals(minmax);
 
      const upArrow = "\u25B4";
      const downArrow = "\u25Be";
@@ -226,6 +292,7 @@ class Report extends React.Component {
              </tr>
 
              {rows}
+             {totals}
 
              </tbody>
            </table>
