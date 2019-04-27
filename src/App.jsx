@@ -22,11 +22,7 @@ class Banner extends React.Component {
       </div>
     );
 
-    var cell2 = ( <div></div>
-    );
-
-    if (this.props.source_set.length > 1) {
-      cell2 =
+    var cell2 =
       Object.keys(this.props.source_set).map(function(key, i) {
           var page_title = this.props.source_set[key].page_title;
           var description = this.props.source_set[key].description;
@@ -38,7 +34,8 @@ class Banner extends React.Component {
             </li>
           )
         }.bind(this));
-    }
+
+    if (cell2.length < 2) cell2 = (<div></div>);
 
     var button_text = this.props.show_summary ? 'Detail' : 'Summary';
     var cell3 = (<button onClick={this.props.toggleSummary}>show {button_text}</button>);
