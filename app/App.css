@@ -49,7 +49,7 @@ body {
 .selected_value {
   float: left;
   max-width: 200px;
-  padding: 5px;
+  padding: 6px;
 
   margin-left:5px;
   margin-right:5px;
@@ -85,13 +85,17 @@ th {
 th,
 td {
   padding: 4px;
-  border: 1px solid #888888;
 }
 table {
   border-collapse: collapse;
 }
+
 td.measure {
   text-align: right;
+}
+
+.report_div td {
+  border: 1px solid #888888;
 }
 
 .selected_value_widget th, .selected_value_widget td {
@@ -161,6 +165,7 @@ td.measure {
 .measure_cell {
   text-align: right;
   font-size: 90%;
+  border: 1px solid #DDDDDD
 }
 
 .title_cell {
@@ -194,4 +199,11 @@ td.measure {
 
 .bar_holder {
   min-width: 120px;
+}
+
+.content td {
+//  border: none;
+  vertical-align: top;
+
+
 }

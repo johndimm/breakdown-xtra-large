@@ -330,12 +330,19 @@ class App extends React.Component {
             show_summary={this.state.report.show_summary}
             />
 
+          <table className="content"><tbody><tr>
+
+          <td>
           <div className='dimensions_div'>
             {dimensions}
           </div>
+          </td>
 
+          <td>
           {right_side}
+          </td>
 
+          </tr></tbody></table>
        </div>
     );
   }

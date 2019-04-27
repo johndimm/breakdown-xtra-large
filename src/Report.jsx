@@ -22,7 +22,10 @@ function csvJSON(csv){
 }
 
 function formatNumber(num) {
-  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+  if (num == null)
+    return 0;
+  else
+    return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
 class Bar extends React.Component {
@@ -214,7 +217,6 @@ class Report extends React.Component {
 
             <Bar pc0Pos={pc0Pos} pc0Neg={pc0Neg} pcMaxPos={pcMaxPos} pcMaxNeg={pcMaxNeg} />
 
-
             {measure_columns}
 
           </tr>
@@ -228,12 +230,12 @@ class Report extends React.Component {
      var measure_columns = this.props.measures.split(',').map(function(measure, i) {
 
        if (measure == '')
-         return ( <td></td> )
+         return ( <td key={i}></td> )
        else
          return (
-         <td className='measure_cell'>{formatNumber(minmax[measure].total)}</td>
+         <td className='measure_cell' key={i}>{formatNumber(minmax[measure].total)}</td>
        )
-     });
+     }.bind(this));
 
      return (
        <tr><td></td><td>Totals:</td>{measure_columns}</tr>
@@ -244,8 +246,8 @@ class Report extends React.Component {
 
   render() {
 
- //    if (this.state.lines.length == 0)
- //      return (<div></div>);
+     if (this.state.lines.length == 0)
+       return (<div></div>);
 
      var minmax = this.scanMeasures();
      var rows = this.generateReportRows(minmax);
