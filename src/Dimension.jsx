@@ -28,50 +28,54 @@ class Dimension extends React.Component {
      }
 
      var prevNext = (<div></div>);
+
      if (this.props.name == this.props.lastFilter) {
         prevNext = (
-
-           <div className='prev_dim_div'>
-               <div className='prev_dim' onClick={ function() {
+           <td className="arrows_div">
+           <table className='prev_dim_div'><tbody><tr>
+               <td className='prev_dim' onClick={ function() {
                    this.props.slideDim(this.props.name, this.props.selectedValue, -1);
                  }.bind(this)
-                }>{leftArrow}</div>
+                }>{leftArrow}</td>
 
-               <div className='next_dim' onClick={ function() {
+               <td className='next_dim' onClick={ function() {
                    this.props.slideDim(this.props.name, this.props.selectedValue, 1);
                  }.bind(this)
-                }>{rightArrow}</div>
-           </div>
+                }>{rightArrow}</td>
+           </tr></tbody></table>
+           </td>
         );
      }
 
+
      var selectedValueDiv = (<div></div>);
+
      if (this.props.selectedValue != null) {
        selectedValueDiv = (
+         <table className='selected_value_table'><tbody><tr>
 
-         <table className='selected_value_widget'><tbody><tr>
-         <td className="selected_value_div">
            {prevNext}
+
+         <td className='selected_value' onClick={ function() {
+                this.props.removeFilter(this.props.name)
+             }.bind(this)}>
+             {this.props.selectedValue}
          </td>
 
-         <td>
-           <div className='selected_value' onClick={ function() {
-                  this.props.removeFilter(this.props.name)
-               }.bind(this)
-             }>{this.props.selectedValue}
-           </div>
-          </td>
-          </tr></tbody></table>
-       );
+         </tr></tbody></table>
+       )
      }
+
 
      var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
      var nameSpaced = this.props.name.replace(/_/g, ' ');
      return (
        <div className='dimension'>
          <div className={titleClass} onClick={this.props.setGroupby}>
-            <div className='dim_name'>{nameSpaced}</div>
-            <div className='dim_count'>{this.props.count}</div>
+            <table className='dim_table'><tbody><tr>
+              <td className='dim_name'>{nameSpaced}</td>
+              <td className='dim_count'>{this.props.count}</td>
+            </tr></tbody></table>
           </div>
           {selectedValueDiv}
        </div>

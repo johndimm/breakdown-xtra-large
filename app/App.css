@@ -13,72 +13,6 @@ body {
   font-size:14pt;
 }
 
-.report_div {
-  max-width: 1000px;
-  margin-top: 10px;
-  float: left;
-}
-
-.dimension {
-  margin: 8px;
-  padding: 8px;
-  // padding-right: 10px;
-  max-width: 400px;
-  border: 1px solid black;
-}
-
-
-.dim_groupby, .dim_normal {
-  margin: 1px;
-  padding: 3px;
-  color:white;
-  font-weight:600;
-  height: 18px;
-
-}
-
-.dim_groupby {
-  background-color: #772211;
-}
-
-.dim_normal {
-  background-color: #221177;
-  cursor:pointer;
-}
-
-.selected_value {
-  float: left;
-  max-width: 200px;
-  padding: 4px;
-
-  margin-left:5px;
-  margin-right:5px;
-  background-color: #EFEFEF;
-  font-weight:bold;
-  border:1px solid #BBBBBB;
-  cursor:pointer;
-}
-
-.selected_value_div {
-//  height: 30px;
-  vertical-align: top;
-}
-.prev_dim, .next_dim {
- // margin-top:10px;
-  float:left;
-  cursor: pointer;
-}
-
-.prev_dim {
-//  margin-top: 7px;
-  margin-top: -3px;
-  margin-right: 7px;
-}
-
-.prev_dim_div {
-  float:left;
-}
-
 th {
   background-color: #DDDDDD;
 }
@@ -94,68 +28,8 @@ td.measure {
   text-align: right;
 }
 
-.report_div td {
+.report_div td, #detail_div td, #detail_div th {
   border: 1px solid #888888;
-}
-
-.selected_value_widget th, .selected_value_widget td {
-  border: none;
-}
-
-.selected_value_widget {
-  margin-top:7px;
-}
-
-
-.bar {
-  background-color: #777788;
-}
-
-.bar_table {
-  width: 100%;
-}
-
-.bar_table th, .bar_table td {
-  margin:0;
-  padding:0;
-}
-
-.report_line {
-  color: #000077;
-  cursor:pointer;
-}
-
-.report_heading, .detail_heading {
-  white-space: nowrap;
-  cursor:pointer;
-}
-
-.dim_name {
-  float: left;
-  text-align: left;
-}
-
-.dim_count {
-  float: right;
-  margin-left: 10px;
-}
-
-.download_link {
-  cursor:pointer;
-  color: #112244;
-  margin-bottom: 8px;
-  margin-top: 10px;
-}
-
-.download_button {
-  margin-left: 4px;
-}
-
-#detail_div {
-  float: left;
-  max-width: 1000px;
-  margin-top: 10px;
-  font-size: 80%;
 }
 
 .measure_cell {
@@ -193,13 +67,6 @@ td.measure {
   font-size: 12pt;
 }
 
-.bar_holder {
-  min-width: 120px;
-}
-
 .content td {
-//  border: none;
   vertical-align: top;
-
-
 }

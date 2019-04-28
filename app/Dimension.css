@@ -1,0 +1,67 @@
+.dimension {
+  margin: 8px;
+  padding: 8px;
+  max-width: 400px;
+  border: 1px solid black;
+  padding-bottom: 6px;
+}
+
+.dim_groupby, .dim_normal {
+  color:white;
+  font-weight:600;
+  height: 21px;
+}
+
+.dim_groupby {
+  background-color: #772211;
+}
+
+.dim_normal {
+  background-color: #221177;
+  cursor:pointer;
+}
+
+.dim_table {
+  width: 100%;
+}
+
+.dim_name, .dim_count {
+  margin: 1px;
+  padding: 3px;
+  white-space: nowrap;
+}
+
+.dim_name {
+  text-align: left;
+}
+
+.dim_count {
+  text-align: right;
+  margin-left: 10px;
+}
+
+.selected_value {
+  float: left;
+  max-width: 200px;
+  margin-top: 6px;
+  min-height: 20px;
+  margin-left:0px;
+  margin-right:5px;
+  background-color: #EFEFEF;
+  font-weight:bold;
+  border:1px solid #BBBBBB;
+  cursor:pointer;
+}
+
+.arrows_div {
+  vertical-align: top;
+  cursor: pointer;
+  height: 22px;
+}
+
+.next_dim {
+  padding-top: 6px;
+}
+.prev_dim {
+  margin-right: 7px;
+}

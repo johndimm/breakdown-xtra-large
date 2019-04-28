@@ -149,7 +149,7 @@ class Detail extends React.Component {
 
         <div className="download_link" >
           <button className="download_button" onClick={this.showNextChunk.bind(this)}>+100</button>
-          |
+          &nbsp;
           <button className="download_button" onClick={this.downloadCSV.bind(this)}>Download</button>
         </div>
 

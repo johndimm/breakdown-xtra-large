@@ -1,0 +1,16 @@
+.download_link {
+  cursor:pointer;
+  color: #112244;
+  margin-bottom: 8px;
+  margin-top: 10px;
+}
+
+.download_button {
+  margin-left: 4px;
+}
+
+#detail_div {
+  float: left;
+  margin-top: 10px;
+  font-size: 80%;
+}

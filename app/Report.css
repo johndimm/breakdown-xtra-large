@@ -1,0 +1,32 @@
+.report_div {
+  max-width: 1000px;
+  margin-top: 10px;
+  float: left;
+}
+
+.bar {
+  background-color: #777788;
+}
+
+.bar_table {
+  width: 100%;
+}
+
+.bar_table th, .bar_table td {
+  margin:0;
+  padding:0;
+}
+
+.report_line {
+  color: #000077;
+  cursor:pointer;
+}
+
+.report_heading, .detail_heading {
+  white-space: nowrap;
+  cursor:pointer;
+}
+
+.bar_holder {
+  min-width: 120px;
+}
