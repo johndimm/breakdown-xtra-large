@@ -1,5 +1,10 @@
-class Dimension extends React.Component {
+/*
+ * Copyright 2019 John Dimm -- All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license.
+ */
 
+class Dimension extends React.Component {
 
   render() {
      const leftArrow = "\u25C0";

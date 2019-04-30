@@ -1,3 +1,9 @@
+/*
+ * Copyright 2019 John Dimm -- All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license.
+ */
+
 //
 // Utility fundtion to convert from csv to json.
 // Allows transfer of more compact csv format.
