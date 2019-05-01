@@ -1,3 +1,9 @@
+/*
+ * Copyright 2019 John Dimm -- All Rights Reserved
+ * You may use, distribute and modify this code under the
+ * terms of the MIT license.
+ */
+
 const React = window.React;
 const ReactDOM = window.ReactDOM;
 
