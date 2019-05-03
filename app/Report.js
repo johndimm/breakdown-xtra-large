@@ -283,6 +283,7 @@ class Report extends React.Component {
       },
       onClick: this.sortByGroupBy.bind(this)
     }, this.props.groupBy, " ", arrow), React.createElement("th", {
+      className: "report_heading",
       width: "200"
     }), measure_header), rows, totals)));
   }

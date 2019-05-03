@@ -6,7 +6,7 @@ values
 (  'olympics'
   ,'olympics_fact'
   , 'olympics_summary'
-  , 'Sport,Discipline,Event,Country,Medal,Year,Season,Gender,City'
+  , 'Sport,Discipline,Athlete,Event,Country,Medal,Year,Season,Gender,City'
   , 'Medals'
   , 'sum(Medals) as Medals'
   , '*'

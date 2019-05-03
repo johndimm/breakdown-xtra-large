@@ -25,6 +25,7 @@
 .report_heading, .detail_heading {
   white-space: nowrap;
   cursor:pointer;
+  border: 1px solid black;
 }
 
 .bar_holder {

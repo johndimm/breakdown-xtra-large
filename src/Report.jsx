@@ -295,7 +295,7 @@ class Report extends React.Component {
                onClick={this.sortByGroupBy.bind(this)}>
                {this.props.groupBy} {arrow}
              </th>
-             <th width="200"></th>
+             <th className='report_heading' width="200"></th>
                {measure_header}
              </tr>
 
