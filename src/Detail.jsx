@@ -89,7 +89,9 @@ class Detail extends React.Component {
   }
 
   downloadCSV() {
-    this.getData(this.props, this.downloadData.bind(this));
+    this.setState({limit: 100000000}, function() {
+      this.getData(this.props, this.downloadData.bind(this));
+    }.bind(this));
   }
   
   sortBy(column) {
