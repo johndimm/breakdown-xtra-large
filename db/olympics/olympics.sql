@@ -30,6 +30,7 @@ Season,
 Year,
 City,
 Sport,
+Discipline,
 ifnull(dict.country,olympics_fact.Country) as Country,
 Gender,
 Event,
@@ -44,9 +45,10 @@ Season,
 Year,
 City,
 Sport,
+Discipline,
 Country,
 Gender,
 Event,
 Medal;
 
-create index idx_olympic1 on olympics_summary(Season, Year, City, Sport, Country, Gender, Event, Medal);
+create index idx_olympic1 on olympics_summary(Season, Year, City, Sport, Discipline, Country, Gender, Event, Medal);
