@@ -8,10 +8,22 @@ end //
 delimiter ;
 
 
+drop procedure if exists get_dim_metadata;
+delimiter //
+create procedure get_dim_metadata(_tableName varchar(255))
+begin
+  set @cmd = concat("select name, metadata from ", _tableName);
+
+  PREPARE stmt FROM @cmd;
+  EXECUTE stmt;
+  DEALLOCATE PREPARE stmt;
+end //
+delimiter ;
+
 drop function if exists clause;
 delimiter //
-create function clause(intro varchar(255), param varchar(255))
-returns varchar(255)
+create function clause(intro varchar(255), param text)
+returns text
 READS SQL DATA
 DETERMINISTIC
 begin
@@ -28,7 +40,7 @@ drop procedure if exists breakdown;
 delimiter //
 create procedure breakdown (
   _source varchar(64),
-  _where varchar(1024),
+  _where text,
   _group_by varchar(255),
   _order_by varchar(255))
 begin
@@ -73,7 +85,7 @@ delimiter ;
 
 drop procedure if exists dim_counts;
 delimiter //
-create procedure dim_counts (_source varchar(64), _where varchar(1024), _count_distinct varchar(1024))
+create procedure dim_counts (_source varchar(64), _where text, _count_distinct text)
 begin
   #
   # Same for all queries.
@@ -105,7 +117,7 @@ delimiter ;
 
 drop procedure if exists detail;
 delimiter //
-create procedure detail (_source varchar(64), _where varchar(1024), _orderBy varchar(64), _limit varchar(32))
+create procedure detail (_source varchar(64), _where text, _orderBy varchar(64), _limit varchar(32))
 begin
   #
   # Same for all queries.

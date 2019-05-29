@@ -2,6 +2,8 @@
   max-width: 1000px;
   margin-top: 10px;
   float: left;
+  overflow: auto;
+  height:calc(100vh - 180px);
 }
 
 .bar {

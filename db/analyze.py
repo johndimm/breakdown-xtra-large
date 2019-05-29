@@ -4,6 +4,9 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+# sep = ","
+sep = "\t"
+
 header = []
 maxWidth = []
 uniques = []
@@ -13,7 +16,7 @@ def allNumbers(inputString):
      return inputString is None or all(char.isdigit() or char == '.' or char == '-' for char in inputString)
 
 def analyzeLine(line):
-     cols = line.split("\t")
+     cols = line.split(sep)
 #     if len(cols) != 24:
 #        print len(cols)
      for col in cols:
@@ -27,6 +30,7 @@ def analyzeLine(line):
          uniques[i][col] = 1
          if not allNumbers(col):
              isInt[i] = False;
+#         print "%s, %s" % (col, isInt[i])
          i += 1
 
 
@@ -37,7 +41,7 @@ def main():
   line = fn.readline().rstrip()
 #  print line
 
-  header = line.split("\t")
+  header = line.split(sep)
 
   for line in fn:
      analyzeLine(line.rstrip())
@@ -48,8 +52,10 @@ def main():
   for i in range(len(header)):
       if (isInt[i] or header[i].find('quantity') != -1) and header[i].find('date') == -1 and header[i].find('match')  == -1:
           types.append('int')
-      else:
+      elif maxWidth[i] < 64:
           types.append("varchar(%s)" % maxWidth[i])
+      else:
+          types.append("text")
 
   # Print stats.
   print "/*---------"

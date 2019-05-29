@@ -1,5 +1,6 @@
 body {
   font-family: sans-serif;
+  height:100%;
 }
 
 .dimensions_div {
@@ -7,6 +8,8 @@ body {
   max-width: 400px;
   float: left;
   text-align: center;
+  overflow: auto;
+  height:calc(100vh - 140px);
 }
 
 .dimensions_div button {
@@ -30,6 +33,7 @@ td.measure {
 
 .report_div td, #detail_div td, #detail_div th {
   border: 1px solid #888888;
+
 }
 
 .measure_cell {

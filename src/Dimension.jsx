@@ -78,7 +78,7 @@ class Dimension extends React.Component {
        <div className='dimension'>
          <div className={titleClass} onClick={this.props.setGroupby}>
             <table className='dim_table'><tbody><tr>
-              <td className='dim_name'>{nameSpaced}</td>
+              <td className='dim_name' title={this.props.title}>{nameSpaced}</td>
               <td className='dim_count'>{this.props.count}</td>
             </tr></tbody></table>
           </div>

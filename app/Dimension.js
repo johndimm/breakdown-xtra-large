@@ -77,7 +77,8 @@ class Dimension extends React.Component {
     }, React.createElement("table", {
       className: "dim_table"
     }, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", {
-      className: "dim_name"
+      className: "dim_name",
+      title: this.props.title
     }, nameSpaced), React.createElement("td", {
       className: "dim_count"
     }, this.props.count))))), selectedValueDiv);

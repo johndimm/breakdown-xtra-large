@@ -6,6 +6,14 @@
 const React = window.React;
 const ReactDOM = window.ReactDOM;
 
+function isEmpty(obj) {
+  for (var key in obj) {
+    if (obj.hasOwnProperty(key)) return false;
+  }
+
+  return true;
+}
+
 class Banner extends React.Component {
   render() {
     if (this.props.current_source == null) return React.createElement("div", null);
@@ -67,6 +75,8 @@ class App extends React.Component {
         fact_table: '',
         summary_table: '',
         dimensions: '',
+        dim_metadata_table: '',
+        dim_metadata: {},
         d_array: [],
         measures: '',
         m_array: [],
@@ -107,10 +117,30 @@ class App extends React.Component {
           return "'" + r.d_array[i].trim() + "'";
         });
         this.source_set[r.name] = r;
-        name = r.name;
+        if (r.dim_metadata_table != '') this.getDimMetadata(r.name, r.dim_metadata_table);else name = r.name;
       }
 
       if (name != '') this.setSource(name);
+    }.bind(this));
+  }
+
+  getDimMetadata(source_set_name, dim_metadata_table) {
+    var data = new FormData();
+    data.append('proc', 'get_dim_metadata');
+    data.append('param', dim_metadata_table);
+    fetch("mysql.php", {
+      method: "POST",
+      body: data
+    }).then(function (response) {
+      return response.json();
+    }).then(function (result) {
+      var dim_metadata = {};
+      result.forEach(function (key, i) {
+        dim_metadata[key.name] = key.metadata;
+      });
+      this.source_set[source_set_name].dim_metadata = dim_metadata; // Set source here for one with metadata.
+
+      this.setSource(source_set_name);
     }.bind(this));
   }
 
@@ -131,6 +161,7 @@ class App extends React.Component {
     }, function () {
       this.setGroupby(this.state.source.dimensions.split(',')[0]);
       this.getDimCounts();
+      this.getDimMetadata();
     }.bind(this));
   }
 
@@ -269,6 +300,8 @@ class App extends React.Component {
         dimValues = this.dimValues[row];
       }
 
+      var title = '';
+      if (!isEmpty(this.state.source.dim_metadata) && row in this.state.source.dim_metadata) title = this.state.source.dim_metadata[row];
       return React.createElement(Dimension, {
         key: i,
         setGroupby: function () {
@@ -285,7 +318,8 @@ class App extends React.Component {
         addFilter: this.addFilter.bind(this),
         slideDim: this.slideDim.bind(this),
         lastFilter: this.filterStack[this.filterStack.length - 1],
-        source: this.state.current_source
+        source: this.state.current_source,
+        title: title
       });
     }.bind(this));
     var whereClause = this.whereClause();
