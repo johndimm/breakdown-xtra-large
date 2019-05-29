@@ -6,7 +6,7 @@ values
 (  'Forbes'
   ,'forbes_fact'
   , 'forbes_summary'
-  , 'Name,Categories,Location'
+  , 'Categories,Location,Name'
   , 'Funding,count'
   , 'sum(Funding) as Funding,count(*) as count'
   , '*'
