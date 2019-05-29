@@ -1,0 +1,204 @@
+Name
+Categories
+Funding
+Location
+Acorns	
+Personal Finance
+$257 M
+Irvine, California
+Addepar	
+Wall Street
+$240 M
+Mountain View, California
+Affirm	
+Lending
+$450 M
+San Francisco, California
+Axoni	
+Wall Street
+$59 M
+New York, New York
+Ayasdi	
+Wall Street
+$106 M
+Palo Alto, California
+Behavox	
+Wall Street
+$15 M
+New York, New York
+Betterment	
+Investing
+$275 M
+New York, New York
+Bitfury	
+Crypto & Blockchain
+$150 M
+Amsterdam, Netherlands
+Blend	
+Real Estate
+$160 M
+San Francisco, California
+Bolt	
+Payments
+$20 M
+San Francisco, California
+Brex	
+Payments
+$215 M
+San Francisco, California
+Cadre	
+Real Estate
+$133 M
+New York, New York
+Carta	
+Wall Street
+$148 M
+Palo Alto, California
+Chime	
+Personal Finance
+$105 M
+San Francisco, California
+Circle	
+Crypto & Blockchain
+$246 M
+Boston, Massachusetts
+Coinbase	
+Crypto & Blockchain
+$525 M
+San Francisco, California
+Credit Karma	
+Personal Finance
+$869 M
+San Francisco, California
+Cross River	
+Wall Street
+$128 M
+Fort Lee, New Jersey
+Digital Reasoning	
+Wall Street
+$110 M
+Nashville, Tennessee
+Earnin	
+Personal Finance
+$190 M
+Palo Alto, California
+Enigma	
+Wall Street
+$130 M
+New York, New York
+Even	
+Personal Finance
+$51 M
+Oakland, California
+Flywire	
+Payments
+$142 M
+Boston, Massachusetts
+Forter	
+Payments
+$100 M
+New York, New York
+Fundrise	
+Real Estate
+$59 M
+Washington, United States
+Gemini	
+Crypto & Blockchain
+$0 M
+New York, New York
+Guideline	
+Investing
+$59 M
+San Mateo, California
+iCapital Network	
+Investing
+$80 M
+New York, New York
+IEX Group	
+Wall Street
+$100 M
+New York, New York
+Kabbage	
+Lending
+$489 M
+Atlanta, Georgia
+Lemonade	
+Personal Finance
+$180 M
+New York, New York
+LendingHome	
+Real Estate
+$166 M
+San Francisco, California
+Marqeta	
+Payments
+$116 M
+Oakland, California
+Nova Credit	
+Lending
+$20 M
+San Francisco, California
+Opendoor	
+Real Estate
+$1000 M
+San Francisco, California
+Personal Capital	
+Investing
+$225 M
+Redwood City, California
+Plaid	
+Payments
+$310 M
+San Francisco, California
+Poynt	
+Payments
+$132 M
+Palo Alto, California
+Remitly	
+Payments
+$175 M
+Seattle, Washington
+Ripple	
+Crypto & Blockchain
+$94 M
+San Francisco, California
+Robinhood	
+Investing
+$539 M
+Menlo Park, California
+Roofstock	
+Real Estate
+$75 M
+Oakland, California
+Root Insurance	
+Personal Finance
+$178 M
+Columbus, Ohio
+Stash	
+Investing
+$117 M
+New York, New York
+Stripe	
+Payments
+$685 M
+San Francisco, California
+Symphony	
+Wall Street
+$300 M
+New York, New York
+Tala	
+Lending
+$105 M
+Santa Monica, California
+Toast	
+Payments
+$248 M
+Boston, Massachusetts
+Tradeshift	
+Payments
+$400 M
+San Francisco, California
+TransferWise	
+Payments
+$397 M
+London, United Kingdom
