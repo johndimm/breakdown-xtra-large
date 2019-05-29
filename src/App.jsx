@@ -188,7 +188,6 @@ class App extends React.Component {
      function() {
       this.setGroupby(this.state.source.dimensions.split(',')[0]);
       this.getDimCounts();
-      this.getDimMetadata();
     }.bind(this));
 
   }
