@@ -141,6 +141,9 @@ class App extends React.Component {
   }
 
   getDimMetadata(source_set_name, dim_metadata_table) {
+    if (source_set_name == null)
+	  return;
+	  
     var data = new FormData();
     data.append ('proc','get_dim_metadata');
     data.append('param', dim_metadata_table);
