@@ -8,25 +8,44 @@
 
     <title>breakdown</title>
 
-    <script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script>
+    <!--script src="https://npmcdn.com/jquery@3.1.0/dist/jquery.min.js"></script-->
+
+     <script src="http://code.jquery.com/jquery-3.3.1.slim.js" integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA=" crossorigin="anonymous"></script>
+
+
     <script src="https://npmcdn.com/react@15.6.2/dist/react.js"></script>
     <script src="https://npmcdn.com/react-dom@15.6.2/dist/react-dom.js"></script>
     <script src="https://npmcdn.com/babel-core@5.8.38/browser.min.js"></script>
     <script src="https://npmcdn.com/remarkable@1.6.2/dist/remarkable.min.js"></script>
 
+    <script src="lib/jquery-csv.js"></script>
+    <script src="lib/lovefield.js"></script>
+    <script src="lovefield.js?foo=14"></script>
+    <script src="mysql.js?foo=123"></script>
+
     <script src="App.js"></script>
     <script src="Dimension.js"></script>
     <script src="Report.js"></script>
-     <script src="Detail.js"></script>
+    <script src="Detail.js"></script>
+    <script src="Catalog.js"></script>
+
 
     <link rel="stylesheet" type="text/css" href="App.css">
     <link rel="stylesheet" type="text/css" href="Dimension.css">
     <link rel="stylesheet" type="text/css" href="Report.css">
     <link rel="stylesheet" type="text/css" href="Detail.css">
+    <link rel="stylesheet" type="text/css" href="preloader10.css">
+
+
 </head>
 
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div class="preloader10">
+            <span></span>
+            <span></span>
+        </div>
+    </div>
 </body>
 
 </html>

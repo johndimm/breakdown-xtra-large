@@ -32,7 +32,7 @@ class Dimension extends React.Component {
        );
      }
 
-     var prevNext = (<div></div>);
+     var prevNext = (<td></td>);
 
      if (this.props.name == this.props.lastFilter) {
         prevNext = (
@@ -74,8 +74,9 @@ class Dimension extends React.Component {
 
      var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
      var nameSpaced = this.props.name.replace(/_/g, ' ');
+     var style = {"display": (this.props.count < 1000) ? "block" : "none"};
      return (
-       <div className='dimension'>
+       <div className='dimension' style={style}>
          <div className={titleClass} onClick={this.props.setGroupby}>
             <table className='dim_table'><tbody><tr>
               <td className='dim_name' title={this.props.title}>{nameSpaced}</td>

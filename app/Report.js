@@ -72,46 +72,38 @@ class Report extends React.Component {
       sortDir: 'DESC',
       source: ''
     };
-  }
+  } //  componentDidMount() {
+  //    this.componentWillReceiveProps(this.props);
+  //  }
 
-  componentDidMount() {
-    this.componentWillReceiveProps(this.props);
-  }
 
   componentWillReceiveProps(newProps) {
     //
     // Run summary query to get data for this report.
     //
-    if (newProps.groupBy == null) return;
-
-    if (newProps.source != this.state.source) {
-      this.setState({
-        source: newProps.source,
-        orderBy: '2',
-        sortDir: 'DESC'
-      });
-    }
+    if (newProps.groupBy == null) //  || newProps.groupBy == this.props.groupBy)
+      return; //  return;
+    //   if (newProps.source != this.state.source) {
+    //     this.setState({source: newProps.source, orderBy: '2', sortDir: 'DESC'});
+    //   }
 
     var data = new FormData();
     data.append('proc', 'breakdown');
     data.append('whereClause', newProps.whereClause);
     data.append('groupBy', newProps.groupBy);
-    data.append('source', this.props.source);
+    data.append('source', newProps.source);
+    data.append('aggregates', newProps.aggregates);
     var orderBy = this.state.orderBy;
     if (orderBy != '') orderBy += ' ' + this.state.sortDir;
     data.append('orderBy', orderBy);
-    console.log('breakdown: ' + newProps.whereClause + ' / ' + orderBy);
-    fetch("mysql.php", {
-      method: "POST",
-      body: data
-    }).then(function (response) {
-      return response.ok ? response.text() : Promise.reject(response.status);
-    }.bind(this)).then(function (result) {
-      // console.log(result);
-      // var json = csvJSON(result);
+    console.log('breakdown, data:' + data); // Get the same info from lovefield or mysql.
+
+    Database.breakdown(data, function (result) {
       this.setState({
-        lines: eval(result)
+        source: newProps.source,
+        lines: result
       });
+      console.log(result[0]);
     }.bind(this));
   }
 

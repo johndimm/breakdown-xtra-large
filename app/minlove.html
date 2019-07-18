@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Minimal example of using Lovefield</title>
+
+    <script src="http://code.jquery.com/jquery-3.3.1.slim.js" integrity="sha256-fNXJFIlca05BIO2Y5zh1xrShK3ME+/lYZ0j+ChxX2DA=" crossorigin="anonymous"></script>
+
+    <script src="lib/jquery-csv.js"></script>
+    <script src="lib/lovefield.min.js"></script>
+  </head>
+  <body>
+    <script>
+
+var db;
+var fact;
+var data;
+
+var dbName = 'breakdown';
+var tableName = 'fact';
+var FILE_KEY = 'save.json';
+var HEADER_KEY = 'header.json';
+var schemaBuilder = lf.schema.create(dbName, 1);
+
+
+init();
+
+function init() {
+  define();
+  connect();
+}
+
+function readSpreadsheet() {
+  var content = localStorage.getItem(FILE_KEY);
+  return $.csv.toObjects(content);
+}
+
+function define() {
+  var header = localStorage.getItem(HEADER_KEY);
+  if (!header) {
+    data = readSpreadsheet();
+
+    var header = Object.keys(data[0]);
+    localStorage.setItem(HEADER_KEY, header);
+  } else {
+    header = header.split(',');
+  }
+
+  var factTable = schemaBuilder.createTable(tableName);
+  // factTable.persistentIndex(true);
+  header.forEach(function(key, i) {
+    factTable.addColumn(key, lf.Type.STRING);
+  });
+ // factTable.addIndex('SportIndex', ['Sport']);
+
+}$
+
+
+function connect() {
+  schemaBuilder.connect().then(function(_db) {
+    db = _db;
+
+    console.log(db.getSchema());
+    fact = db.getSchema().table(tableName);
+    // db.persistentIndex(true);
+
+    if (data != null)
+      load(db);
+
+    query();
+
+    setTimeout(function() {
+      console.clear();
+      query2();
+    }, 5000);
+  });
+}
+
+
+function load(db) {
+   db.delete().from(fact).exec();
+
+    var dataRows = data.map(
+      function(obj) {
+        return fact.createRow(obj);
+      }, this);
+
+
+  var q1 = db.
+      insert().
+      into(fact).
+      values(dataRows);
+
+
+  var tx = db.createTransaction();
+  tx.exec([q1]).then (
+    query()
+  );
+}
+
+function query() {
+
+    db.select(fact.Sport, lf.fn.count()).from(fact).groupBy(fact.Sport).exec()
+      .then(function(results) {
+         results.forEach(function(row) {
+          console.log(row);
+      })});
+}
+
+function query2() {
+
+    db.select(fact.Country, lf.fn.count()).from(fact).groupBy(fact.Country).exec()
+      .then(function(results) {
+         results.forEach(function(row) {
+          console.log(row);
+      })});
+}
+
+    </script>
+  </body>
+</html>

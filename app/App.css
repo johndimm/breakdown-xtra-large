@@ -46,8 +46,9 @@ td.measure {
   font-size:32pt;
 }
 
-.source_li {
+.source_title {
   cursor: pointer;
+  font-weight: 600;
 }
 
 .banner {
@@ -73,4 +74,24 @@ td.measure {
 
 .content td {
   vertical-align: top;
+}
+
+#dataset_title {
+  cursor: pointer;
+}
+
+.dataset_cell {
+  vertical-align: top;
+  width: 200px;
+  margin: 20px;
+  padding: 20px;
+  cursor: pointer;
+}
+
+#datasets {
+  margin-top: 20px;
+  margin-left: 200px;
+  width: 800px;
+  padding: 20px;
+  background-color: #EFEFEF;
 }

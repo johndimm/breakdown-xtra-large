@@ -34,7 +34,7 @@ class Dimension extends React.Component {
       }, dimValues);
     }
 
-    var prevNext = React.createElement("div", null);
+    var prevNext = React.createElement("td", null);
 
     if (this.props.name == this.props.lastFilter) {
       prevNext = React.createElement("td", {
@@ -69,8 +69,12 @@ class Dimension extends React.Component {
 
     var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
     var nameSpaced = this.props.name.replace(/_/g, ' ');
+    var style = {
+      "display": this.props.count < 1000 ? "block" : "none"
+    };
     return React.createElement("div", {
-      className: "dimension"
+      className: "dimension",
+      style: style
     }, React.createElement("div", {
       className: titleClass,
       onClick: this.props.setGroupby

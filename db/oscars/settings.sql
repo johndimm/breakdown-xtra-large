@@ -1,7 +1,7 @@
 use breakdown;
 
 insert into breakdown_sources
-(name, fact_table, summary_table, dimensions, measures, aggregates, detail_columns, page_title, description, url)
+(name, fact_table, summary_table, dimensions, measures, aggregates, detail_columns, page_title, description, url, google_sheet)
 values
 (   'oscars'
   , 'oscars_fact'
@@ -13,6 +13,7 @@ values
   , 'The Academy Awards'
   , 'What actors and films have received the most Oscars?'
   , 'https://www.kaggle.com/theacademy/academy-awards'
+  , 'https://docs.google.com/spreadsheets/d/1zeWD7RUNg3bdZNlMcUtGEmR7VdWQH6UeSjnoLt1BEXI/edit?usp=sharing'
 );
 
 # call breakdown("country='France' and year=2002 and medal='BRONZE'", 'sport',"2");
