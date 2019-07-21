@@ -3,44 +3,58 @@
   <head>
     <meta charset="utf-8" />
     <title>Minimal example of using Lovefield</title>
-    <script src="lib/lovefield.min.js"></script>
+    <script src="lib/lovefield.js"></script>
   </head>
   <body>
     <script>
+
+
+function makeSomeRows() {
+  var rows = [];
+  for (var i=0; i<10; i++) {
+    rows.push(item.createRow({
+      'id': i,
+      'group': i % 2,
+      'measure': i * 100
+  }));
+  }
+  return rows;
+
+}
+
 
 var schemaBuilder = lf.schema.create('todo', 1);
 
 schemaBuilder.createTable('Item').
     addColumn('id', lf.Type.INTEGER).
-    addColumn('description', lf.Type.STRING).
-    addColumn('deadline', lf.Type.DATE_TIME).
-    addColumn('done', lf.Type.BOOLEAN).
-    addPrimaryKey(['id']).
-    addIndex('idxDeadline', ['deadline'], false, lf.Order.DESC);
+    addColumn('group', lf.Type.INTEGER).
+    addColumn('measure', lf.Type.INTEGER).
+    addPrimaryKey(['id']);
 
 var todoDb;
 var item;
 schemaBuilder.connect().then(function(db) {
   todoDb = db;
-  item = db.getSchema().table('Item');
-  var row = item.createRow({
-    'id': 1,
-    'description': 'Get a cup of coffee',
-    'deadline': new Date(),
-    'done': false
-  });
 
-  return db.insertOrReplace().into(item).values([row]).exec();
+  item = db.getSchema().table('Item');
+
+  var rows = makeSomeRows(item);
+
+  return db.insertOrReplace().into(item).values(rows).exec();
 }).then(function() {
+
   return todoDb.select(
-    // lf.fn.count().as('count of rows')
-     lf.fn.count()
-  ).from(item).where(item.done.eq(false)).exec();
+    item['group'],
+    lf.fn.sum(item['measure']).as('sum of measures'),
+    lf.fn.count().as('count of rows')
+
+  ).from(item).groupBy(item['group']).exec();
+
 }).then(function(results) {
   results.forEach(function(row) {
-//    console.log(row['description'], 'before', row['deadline']);
-    console.log(row['COUNT(*)']);
-//    console.log(row['count of rows']);
+    console.log('group:' + row['group']);
+    console.log('count of rows: ' + row['count of rows']);
+    console.log('sum of measures: ' + row['sum of measures']);
   });
 });
 
