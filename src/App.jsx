@@ -88,9 +88,12 @@ class App extends React.Component {
            show_summary: true
       }
     };
+
+    $('head').append("<style id='grayed_out'> .grayed_out { color: #AAAAAA } </style>");
   }
 
   componentWillReceiveProps(newProps) {
+
     if (this.props.source != newProps.source && newProps.source != null)
       this.setSource(newProps.source);
   }
@@ -326,7 +329,7 @@ class App extends React.Component {
     // Assemble the page.
     //
     return (
-      <div>
+      <div id="breakdown">
           <Banner current_source={this.state.current_source}
             source={this.props.source}
             toggleSummary={this.toggleSummary.bind(this)}

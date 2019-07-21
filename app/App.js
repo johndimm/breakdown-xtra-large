@@ -77,6 +77,7 @@ class App extends React.Component {
         show_summary: true
       }
     };
+    $('head').append("<style id='grayed_out'> .grayed_out { color: #AAAAAA } </style>");
   }
 
   componentWillReceiveProps(newProps) {
@@ -294,7 +295,9 @@ class App extends React.Component {
     // Assemble the page.
     //
 
-    return React.createElement("div", null, React.createElement(Banner, {
+    return React.createElement("div", {
+      id: "breakdown"
+    }, React.createElement(Banner, {
       current_source: this.state.current_source,
       source: this.props.source,
       toggleSummary: this.toggleSummary.bind(this),

@@ -89,9 +89,22 @@ td.measure {
 }
 
 #datasets {
-  margin-top: 20px;
+ // margin-top: 20px;
   margin-left: 200px;
   width: 800px;
   padding: 20px;
-  background-color: #EFEFEF;
+//  background-color: #EFEFEF;
 }
+
+#breakdown {
+  display: none;
+}
+
+body.waiting * {
+    cursor: progress;
+}
+
+#connect_button {
+  display: none;
+}
+

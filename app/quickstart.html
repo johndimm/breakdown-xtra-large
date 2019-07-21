@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <title>Minimal example of using Lovefield</title>
-    <script src="lib/lovefield.js"></script>
+    <script src="lib/lovefield.min.js"></script>
   </head>
   <body>
     <script>
@@ -33,14 +33,14 @@ schemaBuilder.connect().then(function(db) {
   return db.insertOrReplace().into(item).values([row]).exec();
 }).then(function() {
   return todoDb.select(
-    lf.fn.count().as('count of rows')
-    // lf.fn.count()
+    // lf.fn.count().as('count of rows')
+     lf.fn.count()
   ).from(item).where(item.done.eq(false)).exec();
 }).then(function(results) {
   results.forEach(function(row) {
 //    console.log(row['description'], 'before', row['deadline']);
-//    console.log(row['COUNT(*)']);
-    console.log(row['count of rows']);
+    console.log(row['COUNT(*)']);
+//    console.log(row['count of rows']);
   });
 });
 

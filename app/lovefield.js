@@ -18,6 +18,91 @@ Lovefield = function() {
     this.data = null;
 
 
+    this.init = function() {
+        //
+        // Open the database.
+        //    Use localStorage to "recreate" (define really) the existing tables.
+        //    Use localStorage to load data into a new table.
+        //    Make sure the database version is increased to allow this new table as an upgrade.
+        //
+
+
+        this.schemaBuilder = lf.schema.create(this.dbName, this.getDBVersion());
+
+        var s = localStorage.getItem('breakdown_sources');
+        if (s == null || s == '')
+          return;
+
+        //
+        // Create the tables.
+        //
+        var sources = s.split("\n");
+        this.breakdown_sources = [];
+        var typeArray = [];
+        var fieldArray = [];
+        sources.forEach(function(key,i) {
+           this.createTable(key);
+           this.breakdown_sources.push(key);
+        }.bind(this));
+    }
+
+    this.connect = function(data, source, fnSuccess) {
+        //
+        // Connect and open the database.
+        //
+
+        // Do this only once per session.
+        if (this.db != null)
+          return;
+
+        $('body').addClass('waiting');
+        $('#import_instructions').css('display', 'none');
+        $("#connect_button").css('display', 'none');
+
+        this.schemaBuilder.connect().then(function(_db) {
+            this.db = _db;
+            $('#grayed_out').remove();
+            $('body').removeClass('waiting');
+
+
+            if (data != null) {
+                var lfTable = this.db.getSchema().table(source.fact_table);
+                this.load(lfTable, data, source.aggregates.split(","), function() {
+                if (fnSuccess)
+                   fnSuccess();
+                });
+            } else if (fnSuccess)
+              fnSuccess();
+
+        }.bind(this));
+    }
+
+
+     this.load = function(factTable, data, aggregates, fnSuccess) {
+       this.db.delete().from(factTable).exec();
+        var dataRows = data.map(
+          function(obj, i) {
+            // Fix up numeric rows.  The input should have them as Funding: 48, not Funding: "48".
+            Object.keys(obj).forEach(function(key) {
+              if (aggregates.find(function(val) {return val == key} )) {
+                obj[key] = parseInt(obj[key]);
+              }
+            });
+            //  obj.Funding = parseFloat(obj.Funding);
+            return factTable.createRow(obj);
+          }, this);
+
+        var q1 = this.db.
+          insert().
+          into(factTable).
+          values(dataRows);
+
+        var tx = this.db.createTransaction();
+        tx.exec([q1]).then(
+            fnSuccess()
+        );
+    }
+
     this.getDBVersion = function() {
       return localStorage.getItem('lovefield_db_version') || 0;
     }
@@ -27,6 +112,15 @@ Lovefield = function() {
       var v = parseInt(version);
       v = v + 1;
       localStorage.setItem('lovefield_db_version', v);
+    }
+
+    this.setSource = function(source) {
+       this.fact = this.db.getSchema().table(source.fact_table);
+    }
+
+
+    this.getBreakdownSources = function() {
+       return this.breakdown_sources;
     }
 
     this.addBreakdownSource = function (sourceName, header, line) {
@@ -80,8 +174,8 @@ Lovefield = function() {
        //
        // Add this source to the list in localStorage.
        //
-       var breakdown_sources = current_list +
-          JSON.stringify({
+
+       var sourceObj = {
                    database: 'lovefield',
                    name: sourceName,
                    fact_table: tableName, // this.datasetName, // 'fact',
@@ -92,102 +186,56 @@ Lovefield = function() {
                    fields: fields.join(','),
                    types: types.join(','),
 
-
                    dim_metadata_table: '',
                    dim_metadata: {},
                    d_array: [],                   m_array: [],
                    aggregates: aggregates.join(','),
                    page_title: 'Breakdown: ' + sourceName
-              });
+              };
+       var sourceJson = JSON.stringify(sourceObj);
+
+       var breakdown_sources = current_list + sourceJson;
        localStorage.setItem('breakdown_sources', breakdown_sources);
 
        this.incrementDBVersion();
 
+       return sourceJson;
+
      }
 
+    this.createTable = function(sourceJson) {
+        var source = JSON.parse(sourceJson);
+        var factTable = this.schemaBuilder.createTable(source.fact_table);
+        typeArray = source.types.split(',');
 
-    this.init = function() {
-        //
-        // Open the database.
-        //    Use localStorage to "recreate" (define really) the existing tables.
-        //    Use localStorage to load data into a new table.
-        //    Make sure the database version is increased to allow this new table as an upgrade.
-        //
-        var schemaBuilder = lf.schema.create(this.dbName, this.getDBVersion());
-
-        var s = localStorage.getItem('breakdown_sources');
-        if (s == null || s == '')
-          return;
-
-        //
-        // Create the tables.
-        //
-        var sources = s.split("\n");
-        this.breakdown_sources = [];
-        var typeArray = [];
-        var fieldArray = [];
-        sources.forEach(function(key,i) {
-            var source = JSON.parse(key);
-            this.breakdown_sources.push(key);
-
-            var factTable = schemaBuilder.createTable(source.fact_table);
-            typeArray = source.types.split(',');
-
-            fieldArray = source.fields.split(",");
-            fieldArray.forEach(function(columnName, i) {
-               var fieldType = typeArray[i] == 'NUMBER' ? lf.Type.NUMBER : lf.Type.STRING;
-               factTable.addColumn(columnName, fieldType);
-            });
-
-        }.bind(this));
-
-        //
-        // Connect and open the database.
-        //
-        schemaBuilder.connect().then(function(_db) {
-            this.db = _db;
-            sources.forEach(function(key,i) {
-              var source = JSON.parse(key);
-              var content = localStorage.getItem(source.name);
-
-              if (content != null && content != '') {
-                var data = $.csv.toObjects(content);
-
-                // load the database table with content.
-                var lfTable = this.db.getSchema().table(source.fact_table);
-                this.load(lfTable, data, source.aggregates.split(","), function() {
-                  // Remove csv data from local storage.
-                  localStorage.removeItem(source.name);
-                });
-
-
-              }
-            }.bind(this));
-        }.bind(this));
+        fieldArray = source.fields.split(",");
+        fieldArray.forEach(function(columnName, i) {
+           var fieldType = typeArray[i] == 'NUMBER' ? lf.Type.NUMBER : lf.Type.STRING;
+           factTable.addColumn(columnName, fieldType);
+        });
     }
 
-    this.addSource = function(sourceName, data) {
-      var cr = data.indexOf("\n");
-      var header = data.substring(0, cr);
-      var line = data.substring( cr + 1, data.indexOf("\n", cr + 1 ) );
-      this.addBreakdownSource(sourceName, header, line);
+
+    this.addSource = function(sourceName, content, fnSuccess) {
+      var cr = content.indexOf("\n");
+      var header = content.substring(0, cr);
+      var line = content.substring( cr + 1, content.indexOf("\n", cr + 1 ) );
+      var source = this.addBreakdownSource(sourceName, header, line);
+      // this.createTable(source);
+
+      var data = $.csv.toObjects(content);
+      this.init();
+      this.connect(data, JSON.parse(source), fnSuccess);
+
 
       // Save in local storage for now, load into the database in the next session.
       // Lovefield can't connect twice.
-      localStorage.setItem(sourceName, data);
+ //     localStorage.setItem(sourceName, data);
 
       // Bring up the next session.
-      location.reload();
+//      location.reload();
     }
 
-    this.setSource = function(source) {
-       this.fact = this.db.getSchema().table(source.fact_table);
-    }
-
-
-    this.getBreakdownSources = function() {
-       return this.breakdown_sources;
-    }
 
 
     this.readLocalStorage = function() {
@@ -195,32 +243,6 @@ Lovefield = function() {
       if (content != null)
         return $.csv.toObjects(content);
       return null;
-    }
-
-
-     this.load = function(factTable, data, aggregates, fnSuccess) {
-       this.db.delete().from(factTable).exec();
-        var dataRows = data.map(
-          function(obj, i) {
-            // Fix up numeric rows.  The input should have them as Funding: 48, not Funding: "48".
-            Object.keys(obj).forEach(function(key) {
-              if (aggregates.find(function(val) {return val == key} )) {
-                obj[key] = parseInt(obj[key]);
-              }
-            });
-            //  obj.Funding = parseFloat(obj.Funding);
-            return factTable.createRow(obj);
-          }, this);
-
-        var q1 = this.db.
-          insert().
-          into(factTable).
-          values(dataRows);
-
-        var tx = this.db.createTransaction();
-        tx.exec([q1]).then(
-          fnSuccess()
-        );
     }
 
     this.queryCounts = function(dims, _filters, source, fnSuccess) {
