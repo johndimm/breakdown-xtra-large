@@ -85,7 +85,10 @@ Lovefield = function() {
             // Fix up numeric rows.  The input should have them as Funding: 48, not Funding: "48".
             Object.keys(obj).forEach(function(key) {
               if (aggregates.find(function(val) {return val == key} )) {
-                obj[key] = parseInt(obj[key]);
+                var val = isNaN(parseInt(obj[key]))
+                  ? 0
+                  : parseInt(obj[key]);
+                obj[key] = val;
               }
             });
             //  obj.Funding = parseFloat(obj.Funding);
@@ -149,11 +152,15 @@ Lovefield = function() {
             return;
           fields.push(fieldName);
 
+          // 
+          // Some columns contain integers but should not be treated as measures.
+          //
           if (
              isNumeric(key)
            //  && parseInt(key) == key
-             && fieldName != 'id'
-             && fieldName != 'Year'
+             && fieldName.toLowerCase().indexOf('id') == -1 
+             && fieldName.toLowerCase().indexOf('year') == -1 
+             && fieldName.toLowerCase().indexOf('version') == -1 
              ) {
           // if (false) {
           //  measures.push('SUM(' + fieldName + ")");
@@ -339,7 +346,22 @@ Lovefield = function() {
         this.addWhere(this.select, _filters);
 
         // XXXX Sort only by count for now.  Must allow order by the group by column.
-        this.select.orderBy(lf.fn.count(), lf.Order.DESC);
+        // this.select.orderBy(lf.fn.count(), lf.Order.DESC);
+
+        var parts = orderBy.split(" ");
+        var colName = parts[0];
+        // colName = "SUM(" + colName + ")";
+        if (colName == '1')
+          colName = groupBy;
+
+        var dir = parts[1];
+
+        var orderByColumn =  colName == '2' || colName == 'count'
+          ? lf.fn.count()
+          : this.fact[colName];
+
+        var direction = dir == 'DESC' ? lf.Order.DESC : lf.Order.ASC;
+        this.select.orderBy(orderByColumn, direction);
 
         this.select
           .groupBy(this.fact[groupBy])
