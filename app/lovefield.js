@@ -358,13 +358,13 @@ Lovefield = function() {
 
         var orderByColumn =  colName == '2' || colName == 'count'
           ? lf.fn.count()
-          : this.fact[colName];
+          : lf.fn.sum(this.fact[colName]);
 
         var direction = dir == 'DESC' ? lf.Order.DESC : lf.Order.ASC;
-        this.select.orderBy(orderByColumn, direction);
 
         this.select
           .groupBy(this.fact[groupBy])
+          .orderBy(orderByColumn, direction)
           .exec()
           .then(function(results) {
             fnSuccess(results);
