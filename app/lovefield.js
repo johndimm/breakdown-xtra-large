@@ -382,7 +382,7 @@ Lovefield = function() {
         this.addWhere(this.select, params.whereClause);
 
         // XXXX Need to parse the orderBy request.
-        this.select.orderBy(this.fact['Sport'], params.sortDir='DESC' ? lf.Order.DESC : lf.Order.ASC);
+        // this.select.orderBy(this.fact['Sport'], params.sortDir='DESC' ? lf.Order.DESC : lf.Order.ASC);
 
         this.select
           .limit(1000)
