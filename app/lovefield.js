@@ -117,7 +117,8 @@ Lovefield = function() {
     }
 
     this.setSource = function(source) {
-       this.fact = this.db.getSchema().table(source.fact_table);
+      // if (this.db != null)
+        this.fact = this.db.getSchema().table(source.fact_table);
     }
 
 
