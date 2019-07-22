@@ -57,7 +57,6 @@ Lovefield = function() {
 
         $('body').addClass('waiting');
         $('#import_instructions').css('display', 'none');
-        $("#connect_button").css('display', 'none');
 
         this.schemaBuilder.connect().then(function(_db) {
             this.db = _db;

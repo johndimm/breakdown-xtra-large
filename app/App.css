@@ -96,9 +96,9 @@ td.measure {
 //  background-color: #EFEFEF;
 }
 
-#breakdown {
-  display: none;
-}
+//#breakdown {
+//  display: none;
+//}
 
 body.waiting * {
     cursor: progress;
@@ -108,3 +108,18 @@ body.waiting * {
   display: none;
 }
 
+#catalog_title {
+  font-family: Chalkduster, fantasy;
+  font-size: 32pt;
+}
+
+#try_it {
+  font-size:18pt;
+  color: darkblue;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#import_instructions {
+  margin-top: 20px;
+}

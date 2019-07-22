@@ -153,6 +153,9 @@ class App extends React.Component {
     //
     // Set the first column of the report, the field we will group by.
     //
+    if (this.state.report.dimCounts[row] > 1000)
+      return;
+
     var report = this.state.report;
     report.groupBy = row;
     report.show_summary = true;

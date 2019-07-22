@@ -6,6 +6,7 @@
 
 class Dimension extends React.Component {
 
+
   render() {
      const leftArrow = "\u25C0";
      const rightArrow = "\u25B6";
@@ -74,9 +75,9 @@ class Dimension extends React.Component {
 
      var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
      var nameSpaced = this.props.name.replace(/_/g, ' ');
-     var style = {"display": (this.props.count < 1000) ? "block" : "none"};
+    // var style = {"display": (this.props.count < 1000) ? "block" : "none"};
      return (
-       <div className='dimension' style={style}>
+       <div className='dimension'>
          <div className={titleClass} onClick={this.props.setGroupby}>
             <table className='dim_table'><tbody><tr>
               <td className='dim_name' title={this.props.title}>{nameSpaced}</td>

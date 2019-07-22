@@ -68,13 +68,10 @@ class Dimension extends React.Component {
     }
 
     var titleClass = this.props.isGroupby ? 'dim_groupby' : 'dim_normal';
-    var nameSpaced = this.props.name.replace(/_/g, ' ');
-    var style = {
-      "display": this.props.count < 1000 ? "block" : "none"
-    };
+    var nameSpaced = this.props.name.replace(/_/g, ' '); // var style = {"display": (this.props.count < 1000) ? "block" : "none"};
+
     return React.createElement("div", {
-      className: "dimension",
-      style: style
+      className: "dimension"
     }, React.createElement("div", {
       className: titleClass,
       onClick: this.props.setGroupby
