@@ -31,7 +31,7 @@ td.measure {
   text-align: right;
 }
 
-.report_div td, #detail_div td, #detail_div th {
+#report_div td, #detail_div td, #detail_div th {
   border: 1px solid #888888;
 
 }
@@ -46,8 +46,9 @@ td.measure {
   font-size:32pt;
 }
 
-.source_li {
+.source_title {
   cursor: pointer;
+  font-weight: 600;
 }
 
 .banner {
@@ -73,4 +74,61 @@ td.measure {
 
 .content td {
   vertical-align: top;
+}
+
+#dataset_title {
+  cursor: pointer;
+}
+
+.dataset_cell {
+  vertical-align: top;
+  width: 200px;
+  margin: 20px;
+  padding: 20px;
+  cursor: pointer;
+}
+
+#datasets {
+ // margin-top: 20px;
+  margin-left: 200px;
+  width: 800px;
+  padding: 20px;
+//  background-color: #EFEFEF;
+}
+
+//#breakdown {
+//  display: none;
+//}
+
+body.waiting * {
+    cursor: progress;
+}
+
+#connect_button {
+  display: none;
+}
+
+#catalog_title {
+  font-family: Chalkduster, fantasy;
+  font-size: 32pt;
+}
+
+#try_it {
+  font-size:18pt;
+  color: darkblue;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#import_instructions {
+  margin-top: 20px;
+}
+
+#import_status {
+  margin: 10px;
+  border: 1 solid black;
+}
+
+#continue_import_button {
+  display: none;
 }

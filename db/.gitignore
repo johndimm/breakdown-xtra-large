@@ -1,3 +1,4 @@
 breakdown_db.sql
 *.tsv
 *.csv
+.DS_Store

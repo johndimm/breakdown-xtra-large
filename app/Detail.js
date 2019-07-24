@@ -23,19 +23,20 @@ class Detail extends React.Component {
     this.getData(newProps, this.saveData.bind(this));
   }
 
-  saveData(result) {
+  saveData(lines) {
     // console.log(result);
-    var lines = result.split("\n");
+    // var lines = result.split("\n");
     var header = lines[0].split("\t");
     lines.splice(0, 1);
     this.setState({
       header: header,
       body: lines
     });
-  }
+  } // downloadData(result) {
+  //  var lines = result.split("\n");
 
-  downloadData(result) {
-    var lines = result.split("\n");
+
+  downloadData(lines) {
     var header = lines[0].split("\t");
     lines.splice(0, 1);
     var filename = 'breakdown_' + this.props.source + '_' + this.props.whereClause + '.csv';
@@ -58,23 +59,14 @@ class Detail extends React.Component {
     //
     // Run detail query to get data for this report.
     //
-    var data = new FormData();
-    data.append('proc', 'detail');
-    data.append('whereClause', newProps.whereClause);
-    data.append('format', 'csv');
-    data.append('limit', ' limit ' + this.state.limit);
-    data.append('source', this.props.source);
-    var orderBy = this.state.orderBy;
-    if (orderBy != '') orderBy += ' ' + this.state.sortDir;
-    data.append('orderBy', orderBy);
-    fetch("mysql.php", {
-      method: "POST",
-      body: data
-    }).then(function (response) {
-      return response.ok ? response.text() : Promise.reject(response.status);
-    }.bind(this)).then(function (result) {
-      fnSuccess(result);
-    }.bind(this));
+    var params = {
+      whereClause: newProps.whereClause,
+      limit: this.state.limit,
+      source: this.props.source,
+      orderBy: this.state.orderBy,
+      sortDir: this.state.sortDir
+    };
+    Database.getDetail(params, fnSuccess);
   }
 
   showNextChunk() {

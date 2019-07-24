@@ -75,11 +75,16 @@ function generic($db, $proc) {
 }
 
 function dimCounts($db, $source) {
+    // echo "dimCounts";
+    // return;
+
     $whereClause = postParam('whereClause', '');
     $countDistinct = postParam('countDistinct', "count(distinct genres) as genres");
     # ,count(distinct original_language) as original_language,count(distinct production_countries) as production_countries,count(distinct spoken_languages) as spoken_languages,count(distinct status) as status,count(distinct video) as video,count(distinct vote_average) as vote_average");
 
     $sql = "call dim_counts(:source, :whereClause, :countDistinct)";
+
+    // echo $sql;
 
     $sth = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     $result = $sth->execute(array(
@@ -144,9 +149,10 @@ function  outputX($sth) {
 
 
 function main() {
+  // echo "mysql php starts";
   $db = dbInit();
-  $proc = postParam('proc', 'detail');
-  $source = postParam('source', 'olympics');
+  $proc = postParam('proc', 'dim_counts');
+  $source = postParam('source', 'oscars');
 
   switch ($proc) {
     case 'breakdown':

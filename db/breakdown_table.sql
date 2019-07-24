@@ -11,6 +11,7 @@ create table breakdown_sources
   page_title varchar(255),
   description varchar(255),
   url varchar(255),
-  dim_metadata_table varchar(255) default ''
+  dim_metadata_table varchar(255) default '',
+  google_sheet varchar(255)
 );
 
