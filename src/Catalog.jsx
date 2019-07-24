@@ -231,7 +231,6 @@ class Catalog extends React.Component {
                <br />
                <i>Note: your file never leaves your computer</i>
 
-               <h3>Import Status</h3>
                <div id="import_status">
                </div>
 

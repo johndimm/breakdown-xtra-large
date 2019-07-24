@@ -195,7 +195,7 @@ class Catalog extends React.Component {
       name: "files[]",
       id: "fileUpload",
       onChange: this.handleFileUpload.bind(this)
-    })), React.createElement("br", null), React.createElement("i", null, "Note: your file never leaves your computer"), React.createElement("h3", null, "Import Status"), React.createElement("div", {
+    })), React.createElement("br", null), React.createElement("i", null, "Note: your file never leaves your computer"), React.createElement("div", {
       id: "import_status"
     }), React.createElement("button", {
       id: "continue_import_button",

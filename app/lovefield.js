@@ -15,6 +15,7 @@ Lovefield = function() {
     this.fact;
     this.filters;
     this.header = null;
+    this.types = [];
     this.data = null;
 
 
