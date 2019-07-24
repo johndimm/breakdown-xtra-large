@@ -95,7 +95,6 @@ class App extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-
     if (this.props.source != newProps.source && newProps.source != null)
       this.setSource(newProps.source);
   }
