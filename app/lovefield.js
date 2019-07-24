@@ -150,7 +150,7 @@ Lovefield = function() {
             this.types.push('STRING');
           }
 
-        });
+        }.bind(this));
     }
 
     this.addBreakdownSource = function (sourceName, headerArray, lineArray) {
