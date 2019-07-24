@@ -223,7 +223,7 @@ class Catalog extends React.Component {
                The local javascript database is <a
                href='https://google.github.io/lovefield/'>Lovefield</a> by Google.
 
-               <h3>import your csv file into your local Lovefield database</h3>
+               <h3>Import a csv file into your local Lovefield database</h3>
 
                <div id="import_button">
                <input type="file" name="files[]" id="fileUpload" onChange={this.handleFileUpload.bind(this)}/>
@@ -237,14 +237,23 @@ class Catalog extends React.Component {
                <button id="continue_import_button" onClick={this.continueImport.bind(this)}>continue import</button>
 
 
-               <h3> Instructions</h3>
+               <h3>Instructions</h3>
                <ol>
-                   <li>get a csv file
+                   <li>get a csv file.  Here's one to try before using one of your own: <a href="data/olympics_local.csv">Olympic Medals</a>
+                   </li>
+
+                   <li>click the "choose file" button above and import the csv file.
+                   </li>
+
+               </ol>
+
+               <h3>What sort of csv files works with breakdown?</h3>
+
                      <ul>
-                     <li>make one:  the best candidates have text columns (dimensions) and number columns (measures)
+                     <li><the best candidates have text columns (dimensions) and number columns (measures)
                      , the sort of data that would make a good pivot table.
                      </li>
-                     <li>find one: to test the system, click on any of the Google Sheets links in the
+                     <li>for examples, click on the Google Sheets links in the
                      online demo list and download the csv file for the underlying data.
                      </li>
                      <li>
@@ -255,16 +264,6 @@ class Catalog extends React.Component {
                      has a limit of 50 Meg.
                      </li>
                      </ul>
-                   </li>
-
-                   <li>click the "choose file" button above and import your csv file.
-                   </li>
-
-
-                   <li> enjoy the refreshing feeling of surfing effortlessly through joint distributions of your data.
-                   </li>
-               </ol>
-
 
        </div>
     );
@@ -317,6 +316,7 @@ class Catalog extends React.Component {
                </tr></tbody></table>
 
            {importInstructions}
+           <button id="import_instructions_button" onClick={function() {location.reload()}}>Import Instructions</button>
 
 
           </div>

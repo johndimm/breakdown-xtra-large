@@ -132,3 +132,7 @@ body.waiting * {
 #continue_import_button {
   display: none;
 }
+
+#import_instructions_button {
+  display: none;
+}
