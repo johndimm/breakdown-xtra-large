@@ -179,10 +179,14 @@ class Catalog extends React.Component {
     location.reload();
   }
 
+  continueImport() {
+    lovefield.continueImport();
+  }
+
   importInstructions() {
     return React.createElement("div", {
       id: "import_instructions"
-    }, "Breakdown works with public data from cloud or private data on your own computer.  ", React.createElement("b", null, "Your data stays on your computer."), "  This program imports it into a small database system that runs on your computer. and uses SQL to slice and dice.  The local javascript database is ", React.createElement("a", {
+    }, "Breakdown works with public data from cloud or private data on your own computer.  ", React.createElement("b", null, "Your data stays on your computer."), "  This program imports it into a small database system that runs on your computer and all analysis is done locally. The local javascript database is ", React.createElement("a", {
       href: "https://google.github.io/lovefield/"
     }, "Lovefield"), " by Google.", React.createElement("h3", null, "import your csv file into your local Lovefield database"), React.createElement("div", {
       id: "import_button"
@@ -191,7 +195,12 @@ class Catalog extends React.Component {
       name: "files[]",
       id: "fileUpload",
       onChange: this.handleFileUpload.bind(this)
-    })), React.createElement("br", null), React.createElement("i", null, "Note: your file never leaves your computer"), React.createElement("h3", null, " Instructions"), React.createElement("ol", null, React.createElement("li", null, "get a csv file", React.createElement("ul", null, React.createElement("li", null, "the best candidates have text columns (dimensions) and number columns (measures) and could be used to make a pivot table."), React.createElement("li", null, "To test the system, click on any of the Google Sheets links in the online demo list and download the csv file for the underlying data."), React.createElement("li", null, "Lovefield uses IndexedDB which currently has a limit of 50 Meg."))), React.createElement("li", null, "click the \"choose file\" button above and import your csv file."), React.createElement("li", null, " enjoy the refreshing feeling of surfing effortlessly through joint distributions of your data.")));
+    })), React.createElement("br", null), React.createElement("i", null, "Note: your file never leaves your computer"), React.createElement("h3", null, "Import Status"), React.createElement("div", {
+      id: "import_status"
+    }), React.createElement("button", {
+      id: "continue_import_button",
+      onClick: this.continueImport.bind(this)
+    }, "continue import"), React.createElement("h3", null, " Instructions"), React.createElement("ol", null, React.createElement("li", null, "get a csv file", React.createElement("ul", null, React.createElement("li", null, "make one:  the best candidates have text columns (dimensions) and number columns (measures) , the sort of data that would make a good pivot table."), React.createElement("li", null, "find one: to test the system, click on any of the Google Sheets links in the online demo list and download the csv file for the underlying data."), React.createElement("li", null, "the first line determines which columns are metrics (the ones that parse as a number) and which are dimensions (everything else)."), React.createElement("li", null, "Lovefield uses IndexedDB which currently has a limit of 50 Meg."))), React.createElement("li", null, "click the \"choose file\" button above and import your csv file."), React.createElement("li", null, " enjoy the refreshing feeling of surfing effortlessly through joint distributions of your data.")));
   }
 
   render() {

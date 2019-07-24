@@ -290,11 +290,22 @@ class App extends React.Component {
       whereClause: whereClause,
       orderBy: orderBy,
       source: this.state.current_source
-    });
-    var right_side = // (<div></div>);
-    this.state.report.show_summary ? report : detail; //
+    }); //
+    // Always keep the Report, so we don't have to reread the data if you switch back to summary.
+    // Just make it invisible.
+    //
+
+    var right_side = React.createElement("div", null);
+
+    if (this.state.report.show_summary) {
+      $("#report_div").css("display", "block");
+    } else {
+      $("#report_div").css("display", "none");
+      right_side = detail;
+    } //
     // Assemble the page.
     //
+
 
     return React.createElement("div", {
       id: "breakdown"
@@ -307,7 +318,7 @@ class App extends React.Component {
       className: "content"
     }, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {
       className: "dimensions_div"
-    }, dimensions)), React.createElement("td", null, right_side)))));
+    }, dimensions)), React.createElement("td", null, report, right_side)))));
   }
 
 }

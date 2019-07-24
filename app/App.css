@@ -31,7 +31,7 @@ td.measure {
   text-align: right;
 }
 
-.report_div td, #detail_div td, #detail_div th {
+#report_div td, #detail_div td, #detail_div th {
   border: 1px solid #888888;
 
 }
@@ -122,4 +122,13 @@ body.waiting * {
 
 #import_instructions {
   margin-top: 20px;
+}
+
+#import_status {
+  margin: 10px;
+  border: 1 solid black;
+}
+
+#continue_import_button {
+  display: none;
 }

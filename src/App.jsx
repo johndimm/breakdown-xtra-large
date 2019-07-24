@@ -40,7 +40,9 @@ class Banner extends React.Component {
 
 
     var button_text = this.props.show_summary ? 'Detail' : 'Summary';
-    var cell3 = (<button onClick={this.props.toggleSummary}>show {button_text}</button>);
+    var cell3 = (<button onClick={
+          this.props.toggleSummary
+      }>show {button_text}</button>);
 
     return (
       <table className='banner'>
@@ -325,8 +327,17 @@ class App extends React.Component {
     var detail =  // (<div></div>);
      (<Detail whereClause={whereClause} orderBy={orderBy} source={this.state.current_source}/>);
 
-    var right_side = // (<div></div>);
-      this.state.report.show_summary ? report : detail;
+    //
+    // Always keep the Report, so we don't have to reread the data if you switch back to summary.
+    // Just make it invisible.
+    //
+    var right_side = (<div></div>);
+    if (this.state.report.show_summary) {
+      $("#report_div").css("display", "block");
+    } else {
+      $("#report_div").css("display", "none");
+      right_side = detail;
+    }
 
     //
     // Assemble the page.
@@ -348,6 +359,7 @@ class App extends React.Component {
           </td>
 
           <td>
+          {report}
           {right_side}
           </td>
 

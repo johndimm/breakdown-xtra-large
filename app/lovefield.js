@@ -126,7 +126,33 @@ Lovefield = function() {
        return this.breakdown_sources;
     }
 
-    this.addBreakdownSource = function (sourceName, header, line) {
+    this.guessColumnTypes = function(lineArray, headerArray) {
+        lineArray.forEach(function(key,i) {
+          var fieldName = headerArray[i];
+          if (fieldName == '')
+            return;
+
+          //
+          // Some columns contain integers but should not be treated as measures.
+          //
+          if (
+             isNumeric(key)
+           //  && parseInt(key) == key
+             && fieldName.toLowerCase().indexOf('id') == -1
+             && fieldName.toLowerCase().indexOf('year') == -1
+             && fieldName.toLowerCase().indexOf('version') == -1
+             ) {
+
+            this.types.push('NUMBER');
+          }
+          else {
+            this.types.push('STRING');
+          }
+
+        });
+    }
+
+    this.addBreakdownSource = function (sourceName, headerArray, lineArray) {
        var tableName = sourceName + "_fact";
        var current_list = localStorage.getItem('breakdown_sources');
        if (current_list == null)
@@ -144,43 +170,28 @@ Lovefield = function() {
        var fields = [];
        var types = [];
 
-       var lineArray = $.csv.toArray(line);
+       // var lineArray = $.csv.toArray(line);
 
-       lineArray.forEach(function(key,i) {
-          var fieldName = header.split(',')[i];
+       this.types.forEach(function(key,i) {
+          var fieldName = headerArray[i];
           if (fieldName == '')
             return;
+
           fields.push(fieldName);
 
           // 
           // Some columns contain integers but should not be treated as measures.
           //
-          if (
-             isNumeric(key)
-           //  && parseInt(key) == key
-             && fieldName.toLowerCase().indexOf('id') == -1 
-             && fieldName.toLowerCase().indexOf('year') == -1 
-             && fieldName.toLowerCase().indexOf('version') == -1 
-             ) {
-          // if (false) {
-          //  measures.push('SUM(' + fieldName + ")");
+          if ( key == 'NUMBER') {
             measures.push(fieldName);
             aggregates.push (fieldName);
-            types.push('NUMBER');
           }
           else {
             dimensions.push(fieldName);
-            types.push('STRING');
           }
-
         });
 
-//        measures.push("COUNT(*)")
        measures.push("count");
-
-       //
-       // Add this source to the list in localStorage.
-       //
 
        var sourceObj = {
                    database: 'lovefield',
@@ -224,33 +235,38 @@ Lovefield = function() {
 
 
     this.addSource = function(sourceName, content, fnSuccess) {
-      var cr = content.indexOf("\n");
-      var header = content.substring(0, cr);
-      var line = content.substring( cr + 1, content.indexOf("\n", cr + 1 ) );
-      var source = this.addBreakdownSource(sourceName, header, line);
-      // this.createTable(source);
+      this.import_source = sourceName;
+      this.import_data = $.csv.toObjects(content);
+      this.import_fnSuccess = fnSuccess;
+      this.import_header = Object.keys(this.import_data[0]);
 
-      var data = $.csv.toObjects(content);
+      this.import_line = this.import_header.map(function(key, i) {
+        return this.import_data[1][key];
+      }.bind(this));
+
+      this.guessColumnTypes(this.import_line, this.import_header);
+
+      this.continueImport();
+
+      // To start to allow editing of the schema.  Not sure it's a good idea any more.
+      // Instead, just make each number column a measure, and the rest are dimensions.
+      // If dimCount > 1500, you can't click on it.
+      // So there's no need to exclude any column as too granular.
+      // If you are using a summary table, you have already removed any granular columns.
+      // So let the user control the app by changing the input.
+      return;
+
+      $("#import_status").html(this.import_header.join("<BR />"));
+
+      $("#continue_import_button").css('display', 'block');
+    }
+
+    this.continueImport = function() {
+      this.import_source = this.addBreakdownSource(this.import_source, this.import_header, this.import_line);
       this.init();
-      this.connect(data, JSON.parse(source), fnSuccess);
-
-
-      // Save in local storage for now, load into the database in the next session.
-      // Lovefield can't connect twice.
- //     localStorage.setItem(sourceName, data);
-
-      // Bring up the next session.
-//      location.reload();
+      this.connect(this.import_data, JSON.parse(this.import_source), this.import_fnSuccess);
     }
 
-
-
-    this.readLocalStorage = function() {
-      var content = localStorage.getItem(this.FILE_KEY);
-      if (content != null)
-        return $.csv.toObjects(content);
-      return null;
-    }
 
     this.queryCounts = function(dims, _filters, source, fnSuccess) {
       if (this.db == null)

@@ -79,8 +79,8 @@ class Report extends React.Component {
     // Run summary query to get data for this report.
     //
 
-    if (newProps.groupBy == null) //  || newProps.groupBy == this.props.groupBy)
-      return;
+//    if (newProps.groupBy == null) //  || newProps.groupBy == this.props.groupBy)
+//      return;
 
   //  return;
 
@@ -282,7 +282,7 @@ class Report extends React.Component {
      // Assemble the report.
      //
      return (
-       <div className='report_div'>
+       <div id='report_div'>
            <table>
              <tbody>
 

@@ -81,12 +81,12 @@ class Report extends React.Component {
     //
     // Run summary query to get data for this report.
     //
-    if (newProps.groupBy == null) //  || newProps.groupBy == this.props.groupBy)
-      return; //  return;
+    //    if (newProps.groupBy == null) //  || newProps.groupBy == this.props.groupBy)
+    //      return;
+    //  return;
     //   if (newProps.source != this.state.source) {
     //     this.setState({source: newProps.source, orderBy: '2', sortDir: 'DESC'});
     //   }
-
     var data = new FormData();
     data.append('proc', 'breakdown');
     data.append('whereClause', newProps.whereClause);
@@ -267,7 +267,7 @@ class Report extends React.Component {
 
 
     return React.createElement("div", {
-      className: "report_div"
+      id: "report_div"
     }, React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("th", {
       className: "report_heading",
       style: {

@@ -209,6 +209,10 @@ class Catalog extends React.Component {
       location.reload();
     }
 
+    continueImport() {
+      lovefield.continueImport();
+    }
+
   importInstructions() {
 
     return (
@@ -227,15 +231,26 @@ class Catalog extends React.Component {
                <br />
                <i>Note: your file never leaves your computer</i>
 
+               <h3>Import Status</h3>
+               <div id="import_status">
+               </div>
+
+               <button id="continue_import_button" onClick={this.continueImport.bind(this)}>continue import</button>
+
+
                <h3> Instructions</h3>
                <ol>
                    <li>get a csv file
                      <ul>
-                     <li>the best candidates have text columns (dimensions) and number columns (measures)
-                     and could be used to make a pivot table.
+                     <li>make one:  the best candidates have text columns (dimensions) and number columns (measures)
+                     , the sort of data that would make a good pivot table.
                      </li>
-                     <li>To test the system, click on any of the Google Sheets links in the
+                     <li>find one: to test the system, click on any of the Google Sheets links in the
                      online demo list and download the csv file for the underlying data.
+                     </li>
+                     <li>
+                     the first line determines which columns are metrics (the ones that parse as a number)
+                     and which are dimensions (everything else).
                      </li>
                      <li>Lovefield uses IndexedDB which currently
                      has a limit of 50 Meg.
