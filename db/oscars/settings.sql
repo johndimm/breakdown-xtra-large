@@ -5,10 +5,10 @@ insert into breakdown_sources
 values
 (   'oscars'
   , 'oscars_fact'
-  , 'oscars_summary'
+  , 'oscars_fact'
   , 'Award,Name,Film,Year'
-  , 'Nominations,Oscars'
-  , 'sum(Oscars) as Nominations,sum(Winner) as Oscars'
+  , 'count(*)'
+  , 'count(*)'
   , '*'
   , 'The Academy Awards'
   , 'What actors and films have received the most Oscars?'

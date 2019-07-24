@@ -8,7 +8,7 @@ values
   , 'olympics_summary'
   , 'Sport,Discipline,Athlete,Event,Country,Medal,Year,Season,Gender,City'
   , 'Medals'
-  , 'sum(Medals) as Medals'
+  , 'count(*) as Medals'
   , '*'
   , 'Olympic Medals'
   , 'Which countries and athletes have won the most medals at the Olympic games?'
