@@ -171,7 +171,6 @@ Lovefield = function() {
        var dimensions = [];
        var aggregates = [];
        var fields = [];
-       var types = [];
 
        // var lineArray = $.csv.toArray(line);
 
@@ -205,7 +204,7 @@ Lovefield = function() {
                    measures: measures.join(','),
 
                    fields: fields.join(','),
-                   types: types.join(','),
+                   types: this.types.join(','),
 
                    dim_metadata_table: '',
                    dim_metadata: {},
