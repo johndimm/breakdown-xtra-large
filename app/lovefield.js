@@ -2,52 +2,52 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-Lovefield = function() {
+class Lovefield  {
 
-    this.dbName = 'breakdown';
-    this.dbVersion = 1;
-    this.tableName = '';
-    // this.FILE_KEY = 'save.json';
-    this.HEADER_KEY = 'header.json';
-    this.SOURCES_KEY = 'breakdown_sources';
-    // this.schemaBuilder;
-    this.db = null;
-    this.fact;
-    this.filters;
-    this.header = null;
-    this.types = [];
-    this.data = null;
+    init() {
 
+        this.dbName = 'breakdown';
+        this.dbVersion = 1;
+        this.tableName = '';
+        // this.FILE_KEY = 'save.json';
+        this.HEADER_KEY = 'header.json';
+        this.SOURCES_KEY = 'breakdown_sources';
+        // this.schemaBuilder;
+        this.db = null;
+        this.fact;
+        this.filters;
+        this.header = null;
+        this.types = [];
+        this.data = null;
+    }
 
-    this.init = function() {
-        //
-        // Open the database.
-        //    Use localStorage to "recreate" (define really) the existing tables.
-        //    Use localStorage to load data into a new table.
-        //    Make sure the database version is increased to allow this new table as an upgrade.
-        //
-
-
-        this.schemaBuilder = lf.schema.create(this.dbName, this.getDBVersion());
-
+    readBreakdownSources() {
         var s = localStorage.getItem('breakdown_sources');
         if (s == null || s == '')
           return;
 
         //
-        // Create the tables.
+        // Create the list of sources.
         //
-        var sources = s.split("\n");
         this.breakdown_sources = [];
-        var typeArray = [];
-        var fieldArray = [];
+        var sources = s.split("\n");
         sources.forEach(function(key,i) {
-           this.createTable(key);
            this.breakdown_sources.push(key);
         }.bind(this));
     }
 
-    this.connect = function(data, source, fnSuccess) {
+    buildSchema() {
+        this.schemaBuilder = lf.schema.create(this.dbName, this.getDBVersion());
+
+        //
+        // Create the tables.
+        //
+        this.breakdown_sources.forEach(function(key,i) {
+           this.createTable(key);
+        }.bind(this));
+    }
+
+    connect(data, source, fnSuccess) {
         //
         // Connect and open the database.
         //
@@ -55,6 +55,9 @@ Lovefield = function() {
         // Do this only once per session.
         if (this.db != null)
           return;
+
+        this.readBreakdownSources();
+        this.buildSchema();
 
         $('body').addClass('waiting');
         $('#import_instructions').css('display', 'none');
@@ -80,7 +83,7 @@ Lovefield = function() {
     }
 
 
-     this.load = function(factTable, data, aggregates, fnSuccess) {
+     load(factTable, data, aggregates, fnSuccess) {
        this.db.delete().from(factTable).exec();
         var dataRows = data.map(
           function(obj, i) {
@@ -108,28 +111,28 @@ Lovefield = function() {
         );
     }
 
-    this.getDBVersion = function() {
+    getDBVersion() {
       return localStorage.getItem('lovefield_db_version') || 0;
     }
 
-    this.incrementDBVersion = function() {
+    incrementDBVersion() {
       var version = this.getDBVersion();
       var v = parseInt(version);
       v = v + 1;
       localStorage.setItem('lovefield_db_version', v);
     }
 
-    this.setSource = function(source) {
+    setSource(source) {
       // if (this.db != null)
         this.fact = this.db.getSchema().table(source.fact_table);
     }
 
 
-    this.getBreakdownSources = function() {
+    getBreakdownSources() {
        return this.breakdown_sources;
     }
 
-    this.guessColumnTypes = function(lineArray, headerArray) {
+    guessColumnTypes(lineArray, headerArray) {
         lineArray.forEach(function(key,i) {
           var fieldName = headerArray[i];
           if (fieldName == '')
@@ -155,7 +158,7 @@ Lovefield = function() {
         }.bind(this));
     }
 
-    this.addBreakdownSource = function (sourceName, headerArray, lineArray) {
+    addBreakdownSource (sourceName, headerArray, lineArray) {
        var tableName = sourceName + "_fact";
        var current_list = localStorage.getItem('breakdown_sources');
        if (current_list == null)
@@ -223,12 +226,12 @@ Lovefield = function() {
 
      }
 
-    this.createTable = function(sourceJson) {
+    createTable(sourceJson) {
         var source = JSON.parse(sourceJson);
         var factTable = this.schemaBuilder.createTable(source.fact_table);
-        typeArray = source.types.split(',');
+        var typeArray = source.types.split(',');
 
-        fieldArray = source.fields.split(",");
+        var fieldArray = source.fields.split(",");
         fieldArray.forEach(function(columnName, i) {
            var fieldType = typeArray[i] == 'NUMBER' ? lf.Type.NUMBER : lf.Type.STRING;
            factTable.addColumn(columnName, fieldType);
@@ -236,7 +239,7 @@ Lovefield = function() {
     }
 
 
-    this.addSource = function(sourceName, content, fnSuccess) {
+    addSource(sourceName, content, fnSuccess) {
       this.import_source = sourceName;
       this.import_data = $.csv.toObjects(content);
       this.import_fnSuccess = fnSuccess;
@@ -263,14 +266,14 @@ Lovefield = function() {
       $("#continue_import_button").css('display', 'block');
     }
 
-    this.continueImport = function() {
+    continueImport() {
       this.import_source = this.addBreakdownSource(this.import_source, this.import_header, this.import_line);
       this.init();
       this.connect(this.import_data, JSON.parse(this.import_source), this.import_fnSuccess);
     }
 
 
-    this.queryCounts = function(dims, _filters, source, fnSuccess) {
+    queryCounts(dims, _filters, source, fnSuccess) {
       if (this.db == null)
         return;
 
@@ -302,7 +305,7 @@ Lovefield = function() {
           });
     }
 
-    this.addWhere = function(select, _filters) {
+    addWhere(select, _filters) {
         if (_filters == null)
           return;
 
@@ -323,7 +326,7 @@ Lovefield = function() {
         }
     }
 
-    this.breakdown = function(data, fnSuccess) {
+    breakdown(data, fnSuccess) {
         if (this.db == null)
            return;
 
@@ -391,7 +394,7 @@ Lovefield = function() {
     }
 
 
-    this.getDetail = function(params, fnSuccess) {
+    getDetail(params, fnSuccess) {
         if (this.db == null)
            return;
 

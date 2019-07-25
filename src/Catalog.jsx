@@ -40,7 +40,8 @@ class Catalog extends React.Component {
     //
     // Get lovefield sources, from localStorage (fast).
     //
-    lovefield.init();
+    lovefield.readBreakdownSources();
+
     var result = lovefield.getBreakdownSources();
     if (result != null && result.length > 0) {
         for (var i=0; i<result.length; i++) {
@@ -111,10 +112,6 @@ class Catalog extends React.Component {
 
   }
 
-  onConnect() {
-    this.toggleDatasetsDisplay();
-    this.getLovefieldSources();
-  }
 
   printDatasetLink(requestedDatabase, key, i, displayOption) {
 
@@ -155,18 +152,23 @@ class Catalog extends React.Component {
           return (
             <td key={i} className={className} title={titleText}
                   onClick={function() {
-                    //    this.toggleDatasetsDisplay();
 
-                    this.setSourceName(key);
 
                     //
-                    // XXX if the db is not yet open, open it, and open this source when it's ready.
+                    // If the db is not yet open, open it, and open this source when it's ready.
                     //
                     if (database == 'lovefield' && lovefield.db == null) {
-                        lovefield.connect(null, null, this.onConnect.bind(this));
+                        lovefield.connect(null, null, function() {
+                           this.getLovefieldSources();
+                           this.toggleDatasetsDisplay();
+                           this.setSourceName(key);
+                         }.bind(this));
+
                     } else {
+                        this.setSourceName(key);
                         this.toggleDatasetsDisplay();
                     }
+
                   }.bind(this)}>
 
                 <div  className='source_title'>
@@ -247,10 +249,12 @@ class Catalog extends React.Component {
 
                </ol>
 
-               <h3>What sort of csv files works with breakdown?</h3>
+                       <h3>What sort of csv files works with breakdown?</h3>
 
-                     <ul>
-                     <li><the best candidates have text columns (dimensions) and number columns (measures)
+
+
+                   <ul>
+                     <li>the best candidates have text columns (dimensions) and number columns (measures)
                      , the sort of data that would make a good pivot table.
                      </li>
                      <li>for examples, click on the Google Sheets links in the
@@ -263,8 +267,7 @@ class Catalog extends React.Component {
                      <li>Lovefield uses IndexedDB which currently
                      has a limit of 50 Meg.
                      </li>
-                     </ul>
-
+                   </ul>
        </div>
     );
 

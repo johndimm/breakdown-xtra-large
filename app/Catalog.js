@@ -32,7 +32,7 @@ class Catalog extends React.Component {
     //
     // Get lovefield sources, from localStorage (fast).
     //
-    lovefield.init();
+    lovefield.readBreakdownSources();
     var result = lovefield.getBreakdownSources();
 
     if (result != null && result.length > 0) {
@@ -98,11 +98,6 @@ class Catalog extends React.Component {
     $("#breakdown").css('display', on ? 'block' : 'none');
   }
 
-  onConnect() {
-    this.toggleDatasetsDisplay();
-    this.getLovefieldSources();
-  }
-
   printDatasetLink(requestedDatabase, key, i, displayOption) {
     var source = this.state.source_set[key];
     var page_title = source.page_title;
@@ -144,14 +139,17 @@ class Catalog extends React.Component {
       className: className,
       title: titleText,
       onClick: function () {
-        //    this.toggleDatasetsDisplay();
-        this.setSourceName(key); //
-        // XXX if the db is not yet open, open it, and open this source when it's ready.
         //
-
+        // If the db is not yet open, open it, and open this source when it's ready.
+        //
         if (database == 'lovefield' && lovefield.db == null) {
-          lovefield.connect(null, null, this.onConnect.bind(this));
+          lovefield.connect(null, null, function () {
+            this.getLovefieldSources();
+            this.toggleDatasetsDisplay();
+            this.setSourceName(key);
+          }.bind(this));
         } else {
+          this.setSourceName(key);
           this.toggleDatasetsDisplay();
         }
       }.bind(this)
@@ -202,7 +200,7 @@ class Catalog extends React.Component {
       onClick: this.continueImport.bind(this)
     }, "continue import"), React.createElement("h3", null, "Instructions"), React.createElement("ol", null, React.createElement("li", null, "get a csv file.  Here's one to try before using one of your own: ", React.createElement("a", {
       href: "data/olympics_local.csv"
-    }, "Olympic Medals")), React.createElement("li", null, "click the \"choose file\" button above and import the csv file.")), React.createElement("h3", null, "What sort of csv files works with breakdown?"), React.createElement("ul", null, React.createElement("li", null, "make one: the best candidates have text columns (dimensions) and number columns (measures) , the sort of data that would make a good pivot table."), React.createElement("li", null, "find one:  click on any of the Google Sheets links in the online demo list and download the csv file for the underlying data."), React.createElement("li", null, "the first line determines which columns are metrics (the ones that parse as a number) and which are dimensions (everything else)."), React.createElement("li", null, "Lovefield uses IndexedDB which currently has a limit of 50 Meg.")));
+    }, "Olympic Medals")), React.createElement("li", null, "click the \"choose file\" button above and import the csv file.")), React.createElement("h3", null, "What sort of csv files works with breakdown?"), React.createElement("ul", null, React.createElement("li", null, "the best candidates have text columns (dimensions) and number columns (measures) , the sort of data that would make a good pivot table."), React.createElement("li", null, "for examples, click on the Google Sheets links in the online demo list and download the csv file for the underlying data."), React.createElement("li", null, "the first line determines which columns are metrics (the ones that parse as a number) and which are dimensions (everything else)."), React.createElement("li", null, "Lovefield uses IndexedDB which currently has a limit of 50 Meg.")));
   }
 
   render() {

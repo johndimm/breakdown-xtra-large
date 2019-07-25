@@ -54,7 +54,6 @@ class App extends React.Component {
     this.filterStack = []; //    this.source_set = {};
 
     this.state = {
-      current_setting: 'forbes',
       source: {
         database: 'mysql',
         name: '',
@@ -352,8 +351,8 @@ function renderRoot() {
 
 $(document).ready(function () {
   lovefield = new Lovefield();
+  lovefield.init();
   mysql = new Mysql();
   Database = mysql;
-  mysql.init(); // lovefield.init();
-  // renderRoot();
+  mysql.init(); // renderRoot();
 });
