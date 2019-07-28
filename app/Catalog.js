@@ -1,3 +1,51 @@
+class ImportInstructions extends React.Component {
+  render() {
+    if (!this.props.importedOwnData && !this.props.displayImportInstructions) {
+      return this.tryIt();
+    } else if (!this.props.importedOwnData && this.props.displayImportInstructions) {
+      return this.importInstructions();
+    } else if (this.props.importedOwnData && this.props.dbIsOpen) {
+      return this.requestReload();
+    } else if (this.props.importedOwnData && !this.props.dbIsOpen) {
+      return this.importInstructions();
+    }
+  }
+
+  requestReload() {
+    return React.createElement("button", {
+      id: "import_instructions_button",
+      onClick: function () {
+        location.reload();
+      }
+    }, "import another csv file");
+  }
+
+  tryIt() {
+    return React.createElement("div", {
+      id: "try_it",
+      onClick: this.props.turnOnDisplayImportInstructions
+    }, React.createElement("i", null, "Try it on your own data"));
+  }
+
+  importInstructions() {
+    return React.createElement("div", {
+      id: "import_instructions"
+    }, "Breakdown works with public data from cloud or private data on your own computer.  ", React.createElement("b", null, "Your data stays on your computer."), "  This program imports it into a small database system that runs on your computer and all analysis is done locally. The local javascript database is ", React.createElement("a", {
+      href: "https://google.github.io/lovefield/"
+    }, "Lovefield"), " by Google.", React.createElement("h3", null, "Import a csv file into your local Lovefield database"), React.createElement("div", {
+      id: "import_button"
+    }, React.createElement("input", {
+      type: "file",
+      name: "files[]",
+      id: "fileUpload",
+      onChange: this.props.handleFileUpload
+    })), React.createElement("br", null), React.createElement("i", null, "Note: your file never leaves your computer"), React.createElement("h3", null, "Instructions"), React.createElement("ol", null, React.createElement("li", null, "get a csv file.  Here's one to try before using one of your own: ", React.createElement("a", {
+      href: "data/olympics_local.csv"
+    }, "Olympic Medals")), React.createElement("li", null, "click the \"choose file\" button above and import the csv file.")), React.createElement("h3", null, "What sort of csv files works with breakdown?"), React.createElement("ul", null, React.createElement("li", null, "the best candidates have text columns (dimensions) and number columns (measures) , the sort of data that would make a good pivot table."), React.createElement("li", null, "for examples, click on the Google Sheets links in the online demo list and download the csv file for the underlying data."), React.createElement("li", null, "the first line determines which columns are metrics (the ones that parse as a number) and which are dimensions (everything else)."), React.createElement("li", null, "Lovefield uses IndexedDB which currently has a limit of 50 Meg.")));
+  }
+
+}
+
 class Catalog extends React.Component {
   constructor(props, context) {
     super(props, context); // Setup file reading
@@ -37,7 +85,7 @@ class Catalog extends React.Component {
 
     if (result != null && result.length > 0) {
       for (var i = 0; i < result.length; i++) {
-        var r = JSON.parse(result[i]);
+        var r = result[i];
         r.database = 'lovefield';
         this.registerSource(r);
         this.setState({
@@ -75,8 +123,7 @@ class Catalog extends React.Component {
       result.forEach(function (key, i) {
         dim_metadata[key.name] = key.metadata;
       });
-      this.state.source_set[source_set_name].dim_metadata = dim_metadata; // Set source here for one with metadata.
-      //      this.setSource(source_set_name);
+      this.state.source_set[source_set_name].dim_metadata = dim_metadata;
     }.bind(this));
   }
 
@@ -87,8 +134,7 @@ class Catalog extends React.Component {
       this.setState({
         source: source,
         datasetName: key
-      }); //      if (source.database == 'lovefield')
-      //        lovefield.setSource(source.fact_table, null, source.dimensions);
+      });
     }
   }
 
@@ -101,25 +147,24 @@ class Catalog extends React.Component {
   printDatasetLink(requestedDatabase, key, i, displayOption) {
     var source = this.state.source_set[key];
     var page_title = source.page_title;
-    var description = displayOption == 'image' ? source.description : '';
     var database = source.database;
     var google_sheet = source.google_sheet;
     if (database != requestedDatabase) return null;
     var img = '';
-    var grayed_out = '';
-    var className = "dataset_cell";
-    var titleText = '';
+    var description = '';
 
-    if (displayOption == 'image') {
+    if (displayOption == 'full') {
       img = React.createElement("img", {
         src: key + '.jpg',
         width: "200"
       });
-    } else {
-      img = React.createElement("span", null);
+      description = source.description;
     }
 
-    var google_sheet = google_sheet != null && google_sheet != '' && displayOption != 'image' ? React.createElement("div", null, React.createElement("a", {
+    var grayed_out = '';
+    var className = "dataset_cell";
+    var titleText = '';
+    var google_sheet = google_sheet != null && google_sheet != '' ? React.createElement("div", null, React.createElement("a", {
       target: "_blank",
       href: google_sheet
     }, "google sheet")) : '';
@@ -140,7 +185,7 @@ class Catalog extends React.Component {
       title: titleText,
       onClick: function () {
         //
-        // If the db is not yet open, open it, and open this source when it's ready.
+        // If the db is not yet open, open it now, and open this source when it's ready.
         //
         if (database == 'lovefield' && lovefield.db == null) {
           lovefield.connect(null, null, function () {
@@ -161,6 +206,9 @@ class Catalog extends React.Component {
   handleFileUpload(event) {
     this.filename = event.target.files[0];
     this.reader.readAsText(this.filename); // fires onload when done.
+    // Set progress cursor.
+
+    $('body').addClass('waiting');
   }
 
   handleFileRead(event) {
@@ -173,84 +221,26 @@ class Catalog extends React.Component {
     lovefield.addSource(sourceName, content, this.getLovefieldSources.bind(this));
   }
 
-  closeDatabase() {
-    location.reload();
-  }
-
-  continueImport() {
-    lovefield.continueImport();
-  }
-
-  importInstructions() {
-    return React.createElement("div", {
-      id: "import_instructions"
-    }, "Breakdown works with public data from cloud or private data on your own computer.  ", React.createElement("b", null, "Your data stays on your computer."), "  This program imports it into a small database system that runs on your computer and all analysis is done locally. The local javascript database is ", React.createElement("a", {
-      href: "https://google.github.io/lovefield/"
-    }, "Lovefield"), " by Google.", React.createElement("h3", null, "Import a csv file into your local Lovefield database"), React.createElement("div", {
-      id: "import_button"
-    }, React.createElement("input", {
-      type: "file",
-      name: "files[]",
-      id: "fileUpload",
-      onChange: this.handleFileUpload.bind(this)
-    })), React.createElement("br", null), React.createElement("i", null, "Note: your file never leaves your computer"), React.createElement("div", {
-      id: "import_status"
-    }), React.createElement("button", {
-      id: "continue_import_button",
-      onClick: this.continueImport.bind(this)
-    }, "continue import"), React.createElement("h3", null, "Instructions"), React.createElement("ol", null, React.createElement("li", null, "get a csv file.  Here's one to try before using one of your own: ", React.createElement("a", {
-      href: "data/olympics_local.csv"
-    }, "Olympic Medals")), React.createElement("li", null, "click the \"choose file\" button above and import the csv file.")), React.createElement("h3", null, "What sort of csv files works with breakdown?"), React.createElement("ul", null, React.createElement("li", null, "the best candidates have text columns (dimensions) and number columns (measures) , the sort of data that would make a good pivot table."), React.createElement("li", null, "for examples, click on the Google Sheets links in the online demo list and download the csv file for the underlying data."), React.createElement("li", null, "the first line determines which columns are metrics (the ones that parse as a number) and which are dimensions (everything else)."), React.createElement("li", null, "Lovefield uses IndexedDB which currently has a limit of 50 Meg.")));
-  }
-
-  render() {
-    if (this.state.importedOwnData) {
-      return this.renderPowerUser();
-    } else {
-      return this.renderNewUser();
-    }
-  }
-
-  renderPowerUser() {
-    var onlineDatasets = Object.keys(this.state.source_set).map(function (key, i) {
-      return this.printDatasetLink('mysql', key, i, "name");
-    }.bind(this));
-    var localDatasets = Object.keys(this.state.source_set).map(function (key, i) {
-      return this.printDatasetLink('lovefield', key, i, "fields");
-    }.bind(this));
-    var importInstructions = this.importInstructions();
-    return React.createElement("div", null, React.createElement("div", {
-      id: "dataset_title",
-      onClick: function () {
-        this.toggleDatasetsDisplay();
-      }.bind(this)
-    }, "Datasets"), React.createElement("div", {
-      id: "datasets"
-    }, React.createElement("div", {
-      id: "catalog_title"
-    }, "Breakdown"), React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, onlineDatasets))), React.createElement("h2", null, "My Own Private Data"), React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, localDatasets))), importInstructions, React.createElement("button", {
-      id: "import_instructions_button",
-      onClick: function () {
-        location.reload();
-      }
-    }, "Import Instructions")), React.createElement(App, {
-      source: this.state.source
-    }));
-  }
-
-  displayImportInstructions() {
+  turnOnDisplayImportInstructions() {
     this.setState({
       displayImportInstructions: true
     });
   }
 
-  renderNewUser() {
+  render() {
     var onlineDatasets = Object.keys(this.state.source_set).map(function (key, i) {
-      return this.printDatasetLink('mysql', key, i, "image");
+      return this.printDatasetLink('mysql', key, i, !this.state.importedOwnData ? "full" : "compact");
     }.bind(this));
-    var importInstructions = this.state.displayImportInstructions ? this.importInstructions() : null;
+    var localDatasets = [];
+    Object.keys(this.state.source_set).forEach(function (key, i) {
+      var link = this.printDatasetLink('lovefield', key, i, "compact");
+      if (link != null) localDatasets.push(link);
+    }.bind(this));
+    var privateDataStyle = {
+      'display': localDatasets.length > 0 ? 'block' : 'none'
+    };
     return React.createElement("div", null, React.createElement("div", {
-      id: "dataset_title",
+      id: "dataset_catalog_context_switch",
       onClick: function () {
         this.toggleDatasetsDisplay();
       }.bind(this)
@@ -258,12 +248,31 @@ class Catalog extends React.Component {
       id: "datasets"
     }, React.createElement("div", {
       id: "catalog_title"
-    }, "Breakdown"), "Breakdown is a visualization tool for data organized as dimensions and measures.  Here are some examples.", React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, onlineDatasets))), React.createElement("div", {
-      id: "try_it",
-      onClick: this.displayImportInstructions.bind(this)
-    }, React.createElement("i", null, "Try it on your own data")), importInstructions), React.createElement(App, {
+    }, "Breakdown"), React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, onlineDatasets))), React.createElement("h2", {
+      style: privateDataStyle
+    }, "My Own Private Data"), React.createElement("table", null, React.createElement("tbody", null, React.createElement("tr", null, localDatasets))), React.createElement(ImportInstructions, {
+      importedOwnData: this.state.importedOwnData,
+      dbIsOpen: lovefield.db != null,
+      displayImportInstructions: this.state.displayImportInstructions,
+      turnOnDisplayImportInstructions: this.turnOnDisplayImportInstructions.bind(this),
+      handleFileUpload: this.handleFileUpload.bind(this)
+    })), React.createElement(Breakdown, {
       source: this.state.source
     }));
   }
 
 }
+
+function renderRoot() {
+  var domContainerNode = window.document.getElementById('root'); //  ReactDOM.unmountComponentAtNode(domContainerNode);
+
+  ReactDOM.render(React.createElement(Catalog, null), domContainerNode);
+}
+
+$(document).ready(function () {
+  lovefield = new Lovefield();
+  lovefield.init();
+  mysql = new Mysql();
+  mysql.init();
+  Database = mysql; // renderRoot();
+});

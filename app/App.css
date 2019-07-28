@@ -76,8 +76,9 @@ td.measure {
   vertical-align: top;
 }
 
-#dataset_title {
+#dataset_catalog_context_switch {
   cursor: pointer;
+  display: none;
 }
 
 .dataset_cell {
@@ -134,5 +135,5 @@ body.waiting * {
 }
 
 #import_instructions_button {
-  display: none;
+//  display: none;
 }

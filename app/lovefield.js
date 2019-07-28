@@ -5,7 +5,6 @@ function isNumeric(n) {
 class Lovefield  {
 
     init() {
-
         this.dbName = 'breakdown';
         this.dbVersion = 1;
         this.tableName = '';
@@ -29,11 +28,12 @@ class Lovefield  {
         //
         // Create the list of sources.
         //
-        this.breakdown_sources = [];
-        var sources = s.split("\n");
-        sources.forEach(function(key,i) {
-           this.breakdown_sources.push(key);
-        }.bind(this));
+        this.breakdown_sources = JSON.parse(s);
+
+        //var sources = s.split("\n");
+        //sources.forEach(function(key,i) {
+        //   this.breakdown_sources.push(key);
+        //}.bind(this));
     }
 
     buildSchema() {
@@ -59,7 +59,9 @@ class Lovefield  {
         this.readBreakdownSources();
         this.buildSchema();
 
+        // Set progress cursor.
         $('body').addClass('waiting');
+
         $('#import_instructions').css('display', 'none');
         $('#import_instructions_button').css('display', 'block');
 
@@ -67,17 +69,21 @@ class Lovefield  {
         this.schemaBuilder.connect().then(function(_db) {
             this.db = _db;
             $('#grayed_out').remove();
-            $('body').removeClass('waiting');
-
 
             if (data != null) {
                 var lfTable = this.db.getSchema().table(source.fact_table);
                 this.load(lfTable, data, source.aggregates.split(","), function() {
+                // Stop progress cursor.
+                $('body').removeClass('waiting');
+
                 if (fnSuccess)
                    fnSuccess();
                 });
-            } else if (fnSuccess)
-              fnSuccess();
+            } else if (fnSuccess) {
+                // Stop progress cursor.
+                $('body').removeClass('waiting');
+                fnSuccess();
+            }
 
         }.bind(this));
     }
@@ -160,11 +166,11 @@ class Lovefield  {
 
     addBreakdownSource (sourceName, headerArray, lineArray) {
        var tableName = sourceName + "_fact";
-       var current_list = localStorage.getItem('breakdown_sources');
-       if (current_list == null)
-         current_list = '';
-       else
-         current_list += "\n";
+
+       var current_list = [];
+       var s = localStorage.getItem('breakdown_sources');
+       if (s != null)
+         current_list = JSON.parse(s);
 
        //
        // Guess column types from the first line.
@@ -215,19 +221,17 @@ class Lovefield  {
                    aggregates: aggregates.join(','),
                    page_title: 'Breakdown: ' + sourceName
               };
-       var sourceJson = JSON.stringify(sourceObj);
 
-       var breakdown_sources = current_list + sourceJson;
+       current_list.push(sourceObj);
+       var breakdown_sources = JSON.stringify(current_list);
        localStorage.setItem('breakdown_sources', breakdown_sources);
 
        this.incrementDBVersion();
 
-       return sourceJson;
-
+       return sourceObj
      }
 
-    createTable(sourceJson) {
-        var source = JSON.parse(sourceJson);
+    createTable(source) {
         var factTable = this.schemaBuilder.createTable(source.fact_table);
         var typeArray = source.types.split(',');
 
@@ -251,25 +255,9 @@ class Lovefield  {
 
       this.guessColumnTypes(this.import_line, this.import_header);
 
-      this.continueImport();
-
-      // To start to allow editing of the schema.  Not sure it's a good idea any more.
-      // Instead, just make each number column a measure, and the rest are dimensions.
-      // If dimCount > 1500, you can't click on it.
-      // So there's no need to exclude any column as too granular.
-      // If you are using a summary table, you have already removed any granular columns.
-      // So let the user control the app by changing the input.
-      return;
-
-      $("#import_status").html(this.import_header.join("<BR />"));
-
-      $("#continue_import_button").css('display', 'block');
-    }
-
-    continueImport() {
       this.import_source = this.addBreakdownSource(this.import_source, this.import_header, this.import_line);
       this.init();
-      this.connect(this.import_data, JSON.parse(this.import_source), this.import_fnSuccess);
+      this.connect(this.import_data, this.import_source, this.import_fnSuccess);
     }
 
 
