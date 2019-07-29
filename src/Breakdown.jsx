@@ -57,13 +57,12 @@ class Banner extends React.Component {
   }
 }
 
-class App extends React.Component {
+class Breakdown extends React.Component {
   constructor(props, context) {
     super(props, context);
 
     this.dimValues = {};
     this.filterStack = [];
-//    this.source_set = {};
 
 
     this.state = {
@@ -72,12 +71,10 @@ class App extends React.Component {
            name: '',
            fact_table: '',
            summary_table: '',
-           dimensions: '',
+           dimensions: [],
            dim_metadata_table: '',
            dim_metadata: {},
-           d_array: [],
-           measures: '',
-           m_array: [],
+           measures: [],
            aggregates: '',
            page_title: ''
        },
@@ -118,15 +115,13 @@ class App extends React.Component {
     report.dimCounts = {};
     report.orderBy = '';
 
-    var dimArray = source.dimensions.split(',');
-    report.groupBy = dimArray[0];
-
+    report.groupBy = source.dimensions[0];
 
     if (source.database != 'mysql') {
 
        lovefield.setSource(source);
 
-       Database.queryCounts(dimArray, this.whereClause(), current_source, function(results) {
+       Database.queryCounts(source.dimensions, this.whereClause(), current_source, function(results) {
        report.dimCounts = results;
        this.setState({
          source: source,
@@ -136,7 +131,7 @@ class App extends React.Component {
 
     } else {
 
-    Database.queryCounts(dimArray, this.whereClause(), current_source, function(results) {
+    Database.queryCounts(source.dimensions, this.whereClause(), current_source, function(results) {
       report.dimCounts = results;
       this.setState({
         source: source,
@@ -172,7 +167,7 @@ class App extends React.Component {
   }
 
     getDimArray() {
-      return   this.state.source.dimensions.split(',');
+      return   this.state.source.dimensions; // .split(',');
   }
 
   whereClause() {
@@ -260,6 +255,7 @@ class App extends React.Component {
     if (isEmptyObject(this.props.source))
       return null;
 
+    $("#dataset_catalog_context_switch").css("display", "block");
 
     //
     // Create the dimension bar on the left side of the page.
@@ -390,23 +386,6 @@ function isEmptyObject(obj) {
     return obj == null || (Object.entries(obj).length === 0 && obj.constructor === Object);
 }
 
-function renderRoot() {
-  var domContainerNode = window.document.getElementById('root');
-//  ReactDOM.unmountComponentAtNode(domContainerNode);
-  ReactDOM.render(<Catalog />, domContainerNode);
-}
 
-$(document).ready (function() {
-
-  lovefield = new Lovefield();
-  lovefield.init();
-
-  mysql = new Mysql();
-  Database = mysql;
-
-  mysql.init();
-
-  // renderRoot();
-});
 
 

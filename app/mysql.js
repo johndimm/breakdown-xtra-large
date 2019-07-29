@@ -13,10 +13,11 @@ Mysql = function() {
 
     this.queryCounts = function(dims, _filters, source, fnSuccess) {
 
-        dims.map(function(key, i) {
-          dims[i] = "count(distinct `" + key + "`) as `" + key + "`";
+        var c = [];
+        dims.forEach(function(key, i) {
+          c.push("count(distinct `" + key + "`) as `" + key + "`");
         });
-        var countDistinct = dims.join(",");
+        var countDistinct = c.join(",");
 
         var whereClause = _filters;
 

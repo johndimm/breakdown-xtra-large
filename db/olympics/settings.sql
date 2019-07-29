@@ -11,7 +11,7 @@ values
   , 'count(*) as Medals'
   , '*'
   , 'Olympic Medals'
-  , 'Which countries and athletes have won the most medals at the Olympic games?'
+  , 'up to the 2014 Winter Games'
   , 'https://www.kaggle.com/the-guardian/olympic-games'
   , 'https://docs.google.com/spreadsheets/d/1obx8JHesu-FGVUKsm6cX-Use9V8PZx-yqJmJHu095DE/edit?usp=sharing'
 );

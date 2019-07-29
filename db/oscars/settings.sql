@@ -11,7 +11,7 @@ values
   , 'count(*)'
   , '*'
   , 'The Academy Awards'
-  , 'What actors and films have received the most Oscars?'
+  , 'Oscars over the years, by actor (director, producer, etc.) and film'
   , 'https://www.kaggle.com/theacademy/academy-awards'
   , 'https://docs.google.com/spreadsheets/d/1zeWD7RUNg3bdZNlMcUtGEmR7VdWQH6UeSjnoLt1BEXI/edit?usp=sharing'
 );

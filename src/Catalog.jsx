@@ -1,3 +1,84 @@
+class ImportInstructions extends React.Component {
+
+  render() {
+    if (! this.props.importedOwnData && ! this.props.displayImportInstructions) {
+      return this.tryIt();
+    } else if (! this.props.importedOwnData && this.props.displayImportInstructions) {
+      return this.importInstructions();
+    } else if (this.props.importedOwnData && this.props.dbIsOpen) {
+      return this.requestReload();
+    } else if (this.props.importedOwnData && ! this.props.dbIsOpen) {
+      return this.importInstructions();
+    }
+  }
+
+  requestReload() {
+     return (
+           <button id="import_instructions_button" onClick={function() {location.reload()}}>import another csv file</button>
+     );
+  }
+
+
+  tryIt() {
+    return (
+      <div id="try_it" onClick={this.props.turnOnDisplayImportInstructions}><i>Try it on your own data</i></div>
+    );
+  }
+
+
+  importInstructions() {
+
+    return (
+    <div id="import_instructions">
+        Breakdown works with public data from cloud or private data on your own
+        computer.  <b>Your data stays on your computer.</b>  This program imports it
+        into a small database system that runs on your computer and all analysis is done locally.
+        The local javascript database is <a
+        href='https://google.github.io/lovefield/'>Lovefield</a> by Google.
+
+        <h3>Import a csv file into your local Lovefield database</h3>
+
+        <div id="import_button">
+        <input type="file" name="files[]" id="fileUpload" onChange={this.props.handleFileUpload}/>
+        </div>
+        <br />
+        <i>Note: your file never leaves your computer</i>
+
+        <h3>Instructions</h3>
+        <ol>
+           <li>get a csv file.  Here's one to try before using one of your own: <a href="data/olympics_local.csv">Olympic Medals</a>
+           </li>
+
+           <li>click the "choose file" button above and import the csv file.
+           </li>
+
+        </ol>
+
+        <h3>What sort of csv files works with breakdown?</h3>
+
+        <ul>
+            <li>the best candidates have text columns (dimensions) and number columns (measures)
+            , the sort of data that would make a good pivot table.
+            </li>
+            <li>for examples, click on the Google Sheets links in the
+            online demo list and download the csv file for the underlying data.
+            </li>
+            <li>
+            the first line determines which columns are metrics (the ones that parse as a number)
+            and which are dimensions (everything else).
+            </li>
+            <li>Lovefield uses IndexedDB which currently
+            has a limit of 50 Meg.
+            </li>
+            </ul>
+       </div>
+    );
+
+  }
+
+}
+
+
 class Catalog extends React.Component {
 
   constructor(props, context) {
@@ -16,7 +97,7 @@ class Catalog extends React.Component {
       };
   }
 
-    componentDidMount() {
+  componentDidMount() {
     //
     // Get mysql sources.
     //
@@ -45,7 +126,7 @@ class Catalog extends React.Component {
     var result = lovefield.getBreakdownSources();
     if (result != null && result.length > 0) {
         for (var i=0; i<result.length; i++) {
-            var r = JSON.parse(result[i]);
+            var r = result[i];
 
             r.database = 'lovefield';
             this.registerSource(r);
@@ -55,53 +136,21 @@ class Catalog extends React.Component {
   }
 
   registerSource(r) {
-    // Fix measures to work as params.
-    r.m_array = r.measures.split(",");
-    r.d_array = r.dimensions.split(",");
-    r.d_array = r.d_array.map(function(key, i) {
-      return "'" + r.d_array[i].trim() + "'";
-    });
+    //
+    // Convert dimensions and measures from comma-separated strings to arrays.
+    //
+    r.dimensions = r.dimensions.split(",");
+    r.measures = r.measures.split(",");
 
     var source_set = this.state.source_set;
     source_set[r.name] = r;
     this.setState({source_set: source_set});
   }
 
-
-  getDimMetadata(source_set_name, dim_metadata_table) {
-    var data = new FormData();
-    data.append ('proc','get_dim_metadata');
-    data.append('param', dim_metadata_table);
-
-    fetch("mysql.php",{
-      method: "POST",
-      body: data
-    })
-      .then(function (response) {
-          return response.json();
-    }).then(function (result) {
-
-      var dim_metadata = {};
-
-      result.forEach(function(key, i) {
-          dim_metadata[key.name] = key.metadata;
-      });
-      this.state.source_set[source_set_name].dim_metadata = dim_metadata;
-
-      // Set source here for one with metadata.
-//      this.setSource(source_set_name);
-
-    }.bind(this)
-    );
-
-  }
-
   setSourceName(key) {
     var source = this.state.source_set[key];
     if (! isEmptyObject(source)) {
       this.setState({source:source, datasetName: key});
-//      if (source.database == 'lovefield')
-//        lovefield.setSource(source.fact_table, null, source.dimensions);
     }
   }
 
@@ -112,86 +161,87 @@ class Catalog extends React.Component {
 
   }
 
-
   printDatasetLink(requestedDatabase, key, i, displayOption) {
 
-          var source = this.state.source_set[key];
+      var source = this.state.source_set[key];
 
-          var page_title = source.page_title;
-          var description = displayOption == 'image' ? source.description : '';
-          var database = source.database;
-          var google_sheet = source.google_sheet;
+      var page_title = source.page_title;
 
-          if (database != requestedDatabase)
-            return null;
+      var database = source.database;
+      var google_sheet = source.google_sheet;
 
-          var img = '';
-          var grayed_out = '';
-          var className = "dataset_cell";
-          var titleText = '';
-          if (displayOption == 'image') {
-            img = (  <img src={key + '.jpg'} width="200" />);
-          } else {
-            img = (<span></span>);
-          }
+      if (database != requestedDatabase)
+        return null;
 
-          var google_sheet = google_sheet != null &&  google_sheet != '' && displayOption != 'image'
-             ? (<div><a  target="_blank" href={google_sheet}>google sheet</a></div>)
-             : ''
-             ;
+      var img = '';
+      var description = '';
+      if (displayOption == 'full') {
+        img = (  <img src={key + '.jpg'} width="200" />);
+        description = source.description;
+      }
 
-          var url = source.url;
+      var grayed_out = '';
+      var className = "dataset_cell";
+      var titleText = '';
 
-          var fields = null;
-          if (source.database == 'lovefield') {
-              fields = source.fields.split(",").map(function(field, i) {
-              return (<li key={i}>{field}</li>)
-            });
-          }
+      var google_sheet = google_sheet != null &&  google_sheet != ''
+         ? (<div><a  target="_blank" href={google_sheet}>google sheet</a></div>)
+         : ''
+         ;
 
-          return (
-            <td key={i} className={className} title={titleText}
-                  onClick={function() {
+      var url = source.url;
 
+      var fields = null;
+      if (source.database == 'lovefield') {
+          fields = source.fields.split(",").map(function(field, i) {
+          return (<li key={i}>{field}</li>)
+        });
+      }
 
-                    //
-                    // If the db is not yet open, open it, and open this source when it's ready.
-                    //
-                    if (database == 'lovefield' && lovefield.db == null) {
-                        lovefield.connect(null, null, function() {
-                           this.getLovefieldSources();
-                           this.toggleDatasetsDisplay();
-                           this.setSourceName(key);
-                         }.bind(this));
+      return (
+        <td key={i} className={className} title={titleText}
+              onClick={function() {
+                //
+                // If the db is not yet open, open it now, and open this source when it's ready.
+                //
+                if (database == 'lovefield' && lovefield.db == null) {
+                    lovefield.connect(null, null, function() {
+                       this.getLovefieldSources();
+                       this.toggleDatasetsDisplay();
+                       this.setSourceName(key);
+                     }.bind(this));
 
-                    } else {
-                        this.setSourceName(key);
-                        this.toggleDatasetsDisplay();
-                    }
+                } else {
+                    this.setSourceName(key);
+                    this.toggleDatasetsDisplay();
+                }
 
-                  }.bind(this)}>
+              }.bind(this)}>
 
-                <div  className='source_title'>
-                  {page_title}
-                </div>
+            <div  className='source_title'>
+              {page_title}
+            </div>
 
-                {img}
-                <div>
-                  <i>{description}</i>
-                </div>
-                {google_sheet}
+            {img}
+            <div>
+              <i>{description}</i>
+            </div>
+            {google_sheet}
 
-                <ul>
-                  {fields}
-                </ul>
-            </td>
-            )
+            <ul>
+              {fields}
+            </ul>
+        </td>
+        )
   }
 
 
     handleFileUpload(event) {
         this.filename = event.target.files[0];
         this.reader.readAsText(this.filename); // fires onload when done.
+
+        // Set progress cursor.
+        $('body').addClass('waiting');
     }
 
     handleFileRead(event) {
@@ -207,170 +257,81 @@ class Catalog extends React.Component {
         lovefield.addSource(sourceName, content, this.getLovefieldSources.bind(this));
     }
 
-    closeDatabase() {
-      location.reload();
-    }
-
-    continueImport() {
-      lovefield.continueImport();
-    }
-
-  importInstructions() {
-
-    return (
-      <div id="import_instructions">
-               Breakdown works with public data from cloud or private data on your own
-               computer.  <b>Your data stays on your computer.</b>  This program imports it
-               into a small database system that runs on your computer and all analysis is done locally.
-               The local javascript database is <a
-               href='https://google.github.io/lovefield/'>Lovefield</a> by Google.
-
-               <h3>Import a csv file into your local Lovefield database</h3>
-
-               <div id="import_button">
-               <input type="file" name="files[]" id="fileUpload" onChange={this.handleFileUpload.bind(this)}/>
-               </div>
-               <br />
-               <i>Note: your file never leaves your computer</i>
-
-               <div id="import_status">
-               </div>
-
-               <button id="continue_import_button" onClick={this.continueImport.bind(this)}>continue import</button>
-
-
-               <h3>Instructions</h3>
-               <ol>
-                   <li>get a csv file.  Here's one to try before using one of your own: <a href="data/olympics_local.csv">Olympic Medals</a>
-                   </li>
-
-                   <li>click the "choose file" button above and import the csv file.
-                   </li>
-
-               </ol>
-
-                       <h3>What sort of csv files works with breakdown?</h3>
-
-
-
-                   <ul>
-                     <li>the best candidates have text columns (dimensions) and number columns (measures)
-                     , the sort of data that would make a good pivot table.
-                     </li>
-                     <li>for examples, click on the Google Sheets links in the
-                     online demo list and download the csv file for the underlying data.
-                     </li>
-                     <li>
-                     the first line determines which columns are metrics (the ones that parse as a number)
-                     and which are dimensions (everything else).
-                     </li>
-                     <li>Lovefield uses IndexedDB which currently
-                     has a limit of 50 Meg.
-                     </li>
-                   </ul>
-       </div>
-    );
-
-  }
-
-  render() {
-      if (this.state.importedOwnData) {
-        return this.renderPowerUser();
-      } else {
-        return this.renderNewUser();
-      }
+   turnOnDisplayImportInstructions() {
+      this.setState({displayImportInstructions: true});
    }
 
-   renderPowerUser() {
-
+  render() {
       var onlineDatasets =
       Object.keys(this.state.source_set).map(function(key, i) {
-            return this.printDatasetLink('mysql', key, i, "name");
+            return this.printDatasetLink('mysql', key, i, ! this.state.importedOwnData ?  "full" : "compact");
         }.bind(this));
 
-      var localDatasets =
-      Object.keys(this.state.source_set).map(function(key, i) {
-            return this.printDatasetLink('lovefield', key, i, "fields");
+      var localDatasets = [];
+      Object.keys(this.state.source_set).forEach(function(key, i) {
+            var link = this.printDatasetLink('lovefield', key, i, "compact");
+            if (link != null)
+              localDatasets.push(link);
         }.bind(this));
 
-      var importInstructions = this.importInstructions();
+      var privateDataStyle = {'display': localDatasets.length > 0
+        ? 'block'
+        : 'none'};
 
       return (
       <div>
-          <div id='dataset_title' onClick={
+        <div id='dataset_catalog_context_switch' onClick={
           function() {
             this.toggleDatasetsDisplay();
           }.bind(this)
-          }>Datasets</div>
+        }>Datasets</div>
 
-          <div id='datasets'>
+        <div id='datasets'>
 
+        <div id="catalog_title">Breakdown</div>
 
-               <div id="catalog_title">Breakdown</div>
+        <table><tbody><tr>
+        {onlineDatasets}
+        </tr></tbody></table>
 
-               <table><tbody><tr>
-               {onlineDatasets}
-               </tr></tbody></table>
+        <h2 style={privateDataStyle}>My Own Private Data</h2>
 
-          <h2>My Own Private Data</h2>
+        <table><tbody><tr>
+        {localDatasets}
+        </tr></tbody></table>
 
-               <table><tbody><tr>
-               {localDatasets}
-               </tr></tbody></table>
+        <ImportInstructions
+         importedOwnData={this.state.importedOwnData}
+         dbIsOpen={lovefield.db != null}
+         displayImportInstructions={this.state.displayImportInstructions}
+         turnOnDisplayImportInstructions={this.turnOnDisplayImportInstructions.bind(this)}
+         handleFileUpload={this.handleFileUpload.bind(this)}/>
 
-           {importInstructions}
-           <button id="import_instructions_button" onClick={function() {location.reload()}}>Import Instructions</button>
+        </div>
 
-
-          </div>
-
-          <App source={this.state.source}/>
+        <Breakdown source={this.state.source}/>
       </div>
       );
    }
 
-   displayImportInstructions() {
-      this.setState({displayImportInstructions: true});
-   }
-
-   renderNewUser() {
-      var onlineDatasets =
-      Object.keys(this.state.source_set).map(function(key, i) {
-            return this.printDatasetLink('mysql', key, i, "image");
-        }.bind(this));
-
-    var importInstructions = this.state.displayImportInstructions
-      ? this.importInstructions()
-      : null;
-
-    return (
-      <div>
-          <div id='dataset_title' onClick={
-          function() {
-            this.toggleDatasetsDisplay();
-          }.bind(this)
-          }>Datasets</div>
-
-          <div id='datasets'>
-
-
-               <div id="catalog_title">Breakdown</div>
-
-               Breakdown is a visualization tool for data organized as dimensions and measures.  Here are some examples.
-
-
-               <table><tbody><tr>
-               {onlineDatasets}
-               </tr></tbody></table>
-
-               <div id="try_it" onClick={this.displayImportInstructions.bind(this)}><i>Try it on your own data</i></div>
-               {importInstructions}
-
-          </div>
-
-          <App source={this.state.source}/>
-      </div>
-    )
-  }
-
 }
+
+
+function renderRoot() {
+  var domContainerNode = window.document.getElementById('root');
+//  ReactDOM.unmountComponentAtNode(domContainerNode);
+  ReactDOM.render(<Catalog />, domContainerNode);
+}
+
+$(document).ready (function() {
+
+  lovefield = new Lovefield();
+  lovefield.init();
+
+  mysql = new Mysql();
+  mysql.init();
+
+  Database = mysql;
+
+  // renderRoot();
+});

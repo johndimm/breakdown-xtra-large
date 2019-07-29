@@ -143,7 +143,7 @@ class Report extends React.Component {
     //
     var minmax = {};
     this.state.lines.forEach(function (row, i) {
-      this.props.measures.split(',').forEach(function (measure, i) {
+      this.props.measures.forEach(function (measure, i) {
         if (!(measure in minmax)) {
           minmax[measure] = {};
           minmax[measure].min = Number.MAX_VALUE;
@@ -169,7 +169,7 @@ class Report extends React.Component {
       var pc0Neg = -1;
       var pcMaxPos = 0;
       var pcMaxNeg = 0;
-      var measure_columns = this.props.measures.split(',').map(function (measure, i) {
+      var measure_columns = this.props.measures.map(function (measure, i) {
         var mval = row[measure]; //
         // Calculate pc for first measure.
         //
@@ -213,7 +213,7 @@ class Report extends React.Component {
   }
 
   generateTotals(minmax) {
-    var measure_columns = this.props.measures.split(',').map(function (measure, i) {
+    var measure_columns = this.props.measures.map(function (measure, i) {
       if (measure == '') return React.createElement("td", {
         key: i
       });else return React.createElement("td", {
@@ -242,7 +242,7 @@ class Report extends React.Component {
     // Create the column headers for metrics.
     //
 
-    var measure_header = this.props.measures.split(',').map(function (measure, i) {
+    var measure_header = this.props.measures.map(function (measure, i) {
       var arrow = '';
 
       if (this.state.orderBy == measure || i == 0 && this.state.orderBy == '2') {

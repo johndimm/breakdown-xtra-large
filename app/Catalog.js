@@ -97,34 +97,21 @@ class Catalog extends React.Component {
 
   registerSource(r) {
     // Fix measures to work as params.
-    r.m_array = r.measures.split(",");
-    r.d_array = r.dimensions.split(",");
-    r.d_array = r.d_array.map(function (key, i) {
-      return "'" + r.d_array[i].trim() + "'";
-    });
-    var source_set = this.state.source_set;
+    //    r.m_array = r.measures.split(",");
+    //    r.d_array = r.dimensions.split(",");
+    //    r.d_array = r.d_array.map(function(key, i) {
+    //      return "'" + r.d_array[i].trim() + "'";
+    //    });
+    var source_set = this.state.source_set; //
+    // Convert dimensions and measures from comma-separated strings to arrays.
+    //
+
+    r.dimensions = r.dimensions.split(",");
+    r.measures = r.measures.split(",");
     source_set[r.name] = r;
     this.setState({
       source_set: source_set
     });
-  }
-
-  getDimMetadata(source_set_name, dim_metadata_table) {
-    var data = new FormData();
-    data.append('proc', 'get_dim_metadata');
-    data.append('param', dim_metadata_table);
-    fetch("mysql.php", {
-      method: "POST",
-      body: data
-    }).then(function (response) {
-      return response.json();
-    }).then(function (result) {
-      var dim_metadata = {};
-      result.forEach(function (key, i) {
-        dim_metadata[key.name] = key.metadata;
-      });
-      this.state.source_set[source_set_name].dim_metadata = dim_metadata;
-    }.bind(this));
   }
 
   setSourceName(key) {

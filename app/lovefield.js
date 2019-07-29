@@ -217,7 +217,6 @@ class Lovefield  {
 
                    dim_metadata_table: '',
                    dim_metadata: {},
-                   d_array: [],                   m_array: [],
                    aggregates: aggregates.join(','),
                    page_title: 'Breakdown: ' + sourceName
               };
