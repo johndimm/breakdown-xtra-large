@@ -1,5 +1,5 @@
-drop table if exists breakdown_sources;
-create table breakdown_sources
+drop table if exists breakdown_datasets;
+create table breakdown_datasets
 (
   name varchar(64),
   fact_table varchar(255),

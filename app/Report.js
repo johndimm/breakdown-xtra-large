@@ -70,7 +70,7 @@ class Report extends React.Component {
       lines: [],
       orderBy: '2',
       sortDir: 'DESC',
-      source: ''
+      dataset: ''
     };
   } //  componentDidMount() {
   //    this.componentWillReceiveProps(this.props);
@@ -84,14 +84,14 @@ class Report extends React.Component {
     //    if (newProps.groupBy == null) //  || newProps.groupBy == this.props.groupBy)
     //      return;
     //  return;
-    //   if (newProps.source != this.state.source) {
-    //     this.setState({source: newProps.source, orderBy: '2', sortDir: 'DESC'});
+    //   if (newProps.dataset != this.state.dataset) {
+    //     this.setState({dataset: newProps.dataset, orderBy: '2', sortDir: 'DESC'});
     //   }
     var data = new FormData();
     data.append('proc', 'breakdown');
     data.append('whereClause', newProps.whereClause);
     data.append('groupBy', newProps.groupBy);
-    data.append('source', newProps.source);
+    data.append('dataset', newProps.dataset);
     data.append('aggregates', newProps.aggregates);
     var orderBy = this.state.orderBy;
     if (orderBy != '') orderBy += ' ' + this.state.sortDir;
@@ -100,7 +100,7 @@ class Report extends React.Component {
 
     Database.breakdown(data, function (result) {
       this.setState({
-        source: newProps.source,
+        dataset: newProps.dataset,
         lines: result
       });
       console.log(result[0]);

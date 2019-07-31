@@ -1,9 +1,9 @@
 
-drop procedure if exists get_breakdown_sources;
+drop procedure if exists get_breakdown_datasets;
 delimiter //
-create procedure get_breakdown_sources(_dummy varchar(1))
+create procedure get_breakdown_datasets(_dummy varchar(1))
 begin
-  select * from breakdown_sources;
+  select * from breakdown_datasets;
 end //
 delimiter ;
 
@@ -39,7 +39,7 @@ delimiter ;
 drop procedure if exists breakdown;
 delimiter //
 create procedure breakdown (
-  _source varchar(64),
+  _dataset varchar(64),
   _where text,
   _group_by varchar(255),
   _order_by varchar(255))
@@ -49,8 +49,8 @@ begin
   #
   select fact_table, summary_table, aggregates
     into @fact_table, @summary_table, @aggregates
-  from breakdown_sources
-  where name = _source;
+  from breakdown_datasets
+  where name = _dataset;
 
   #
   # Define this breakdown.
@@ -69,8 +69,8 @@ begin
 		@where_clause,
 		@group_by_clause,
         @order_by_clause, ' limit 2000') as 'cmd'
-    from breakdown_sources
-    where name = _source
+    from breakdown_datasets
+    where name = _dataset
   );
 
   # select @cmd as cmd, _group_by as group_by;
@@ -85,15 +85,15 @@ delimiter ;
 
 drop procedure if exists dim_counts;
 delimiter //
-create procedure dim_counts (_source varchar(64), _where text, _count_distinct text)
+create procedure dim_counts (_dataset varchar(64), _where text, _count_distinct text)
 begin
   #
   # Same for all queries.
   #
   select fact_table, summary_table, aggregates
     into @fact_table, @summary_table, @aggregates
-  from breakdown_sources
-  where name = _source;
+  from breakdown_datasets
+  where name = _dataset;
 
   set @where_clause = (select clause(' where ', _where));
 
@@ -102,8 +102,8 @@ begin
 		"select ", _count_distinct,
 		" from ", @summary_table,
 		' ', @where_clause, ';') as 'cmd'
-    from breakdown_sources
-    where name = _source
+    from breakdown_datasets
+    where name = _dataset
   );
 
   # select @cmd; #  _where, _count_distinct;
@@ -117,15 +117,15 @@ delimiter ;
 
 drop procedure if exists detail;
 delimiter //
-create procedure detail (_source varchar(64), _where text, _orderBy varchar(64), _limit varchar(32))
+create procedure detail (_dataset varchar(64), _where text, _orderBy varchar(64), _limit varchar(32))
 begin
   #
   # Same for all queries.
   #
   select fact_table, fact_table, detail_columns
     into @fact_table, @fact_table, @detail_columns
-  from breakdown_sources
-  where name = _source;
+  from breakdown_datasets
+  where name = _dataset;
 
   #
   # Define this breakdown.
@@ -140,8 +140,8 @@ begin
 		' ', @where_clause,
 		@order_by,
 		_limit) as 'cmd'
-    from breakdown_sources
-    where name = _source
+    from breakdown_datasets
+    where name = _dataset
   );
 
 #  select @cmd;

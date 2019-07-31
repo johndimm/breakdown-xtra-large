@@ -10,7 +10,7 @@ class Lovefield  {
         this.tableName = '';
         // this.FILE_KEY = 'save.json';
         this.HEADER_KEY = 'header.json';
-        this.SOURCES_KEY = 'breakdown_sources';
+        this.SOURCES_KEY = 'breakdown_datasets';
         // this.schemaBuilder;
         this.db = null;
         this.fact;
@@ -21,18 +21,18 @@ class Lovefield  {
     }
 
     readBreakdownSources() {
-        var s = localStorage.getItem('breakdown_sources');
+        var s = localStorage.getItem('breakdown_datasets');
         if (s == null || s == '')
           return;
 
         //
-        // Create the list of sources.
+        // Create the list of datasets.
         //
-        this.breakdown_sources = JSON.parse(s);
+        this.breakdown_datasets = JSON.parse(s);
 
-        //var sources = s.split("\n");
-        //sources.forEach(function(key,i) {
-        //   this.breakdown_sources.push(key);
+        //var datasets = s.split("\n");
+        //datasets.forEach(function(key,i) {
+        //   this.breakdown_datasets.push(key);
         //}.bind(this));
     }
 
@@ -42,12 +42,12 @@ class Lovefield  {
         //
         // Create the tables.
         //
-        this.breakdown_sources.forEach(function(key,i) {
+        this.breakdown_datasets.forEach(function(key,i) {
            this.createTable(key);
         }.bind(this));
     }
 
-    connect(data, source, fnSuccess) {
+    connect(data, dataset, fnSuccess) {
         //
         // Connect and open the database.
         //
@@ -71,8 +71,8 @@ class Lovefield  {
             $('#grayed_out').remove();
 
             if (data != null) {
-                var lfTable = this.db.getSchema().table(source.fact_table);
-                this.load(lfTable, data, source.aggregates.split(","), function() {
+                var lfTable = this.db.getSchema().table(dataset.fact_table);
+                this.load(lfTable, data, dataset.aggregates.split(","), function() {
                 // Stop progress cursor.
                 $('body').removeClass('waiting');
 
@@ -128,14 +128,14 @@ class Lovefield  {
       localStorage.setItem('lovefield_db_version', v);
     }
 
-    setSource(source) {
+    setSource(dataset) {
       // if (this.db != null)
-        this.fact = this.db.getSchema().table(source.fact_table);
+        this.fact = this.db.getSchema().table(dataset.fact_table);
     }
 
 
     getBreakdownSources() {
-       return this.breakdown_sources;
+       return this.breakdown_datasets;
     }
 
     guessColumnTypes(lineArray, headerArray) {
@@ -164,11 +164,11 @@ class Lovefield  {
         }.bind(this));
     }
 
-    addBreakdownSource (sourceName, headerArray, lineArray) {
-       var tableName = sourceName + "_fact";
+    addBreakdownSource (datasetName, headerArray, lineArray) {
+       var tableName = datasetName + "_fact";
 
        var current_list = [];
-       var s = localStorage.getItem('breakdown_sources');
+       var s = localStorage.getItem('breakdown_datasets');
        if (s != null)
          current_list = JSON.parse(s);
 
@@ -204,9 +204,9 @@ class Lovefield  {
 
        measures.push("count");
 
-       var sourceObj = {
+       var datasetObj = {
                    database: 'lovefield',
-                   name: sourceName,
+                   name: datasetName,
                    fact_table: tableName, // this.datasetName, // 'fact',
                    summary_table: tableName, // 'fact',
                    dimensions: dimensions.join(','), // 'Sport,Discipline,Athlete,Event,Country,Medal,Year,Season,Gender,City',
@@ -218,23 +218,23 @@ class Lovefield  {
                    dim_metadata_table: '',
                    dim_metadata: {},
                    aggregates: aggregates.join(','),
-                   page_title: 'Breakdown: ' + sourceName
+                   page_title: 'Breakdown: ' + datasetName
               };
 
-       current_list.push(sourceObj);
-       var breakdown_sources = JSON.stringify(current_list);
-       localStorage.setItem('breakdown_sources', breakdown_sources);
+       current_list.push(datasetObj);
+       var breakdown_datasets = JSON.stringify(current_list);
+       localStorage.setItem('breakdown_datasets', breakdown_datasets);
 
        this.incrementDBVersion();
 
-       return sourceObj
+       return datasetObj
      }
 
-    createTable(source) {
-        var factTable = this.schemaBuilder.createTable(source.fact_table);
-        var typeArray = source.types.split(',');
+    createTable(dataset) {
+        var factTable = this.schemaBuilder.createTable(dataset.fact_table);
+        var typeArray = dataset.types.split(',');
 
-        var fieldArray = source.fields.split(",");
+        var fieldArray = dataset.fields.split(",");
         fieldArray.forEach(function(columnName, i) {
            var fieldType = typeArray[i] == 'NUMBER' ? lf.Type.NUMBER : lf.Type.STRING;
            factTable.addColumn(columnName, fieldType);
@@ -242,8 +242,8 @@ class Lovefield  {
     }
 
 
-    addSource(sourceName, content, fnSuccess) {
-      this.import_source = sourceName;
+    addSource(datasetName, content, fnSuccess) {
+      this.import_dataset = datasetName;
       this.import_data = $.csv.toObjects(content);
       this.import_fnSuccess = fnSuccess;
       this.import_header = Object.keys(this.import_data[0]);
@@ -254,13 +254,13 @@ class Lovefield  {
 
       this.guessColumnTypes(this.import_line, this.import_header);
 
-      this.import_source = this.addBreakdownSource(this.import_source, this.import_header, this.import_line);
+      this.import_dataset = this.addBreakdownSource(this.import_dataset, this.import_header, this.import_line);
       this.init();
-      this.connect(this.import_data, this.import_source, this.import_fnSuccess);
+      this.connect(this.import_data, this.import_dataset, this.import_fnSuccess);
     }
 
 
-    queryCounts(dims, _filters, source, fnSuccess) {
+    queryCounts(dims, _filters, dataset, fnSuccess) {
       if (this.db == null)
         return;
 

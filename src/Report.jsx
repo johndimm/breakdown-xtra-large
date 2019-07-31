@@ -66,7 +66,7 @@ class Report extends React.Component {
         lines: [],
         orderBy: '2',
         sortDir: 'DESC',
-        source: ''
+        dataset: ''
     };
   }
 
@@ -84,15 +84,15 @@ class Report extends React.Component {
 
   //  return;
 
- //   if (newProps.source != this.state.source) {
- //     this.setState({source: newProps.source, orderBy: '2', sortDir: 'DESC'});
+ //   if (newProps.dataset != this.state.dataset) {
+ //     this.setState({dataset: newProps.dataset, orderBy: '2', sortDir: 'DESC'});
  //   }
 
     var data = new FormData();
     data.append( 'proc', 'breakdown' );
     data.append( 'whereClause', newProps.whereClause);
     data.append( 'groupBy', newProps.groupBy);
-    data.append( 'source', newProps.source);
+    data.append( 'dataset', newProps.dataset);
     data.append( 'aggregates', newProps.aggregates);
 
     var orderBy = this.state.orderBy;
@@ -104,7 +104,7 @@ class Report extends React.Component {
 
     // Get the same info from lovefield or mysql.
     Database.breakdown(data, function(result) {
-      this.setState({source: newProps.source, lines: result});
+      this.setState({dataset: newProps.dataset, lines: result});
       console.log(result[0]);
     }.bind(this));
   }

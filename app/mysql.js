@@ -11,7 +11,7 @@ Mysql = function() {
         }, 100);
     }
 
-    this.queryCounts = function(dims, _filters, source, fnSuccess) {
+    this.queryCounts = function(dims, _filters, dataset, fnSuccess) {
 
         var c = [];
         dims.forEach(function(key, i) {
@@ -25,7 +25,7 @@ Mysql = function() {
         data.append ('proc','dim_counts');
         data.append('countDistinct',countDistinct);
         data.append('whereClause', whereClause);
-        data.append('source', source);
+        data.append('dataset', dataset);
 
         fetch("mysql.php",{
           method: "POST",
@@ -54,7 +54,7 @@ Mysql = function() {
 
     this.getBreakdownSources = function(fnSuccess) {
         var data = new FormData();
-        data.append ('proc','get_breakdown_sources');
+        data.append ('proc','get_breakdown_datasets');
         data.append('param','');
 
         fetch("mysql.php",{
@@ -74,7 +74,7 @@ Mysql = function() {
         data.append( 'whereClause', params.whereClause);
         data.append( 'format', 'csv' );
         data.append( 'limit', ' limit ' + params.limit );
-        data.append('source', params.source);
+        data.append('dataset', params.dataset);
 
         var orderBy = params.orderBy;
         if (orderBy != '')

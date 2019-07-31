@@ -38,7 +38,7 @@ function dbUpdate($connection, $sql) {
 }
 
 
-function breakdown($db, $source) {
+function breakdown($db, $dataset) {
     // The breakdown stored procedure has three params.
     $whereClause = postParam('whereClause', '');
     $groupBy = postParam('groupBy', 'city');
@@ -46,12 +46,12 @@ function breakdown($db, $source) {
 
     // echo $whereClause . "\n";
 
-    $sql = "call breakdown(:source, :whereClause, :groupBy, :orderBy)";
+    $sql = "call breakdown(:dataset, :whereClause, :groupBy, :orderBy)";
 
     // Call the breakdown stored procedure in mysql.
     $sth = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     $result = $sth->execute(array(
-      ':source' => $source,
+      ':dataset' => $dataset,
       ':whereClause' => $whereClause,
       ':groupBy' => $groupBy,
       ':orderBy' => $orderBy
@@ -74,7 +74,7 @@ function generic($db, $proc) {
     outputX($sth);
 }
 
-function dimCounts($db, $source) {
+function dimCounts($db, $dataset) {
     // echo "dimCounts";
     // return;
 
@@ -82,13 +82,13 @@ function dimCounts($db, $source) {
     $countDistinct = postParam('countDistinct', "count(distinct genres) as genres");
     # ,count(distinct original_language) as original_language,count(distinct production_countries) as production_countries,count(distinct spoken_languages) as spoken_languages,count(distinct status) as status,count(distinct video) as video,count(distinct vote_average) as vote_average");
 
-    $sql = "call dim_counts(:source, :whereClause, :countDistinct)";
+    $sql = "call dim_counts(:dataset, :whereClause, :countDistinct)";
 
     // echo $sql;
 
     $sth = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     $result = $sth->execute(array(
-      ':source' => $source,
+      ':dataset' => $dataset,
       ':whereClause' => $whereClause,
       ':countDistinct' => $countDistinct
     ));
@@ -96,16 +96,16 @@ function dimCounts($db, $source) {
     outputX($sth);
 }
 
-function detail($db, $source) {
+function detail($db, $dataset) {
     $whereClause = postParam('whereClause', 'Country="Estonia" and Sport="Rowing"');
     $orderBy = postParam('orderBy', '');
     $limit = postParam('limit', ' limit 20 ');
 
-    $sql = "call detail(:source, :whereClause, :orderBy, :limit)";
+    $sql = "call detail(:dataset, :whereClause, :orderBy, :limit)";
 
     $sth = $db->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
     $result = $sth->execute(array(
-      ':source' => $source,
+      ':dataset' => $dataset,
       ':whereClause' => $whereClause,
       ':orderBy' => $orderBy,
       ':limit' => $limit
@@ -152,17 +152,17 @@ function main() {
   // echo "mysql php starts";
   $db = dbInit();
   $proc = postParam('proc', 'dim_counts');
-  $source = postParam('source', 'oscars');
+  $dataset = postParam('dataset', 'oscars');
 
   switch ($proc) {
     case 'breakdown':
-      breakdown($db, $source);
+      breakdown($db, $dataset);
       break;
     case 'dim_counts':
-      dimCounts($db, $source);
+      dimCounts($db, $dataset);
       break;
     case 'detail':
-      detail($db, $source);
+      detail($db, $dataset);
       break;
     default:
       generic($db, $proc);

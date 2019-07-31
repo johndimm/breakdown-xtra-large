@@ -88,10 +88,10 @@ class Catalog extends React.Component {
     this.reader = new FileReader();
     this.reader.onload = this.handleFileRead.bind(this);
 
-    // this.source_set = {};
+    // this.dataset_set = {};
     this.state = {
-      source: {},
-      source_set: {},
+      dataset: {},
+      dataset_set: {},
       importedOwnData: false,
       displayImportInstructions: false
       };
@@ -99,7 +99,7 @@ class Catalog extends React.Component {
 
   componentDidMount() {
     //
-    // Get mysql sources.
+    // Get mysql datasets.
     //
       mysql.getBreakdownSources(function(result) {
           for (var i=0; i<result.length; i++) {
@@ -119,7 +119,7 @@ class Catalog extends React.Component {
 
   getLovefieldSources() {
     //
-    // Get lovefield sources, from localStorage (fast).
+    // Get lovefield datasets, from localStorage (fast).
     //
     lovefield.readBreakdownSources();
 
@@ -142,15 +142,15 @@ class Catalog extends React.Component {
     r.dimensions = r.dimensions.split(",");
     r.measures = r.measures.split(",");
 
-    var source_set = this.state.source_set;
-    source_set[r.name] = r;
-    this.setState({source_set: source_set});
+    var dataset_set = this.state.dataset_set;
+    dataset_set[r.name] = r;
+    this.setState({dataset_set: dataset_set});
   }
 
   setSourceName(key) {
-    var source = this.state.source_set[key];
-    if (! isEmptyObject(source)) {
-      this.setState({source:source, datasetName: key});
+    var dataset = this.state.dataset_set[key];
+    if (! isEmptyObject(dataset)) {
+      this.setState({dataset:dataset, datasetName: key});
     }
   }
 
@@ -163,12 +163,12 @@ class Catalog extends React.Component {
 
   printDatasetLink(requestedDatabase, key, i, displayOption) {
 
-      var source = this.state.source_set[key];
+      var dataset = this.state.dataset_set[key];
 
-      var page_title = source.page_title;
+      var page_title = dataset.page_title;
 
-      var database = source.database;
-      var google_sheet = source.google_sheet;
+      var database = dataset.database;
+      var google_sheet = dataset.google_sheet;
 
       if (database != requestedDatabase)
         return null;
@@ -177,7 +177,7 @@ class Catalog extends React.Component {
       var description = '';
       if (displayOption == 'full') {
         img = (  <img src={key + '.jpg'} width="200" />);
-        description = source.description;
+        description = dataset.description;
       }
 
       var grayed_out = '';
@@ -189,11 +189,11 @@ class Catalog extends React.Component {
          : ''
          ;
 
-      var url = source.url;
+      var url = dataset.url;
 
       var fields = null;
-      if (source.database == 'lovefield') {
-          fields = source.fields.split(",").map(function(field, i) {
+      if (dataset.database == 'lovefield') {
+          fields = dataset.fields.split(",").map(function(field, i) {
           return (<li key={i}>{field}</li>)
         });
       }
@@ -202,7 +202,7 @@ class Catalog extends React.Component {
         <td key={i} className={className} title={titleText}
               onClick={function() {
                 //
-                // If the db is not yet open, open it now, and open this source when it's ready.
+                // If the db is not yet open, open it now, and open this dataset when it's ready.
                 //
                 if (database == 'lovefield' && lovefield.db == null) {
                     lovefield.connect(null, null, function() {
@@ -218,7 +218,7 @@ class Catalog extends React.Component {
 
               }.bind(this)}>
 
-            <div  className='source_title'>
+            <div  className='dataset_title'>
               {page_title}
             </div>
 
@@ -252,9 +252,9 @@ class Catalog extends React.Component {
         // var data = $.csv.toObjects(content);
 
         var name = this.filename.name;
-        var sourceName = name.substring(0, name.indexOf('.'));
+        var datasetName = name.substring(0, name.indexOf('.'));
 
-        lovefield.addSource(sourceName, content, this.getLovefieldSources.bind(this));
+        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
     }
 
    turnOnDisplayImportInstructions() {
@@ -263,12 +263,12 @@ class Catalog extends React.Component {
 
   render() {
       var onlineDatasets =
-      Object.keys(this.state.source_set).map(function(key, i) {
+      Object.keys(this.state.dataset_set).map(function(key, i) {
             return this.printDatasetLink('mysql', key, i, ! this.state.importedOwnData ?  "full" : "compact");
         }.bind(this));
 
       var localDatasets = [];
-      Object.keys(this.state.source_set).forEach(function(key, i) {
+      Object.keys(this.state.dataset_set).forEach(function(key, i) {
             var link = this.printDatasetLink('lovefield', key, i, "compact");
             if (link != null)
               localDatasets.push(link);
@@ -309,7 +309,7 @@ class Catalog extends React.Component {
 
         </div>
 
-        <Breakdown source={this.state.source}/>
+        <Breakdown dataset={this.state.dataset}/>
       </div>
       );
    }

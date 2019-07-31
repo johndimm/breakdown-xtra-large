@@ -19,18 +19,18 @@ function isEmpty(obj) {
 class Banner extends React.Component {
   render() {
 
-    if (this.props.current_source == null)
+    if (this.props.current_dataset == null)
       return (<div></div>);
 
-    // var source = this.props.source_set[this.props.current_source];
-    var source = this.props.source;
+    // var dataset = this.props.dataset_set[this.props.current_dataset];
+    var dataset = this.props.dataset;
 
     var cell1 = (
       <div>
-        <div className='title_div'>{source.page_title}</div>
-        <div className='subtitle_div'>{source.description}</div>
+        <div className='title_div'>{dataset.page_title}</div>
+        <div className='subtitle_div'>{dataset.description}</div>
         <div className='about_div'>About:&nbsp;
-           <a target="_blank" href={source.url}>datasource</a>
+           <a target="_blank" href={dataset.url}>datadataset</a>
            &nbsp;|&nbsp;
            <a target="_blank" href="https://github.com/johndimm/breakdown">code</a>
          </div>
@@ -66,14 +66,14 @@ class Breakdown extends React.Component {
 
 
     this.state = {
-      source: {
+      dataset: {
            database: 'mysql',
            name: '',
            fact_table: '',
            summary_table: '',
            dimensions: [],
-           dim_metadata_table: '',
-           dim_metadata: {},
+//           dim_metadata_table: '',
+//           dim_metadata: {},
            measures: [],
            aggregates: '',
            page_title: ''
@@ -91,50 +91,50 @@ class Breakdown extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.props.source != newProps.source && newProps.source != null)
-      this.setSource(newProps.source);
+    if (this.props.dataset != newProps.dataset && newProps.dataset != null)
+      this.setSource(newProps.dataset);
   }
 
-  setSource(source) {
+  setSource(dataset) {
 
-    if (isEmptyObject(source))
+    if (isEmptyObject(dataset))
       return false;
 
-    var current_source=source['name'];
-    if (current_source == '')
+    var current_dataset=dataset['name'];
+    if (current_dataset == '')
       return false;
 
-    this.setState({current_source: current_source});
+    this.setState({current_dataset: current_dataset});
 
     this.dimValues = {};
     this.filterStack = [];
-    Database = source.database == 'mysql' ? mysql : lovefield;
+    Database = dataset.database == 'mysql' ? mysql : lovefield;
 
     var report = this.state.report;
     report.filters = {};
     report.dimCounts = {};
     report.orderBy = '';
 
-    report.groupBy = source.dimensions[0];
+    report.groupBy = dataset.dimensions[0];
 
-    if (source.database != 'mysql') {
+    if (dataset.database != 'mysql') {
 
-       lovefield.setSource(source);
+       lovefield.setSource(dataset);
 
-       Database.queryCounts(source.dimensions, this.whereClause(), current_source, function(results) {
+       Database.queryCounts(dataset.dimensions, this.whereClause(), current_dataset, function(results) {
        report.dimCounts = results;
        this.setState({
-         source: source,
+         dataset: dataset,
          report: report
        });
       }.bind(this));
 
     } else {
 
-    Database.queryCounts(source.dimensions, this.whereClause(), current_source, function(results) {
+    Database.queryCounts(dataset.dimensions, this.whereClause(), current_dataset, function(results) {
       report.dimCounts = results;
       this.setState({
-        source: source,
+        dataset: dataset,
         report: report
       });
     }.bind(this));
@@ -158,7 +158,7 @@ class Breakdown extends React.Component {
   }
 
   getDimCounts() {
-    Database.queryCounts(this.getDimArray(), this.whereClause(), this.state.current_source, function(results) {
+    Database.queryCounts(this.getDimArray(), this.whereClause(), this.state.current_dataset, function(results) {
       var report = this.state.report;
       report.dimCounts = results;
       this.setState({report: report});
@@ -167,7 +167,7 @@ class Breakdown extends React.Component {
   }
 
     getDimArray() {
-      return   this.state.source.dimensions; // .split(',');
+      return   this.state.dataset.dimensions; // .split(',');
   }
 
   whereClause() {
@@ -252,7 +252,7 @@ class Breakdown extends React.Component {
 
   render() {
 
-    if (isEmptyObject(this.props.source))
+    if (isEmptyObject(this.props.dataset))
       return null;
 
     $("#dataset_catalog_context_switch").css("display", "block");
@@ -276,8 +276,8 @@ class Breakdown extends React.Component {
       }
 
       var title = '';
-      if (! isEmpty(this.state.source.dim_metadata) && row in this.state.source.dim_metadata)
-        title = this.state.source.dim_metadata[row];
+      if (! isEmpty(this.state.dataset.dim_metadata) && row in this.state.dataset.dim_metadata)
+        title = this.state.dataset.dim_metadata[row];
 
       return (
         <Dimension
@@ -292,7 +292,7 @@ class Breakdown extends React.Component {
           addFilter={this.addFilter.bind(this)}
           slideDim={this.slideDim.bind(this)}
           lastFilter={this.filterStack[this.filterStack.length-1]}
-          source={this.state.current_source}
+          dataset={this.state.current_dataset}
           title={title}
           />
       );
@@ -306,20 +306,20 @@ class Breakdown extends React.Component {
                   whereClause={whereClause}
                   orderBy={orderBy}
 
-                  measures={this.state.source.measures}
-                  aggregates={this.state.source.aggregates}
-                  summary_table={this.state.source.summary_table}
+                  measures={this.state.dataset.measures}
+                  aggregates={this.state.dataset.aggregates}
+                  summary_table={this.state.dataset.summary_table}
 
                   addFilter={this.addFilter.bind(this)}
                   storeDimValues={this.storeDimValues.bind(this)}
                   clearDimValues={this.clearDimValues.bind(this)}
 
-                  source={this.state.current_source}
+                  dataset={this.state.current_dataset}
            />
     );
 
     var detail =  // (<div></div>);
-     (<Detail whereClause={whereClause} orderBy={orderBy} source={this.state.current_source}/>);
+     (<Detail whereClause={whereClause} orderBy={orderBy} dataset={this.state.current_dataset}/>);
 
     //
     // Always keep the Report, so we don't have to reread the data if you switch back to summary.
@@ -338,8 +338,8 @@ class Breakdown extends React.Component {
     //
     return (
       <div id="breakdown">
-          <Banner current_source={this.state.current_source}
-            source={this.props.source}
+          <Banner current_dataset={this.state.current_dataset}
+            dataset={this.props.dataset}
             toggleSummary={this.toggleSummary.bind(this)}
             show_summary={this.state.report.show_summary}
             />
@@ -365,19 +365,19 @@ class Breakdown extends React.Component {
 
 function getRequestedSource() {
     //
-    // Search URL Params for param named 'source'.
+    // Search URL Params for param named 'dataset'.
     //
     var param = window.location.search.replace("?",'');
     var pairs = param.split("&");
-    var source = '';
+    var dataset = '';
     pairs.forEach(function(key, i) {
        var parts = key.split("=");
-       if (parts[0] == 'source') {
-          source = parts[1];
+       if (parts[0] == 'dataset') {
+          dataset = parts[1];
        }
      } .bind(this));
 
-     return source;
+     return dataset;
 }
 
 

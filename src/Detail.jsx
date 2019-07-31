@@ -41,7 +41,7 @@ class Detail extends React.Component {
     var header = lines[0].split("\t");
     lines.splice(0,1);
 
-    var filename = 'breakdown_' + this.props.source + '_' + this.props.whereClause + '.csv';
+    var filename = 'breakdown_' + this.props.dataset + '_' + this.props.whereClause + '.csv';
 
     var header = '';
     this.state.header.forEach(function(key, i) { header += key + "\t"});
@@ -64,7 +64,7 @@ class Detail extends React.Component {
     var params = {
       whereClause : newProps.whereClause,
       limit: this.state.limit,
-      source: this.props.source,
+      dataset: this.props.dataset,
       orderBy: this.state.orderBy,
       sortDir: this.state.sortDir
     };
