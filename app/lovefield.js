@@ -2,6 +2,8 @@ function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+function pad(n){return n<10 ? '0'+n : n}
+
 class Lovefield  {
 
     init() {
@@ -29,11 +31,6 @@ class Lovefield  {
         // Create the list of datasets.
         //
         this.breakdown_datasets = JSON.parse(s);
-
-        //var datasets = s.split("\n");
-        //datasets.forEach(function(key,i) {
-        //   this.breakdown_datasets.push(key);
-        //}.bind(this));
     }
 
     buildSchema() {
@@ -88,6 +85,32 @@ class Lovefield  {
         }.bind(this));
     }
 
+    xformMint(obj) {
+      // "Date","Description","Original Description","Amount","Transaction Type","Category","Account Name","Labels","Notes"
+      //      var cols = "Account,Category,Description,Year,Month,Date,Labels,Notes,Amount";
+
+        if (!this.isMint) {
+          return obj;
+        }
+
+        var date = new Date(obj["Date"]);
+        var year = date.getFullYear();
+        var month = pad(date.getMonth() + 1);
+        var day = pad(date.getDate());
+
+        var out = {};
+        out["Account"] = obj["Account Name"];
+        out["Category"] = obj["Category"];
+        out["Description"] = obj["Description"];
+        out["Year"] = year.toString();
+        out["Month"] = year + '-' + month;
+        out["Date"] = year + '-' + month + '-' + day;
+        out["Labels"] = obj["Labels"];
+        out["Notes"] = obj["Notes"];
+        out["Amount"] = obj["Amount"] * (obj["Transaction Type"] == 'debit' ? -1 : 1);
+
+        return out;
+    }
 
      load(factTable, data, aggregates, fnSuccess) {
        this.db.delete().from(factTable).exec();
@@ -102,8 +125,11 @@ class Lovefield  {
                 obj[key] = val;
               }
             });
+
+            var obj_fixed = this.xformMint(obj);
+
             //  obj.Funding = parseFloat(obj.Funding);
-            return factTable.createRow(obj);
+            return factTable.createRow(obj_fixed);
           }, this);
 
         var q1 = this.db.
@@ -237,7 +263,13 @@ class Lovefield  {
         var fieldArray = dataset.fields.split(",");
         fieldArray.forEach(function(columnName, i) {
            var fieldType = typeArray[i] == 'NUMBER' ? lf.Type.NUMBER : lf.Type.STRING;
+
+           //
+           // Assign column name.
+           //
+          // var col_cleaned = columnName.replace(/[^a-zA-Z0-9]/gmi, "");
            factTable.addColumn(columnName, fieldType);
+          // factTable[col_cleaned].name = columnName;
         });
     }
 
@@ -247,12 +279,29 @@ class Lovefield  {
       this.import_data = $.csv.toObjects(content);
       this.import_fnSuccess = fnSuccess;
       this.import_header = Object.keys(this.import_data[0]);
+      this.isMint = false;
 
-      this.import_line = this.import_header.map(function(key, i) {
-        return this.import_data[1][key];
-      }.bind(this));
+      //
+      // Special handling for data from Mint.
+      //
+      var mintCols = ["Date","Description","Original Description","Amount","Transaction Type","Category","Account Name","Labels","Notes"];
+      if (mintCols.join(",") == this.import_header.join(",")) {
+        var cols = "Account,Category,Description,Year,Month,Date,Labels,Notes,Amount";
+        this.import_header = cols.split(",");
+        var types = "STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,NUMBER";
+        this.types = types.split(",");
+        this.isMint = true;
+      } else {
+        this.import_line = this.import_header.map(function(key, i) {
+          return this.import_data[1][key];
+        }.bind(this));
 
-      this.guessColumnTypes(this.import_line, this.import_header);
+//        this.import_header.forEach(function(key,i) {
+//            this.import_header[i] = this.import_header[i].replace(/[^a-zA-Z0-9]/gmi, "");
+//        }.bind(this));
+
+        this.guessColumnTypes(this.import_line, this.import_header);
+      }
 
       this.import_dataset = this.addBreakdownSource(this.import_dataset, this.import_header, this.import_line);
       this.init();
@@ -321,20 +370,6 @@ class Lovefield  {
         var _filters = data.get('whereClause');
         var orderBy = data.get('orderBy');
         var aggregates = data.get('aggregates');
-
-        // Start creating the select statement.
-        /*
-        var parts = [];
-        var db = this.db;
-        var fact = this.fact;
-        parts.push('db.select( fact(groupBy)');
-        if (aggregates != 'undefined')
-          parts.push(aggregates);
-        parts.push("lf.fn.count('') )");
-        var dynamic = parts.join(",");
-        this.select = eval(dynamic);
-        */
-
 
         var fields = [];
         fields.push(this.fact[groupBy]);
