@@ -87,7 +87,7 @@ class Breakdown extends React.Component {
       }
     };
 
-    $('head').append("<style id='grayed_out'> .grayed_out { color: #AAAAAA } </style>");
+//    $('head').append("<style id='grayed_out'> .grayed_out { color: #AAAAAA } </style>");
   }
 
   componentWillReceiveProps(newProps) {
@@ -364,20 +364,24 @@ class Breakdown extends React.Component {
 }
 
 function getRequestedSource() {
-    //
-    // Search URL Params for param named 'dataset'.
+    return urlparam('dataset', '');
+}
+
+function urlparam(key, defaultValue) {
+      //
+    // Search URL Params for param named key.
     //
     var param = window.location.search.replace("?",'');
     var pairs = param.split("&");
-    var dataset = '';
-    pairs.forEach(function(key, i) {
-       var parts = key.split("=");
-       if (parts[0] == 'dataset') {
-          dataset = parts[1];
+    var val = '';
+    pairs.forEach(function(pair, i) {
+       var parts = pair.split("=");
+       if (parts[0] == key) {
+          val = parts[1];
        }
-     } .bind(this));
+     });
 
-     return dataset;
+     return val;
 }
 
 

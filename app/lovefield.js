@@ -4,6 +4,54 @@ function isNumeric(n) {
 
 function pad(n){return n<10 ? '0'+n : n}
 
+function clean(s) {
+  return s.replace(/[^a-zA-Z0-9]/gmi, "");
+}
+
+var displayName = {};
+
+
+class Datasets {
+
+    init() {
+        this.ds = {};
+        var s = localStorage.getItem('breakdown_datasets');
+        if (s == null || s == '')
+          return;
+        this.ds = JSON.parse(s);
+        return;
+
+        //
+        // Create the list of datasets.
+        //
+        var datasets = JSON.parse(s);
+
+
+        this.ds = {};
+        datasets.forEach(function(d, i) {
+           this.ds[d.name] = d;
+        }.bind(this));
+
+    }
+
+    breakdown_datasets() {
+      return  Object.keys(this.ds).map(function(key, i) {
+        return this.ds[key];
+      }.bind(this))
+    }
+
+    add(datasetObj) {
+      this.ds[datasetObj.name] = datasetObj;
+    }
+
+    save() {
+      localStorage.setItem('breakdown_datasets', JSON.stringify(this.ds));
+    }
+
+
+}
+
+
 class Lovefield  {
 
     init() {
@@ -20,18 +68,11 @@ class Lovefield  {
         this.header = null;
         this.types = [];
         this.data = null;
+
+        this.datasets = new Datasets();
+        this.datasets.init();
     }
 
-    readBreakdownSources() {
-        var s = localStorage.getItem('breakdown_datasets');
-        if (s == null || s == '')
-          return;
-
-        //
-        // Create the list of datasets.
-        //
-        this.breakdown_datasets = JSON.parse(s);
-    }
 
     buildSchema() {
         this.schemaBuilder = lf.schema.create(this.dbName, this.getDBVersion());
@@ -39,7 +80,7 @@ class Lovefield  {
         //
         // Create the tables.
         //
-        this.breakdown_datasets.forEach(function(key,i) {
+        this.datasets.breakdown_datasets().forEach(function(key,i) {
            this.createTable(key);
         }.bind(this));
     }
@@ -53,7 +94,7 @@ class Lovefield  {
         if (this.db != null)
           return;
 
-        this.readBreakdownSources();
+        this.datasets.init();
         this.buildSchema();
 
         // Set progress cursor.
@@ -70,11 +111,11 @@ class Lovefield  {
             if (data != null) {
                 var lfTable = this.db.getSchema().table(dataset.fact_table);
                 this.load(lfTable, data, dataset.aggregates.split(","), function() {
-                // Stop progress cursor.
-                $('body').removeClass('waiting');
+                    // Stop progress cursor.
+                    $('body').removeClass('waiting');
 
-                if (fnSuccess)
-                   fnSuccess();
+                    if (fnSuccess)
+                       fnSuccess();
                 });
             } else if (fnSuccess) {
                 // Stop progress cursor.
@@ -161,7 +202,7 @@ class Lovefield  {
 
 
     getBreakdownSources() {
-       return this.breakdown_datasets;
+       return this.datasets.breakdown_datasets();
     }
 
     guessColumnTypes(lineArray, headerArray) {
@@ -191,12 +232,9 @@ class Lovefield  {
     }
 
     addBreakdownSource (datasetName, headerArray, lineArray) {
-       var tableName = datasetName + "_fact";
+       displayName[clean(datasetName)] = datasetName;
 
-       var current_list = [];
-       var s = localStorage.getItem('breakdown_datasets');
-       if (s != null)
-         current_list = JSON.parse(s);
+       var tableName = clean(datasetName) + "_fact";
 
        //
        // Guess column types from the first line.
@@ -210,7 +248,10 @@ class Lovefield  {
        // var lineArray = $.csv.toArray(line);
 
        this.types.forEach(function(key,i) {
-          var fieldName = headerArray[i];
+          var head = headerArray[i];
+          displayName[clean(head)] = head;
+
+          var fieldName = clean(head);
           if (fieldName == '')
             return;
 
@@ -247,9 +288,10 @@ class Lovefield  {
                    page_title: 'Breakdown: ' + datasetName
               };
 
-       current_list.push(datasetObj);
-       var breakdown_datasets = JSON.stringify(current_list);
-       localStorage.setItem('breakdown_datasets', breakdown_datasets);
+
+       this.datasets.add(datasetObj);
+       this.datasets.save();
+
 
        this.incrementDBVersion();
 

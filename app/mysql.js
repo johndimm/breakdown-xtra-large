@@ -64,6 +64,10 @@ Mysql = function() {
           .then(function (response) {
               return response.json();
         }).then(function (result) {
+          // result.forEach(function(dataset, i) {
+          //   dataset.dimensions = dataset.dimensions.split(",");
+          //   dataset.measures = dataset.measures.split(",");
+          // });
            fnSuccess(result);
         }.bind(this));
     }

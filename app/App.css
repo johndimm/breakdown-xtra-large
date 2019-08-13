@@ -137,3 +137,7 @@ body.waiting * {
 #import_instructions_button {
 //  display: none;
 }
+
+ .grayed_out {
+   color: #AAAAAA
+ }

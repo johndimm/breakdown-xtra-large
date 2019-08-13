@@ -80,7 +80,7 @@ class Catalog extends React.Component {
     //
     // Get lovefield datasets, from localStorage (fast).
     //
-    lovefield.readBreakdownSources();
+    lovefield.datasets.init();
     var result = lovefield.getBreakdownSources();
 
     if (result != null && result.length > 0) {
@@ -99,8 +99,11 @@ class Catalog extends React.Component {
     //
     // Convert dimensions and measures from comma-separated strings to arrays.
     //
-    r.dimensions = r.dimensions.split(",");
-    r.measures = r.measures.split(",");
+    if (!Array.isArray(r.dimensions)) {
+      r.dimensions = r.dimensions.split(",");
+      r.measures = r.measures.split(",");
+    }
+
     var dataset_set = this.state.dataset_set;
     dataset_set[r.name] = r;
     this.setState({
@@ -198,8 +201,16 @@ class Catalog extends React.Component {
     // var data = $.csv.toObjects(content);
 
     var name = this.filename.name;
-    var datasetName = name.substring(0, name.indexOf('.'));
-    lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
+    var datasetName = name.substring(0, name.indexOf('.')); //        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
+
+    lovefield.addSource(datasetName, content, function () {
+      //lovefield.init();
+      this.getLovefieldSources();
+      this.toggleDatasetsDisplay();
+      this.setSourceName(datasetName); //this.registerSource(lovefield.datasets.ds[datasetName]);
+      //this.toggleDatasetsDisplay();
+      //this.setSourceName(datasetName);
+    }.bind(this));
   }
 
   turnOnDisplayImportInstructions() {
