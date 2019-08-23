@@ -278,6 +278,7 @@ class Report extends React.Component {
          arrow = this.state.sortDir == 'ASC' ? upArrow : downArrow;
      }
 
+
      //
      // Assemble the report.
      //

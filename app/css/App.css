@@ -91,9 +91,11 @@ td.measure {
 
 #datasets {
  // margin-top: 20px;
-  margin-left: 200px;
-  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 600px;
   padding: 20px;
+  text-align: center;
 //  background-color: #EFEFEF;
 }
 
@@ -141,3 +143,38 @@ body.waiting * {
  .grayed_out {
    color: #AAAAAA
  }
+
+
+ .upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.btn  {
+  border: 2px solid gray;
+  color: gray;
+  background-color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 100px;
+}
+
+
+.upload-btn-wrapper input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+#datasets_intro {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+#datasets_diagram {
+  margin-top: 30px;
+}

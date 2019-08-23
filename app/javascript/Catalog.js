@@ -1,3 +1,5 @@
+var Database = {};
+
 class ImportInstructions extends React.Component {
   render() {
     if (!this.props.importedOwnData && !this.props.displayImportInstructions) {
@@ -33,8 +35,11 @@ class ImportInstructions extends React.Component {
     }, "Breakdown works with public data from cloud or private data on your own computer.  ", React.createElement("b", null, "Your data stays on your computer."), "  This program imports it into a small database system that runs on your computer and all analysis is done locally. The local javascript database is ", React.createElement("a", {
       href: "https://google.github.io/lovefield/"
     }, "Lovefield"), " by Google.", React.createElement("h3", null, "Import a csv file into your local Lovefield database"), React.createElement("div", {
-      id: "import_button"
-    }, React.createElement("input", {
+      id: "import_button",
+      className: "upload-btn-wrapper"
+    }, React.createElement("button", {
+      className: "btn"
+    }, "Import"), React.createElement("input", {
       type: "file",
       name: "files[]",
       id: "fileUpload",
@@ -73,7 +78,20 @@ class Catalog extends React.Component {
         if (r.dim_metadata_table != '') this.getDimMetadata(r.name, r.dim_metadata_table);
       }
     }.bind(this));
-    this.getLovefieldSources();
+    var lastSource = this.getLovefieldSources();
+    var requestedSource = getRequestedSource();
+
+    if (requestedSource == '' && lastSource != '') {
+      // We're NOT supposed to open the newly downloaded Mint transaction file.
+      // So we can open the existing database if there is one.
+      Database = lovefield;
+      lovefield.datasets.init();
+      lovefield.connect(null, null, function () {
+        this.getLovefieldSources();
+        this.toggleDatasetsDisplay();
+        this.setSourceName(lastSource);
+      }.bind(this));
+    }
   }
 
   getLovefieldSources() {
@@ -81,6 +99,7 @@ class Catalog extends React.Component {
     // Get lovefield datasets, from localStorage (fast).
     //
     lovefield.datasets.init();
+    var lastSource = '';
     var result = lovefield.getBreakdownSources();
 
     if (result != null && result.length > 0) {
@@ -91,8 +110,11 @@ class Catalog extends React.Component {
         this.setState({
           importedOwnData: true
         });
+        lastSource = r.name;
       }
     }
+
+    return lastSource;
   }
 
   registerSource(r) {
@@ -201,7 +223,9 @@ class Catalog extends React.Component {
     // var data = $.csv.toObjects(content);
 
     var name = this.filename.name;
-    var datasetName = name.substring(0, name.indexOf('.')); //        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
+    var datasetName = name.substring(0, name.indexOf('.')); // MMMM special handling for Mint.
+
+    datasetName = 'MintTransactions'; //        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
 
     lovefield.addSource(datasetName, content, function () {
       //lovefield.init();
@@ -220,6 +244,38 @@ class Catalog extends React.Component {
   }
 
   render() {
+    var ds = React.createElement("div", null);
+
+    if (urlparam('dataset', '') != '') {
+      ds = React.createElement("div", {
+        id: "datasets",
+        className: "upload-btn-wrapper"
+      }, React.createElement("div", {
+        id: "catalog_title"
+      }, "Breakdown for Mint"), React.createElement("div", {
+        id: "datasets_intro"
+      }, React.createElement("i", null, "Import the transactions.csv file you just downloaded from Mint")), React.createElement("label", {
+        className: "btn"
+      }, React.createElement("input", {
+        type: "file",
+        name: "files[]",
+        id: "fileUpload",
+        onChange: this.handleFileUpload.bind(this)
+      }), "Import"), React.createElement("div", {
+        id: "datasets_diagram"
+      }, React.createElement("img", {
+        src: "images/lovefield.png"
+      })), React.createElement("div", null, React.createElement("a", {
+        href: window.location.href.replace(window.location.search, '')
+      }, "Skip the file load, use my existing data.")));
+    }
+
+    return React.createElement("div", null, ds, React.createElement(Breakdown, {
+      dataset: this.state.dataset
+    }));
+  }
+
+  render_v0() {
     var onlineDatasets = Object.keys(this.state.dataset_set).map(function (key, i) {
       return this.printDatasetLink('mysql', key, i, !this.state.importedOwnData ? "full" : "compact");
     }.bind(this));

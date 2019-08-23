@@ -1,3 +1,5 @@
+var Database = {};
+
 class ImportInstructions extends React.Component {
 
   render() {
@@ -38,7 +40,8 @@ class ImportInstructions extends React.Component {
 
         <h3>Import a csv file into your local Lovefield database</h3>
 
-        <div id="import_button">
+        <div id="import_button" className="upload-btn-wrapper">
+        <button className='btn'>Import</button>
         <input type="file" name="files[]" id="fileUpload" onChange={this.props.handleFileUpload}/>
         </div>
         <br />
@@ -114,7 +117,23 @@ class Catalog extends React.Component {
 
     }.bind(this));
 
-    this.getLovefieldSources();
+    var lastSource = this.getLovefieldSources();
+     var requestedSource = getRequestedSource();
+
+     if (requestedSource == '' && lastSource != '') {
+
+        // We're NOT supposed to open the newly downloaded Mint transaction file.
+        // So we can open the existing database if there is one.
+
+        Database = lovefield;
+        lovefield.datasets.init();
+
+        lovefield.connect(null, null, function() {
+           this.getLovefieldSources();
+           this.toggleDatasetsDisplay();
+           this.setSourceName(lastSource);
+         }.bind(this));
+     }
   }
 
   getLovefieldSources() {
@@ -123,6 +142,7 @@ class Catalog extends React.Component {
     //
     lovefield.datasets.init();
 
+    var lastSource = '';
     var result = lovefield.getBreakdownSources();
     if (result != null && result.length > 0) {
         for (var i=0; i<result.length; i++) {
@@ -131,8 +151,11 @@ class Catalog extends React.Component {
             r.database = 'lovefield';
             this.registerSource(r);
             this.setState({importedOwnData: true});
+            lastSource = r.name;
         }
     }
+
+    return lastSource;
   }
 
   registerSource(r) {
@@ -256,12 +279,16 @@ class Catalog extends React.Component {
         var name = this.filename.name;
         var datasetName = name.substring(0, name.indexOf('.'));
 
+        // MMMM special handling for Mint.
+        datasetName = 'MintTransactions';
+
 //        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
         lovefield.addSource(datasetName, content,  function() {
           //lovefield.init();
           this.getLovefieldSources();
           this.toggleDatasetsDisplay();
           this.setSourceName(datasetName);
+
 
           //this.registerSource(lovefield.datasets.ds[datasetName]);
           //this.toggleDatasetsDisplay();
@@ -273,7 +300,45 @@ class Catalog extends React.Component {
       this.setState({displayImportInstructions: true});
    }
 
-  render() {
+   render() {
+
+     var ds = (<div></div>);
+     if (urlparam('dataset', '') != '') {
+       ds = (
+        <div id="datasets" className="upload-btn-wrapper">
+          <div id='catalog_title'>Breakdown for Mint</div>
+          <div id="datasets_intro">
+            <i>Import the transactions.csv file you just downloaded from Mint</i>
+          </div>
+
+            <label className='btn'>
+               <input type="file" name="files[]" id="fileUpload" onChange={this.handleFileUpload.bind(this)}/>
+               Import
+             </label>
+
+          <div id="datasets_diagram">
+            <img src="images/lovefield.png" />
+          </div>
+
+          <div>
+            <a href={window.location.href.replace(window.location.search, '')}>Skip the file load, use my existing data.</a>
+          </div>
+        </div>
+
+       )
+     }
+
+
+     return (
+       <div>
+          {ds}
+
+          <Breakdown dataset={this.state.dataset}/>
+       </div>
+     );
+   }
+
+  render_v0() {
       var onlineDatasets =
       Object.keys(this.state.dataset_set).map(function(key, i) {
             return this.printDatasetLink('mysql', key, i, ! this.state.importedOwnData ?  "full" : "compact");

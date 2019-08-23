@@ -21,6 +21,11 @@
   cursor:pointer;
 }
 
+.dim_toobig {
+  background-color: #777777;
+  color: white;
+}
+
 .dim_table {
   width: 100%;
 }
@@ -60,7 +65,7 @@
 }
 
 .next_dim {
-  padding-top: 6px;
+  padding-top: 7px;
 }
 .prev_dim {
   margin-right: 7px;

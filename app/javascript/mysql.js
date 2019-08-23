@@ -27,7 +27,7 @@ Mysql = function() {
         data.append('whereClause', whereClause);
         data.append('dataset', dataset);
 
-        fetch("mysql.php",{
+        fetch("php/mysql.php",{
           method: "POST",
           body: data
         })
@@ -39,7 +39,7 @@ Mysql = function() {
     }
 
     this.breakdown = function(data, fnSuccess) {
-        fetch("mysql.php",{
+        fetch("php/mysql.php",{
           method: "POST",
           body: data
         })
@@ -57,7 +57,7 @@ Mysql = function() {
         data.append ('proc','get_breakdown_datasets');
         data.append('param','');
 
-        fetch("mysql.php",{
+        fetch("php/mysql.php",{
           method: "POST",
           body: data
         })
@@ -85,7 +85,7 @@ Mysql = function() {
           orderBy += ' ' + params.sortDir;
         data.append( 'orderBy', orderBy);
 
-        fetch("mysql.php",{
+        fetch("php/mysql.php",{
           method: "POST",
           body: data
         })

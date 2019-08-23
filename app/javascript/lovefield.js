@@ -112,7 +112,7 @@ class Lovefield  {
                 var lfTable = this.db.getSchema().table(dataset.fact_table);
                 this.load(lfTable, data, dataset.aggregates.split(","), function() {
                     // Stop progress cursor.
-                    $('body').removeClass('waiting');
+//                    $('body').removeClass('waiting');
 
                     if (fnSuccess)
                        fnSuccess();
@@ -285,7 +285,7 @@ class Lovefield  {
                    dim_metadata_table: '',
                    dim_metadata: {},
                    aggregates: aggregates.join(','),
-                   page_title: 'Breakdown: ' + datasetName
+                   page_title: 'Breakdown for Mint' // MMMM special handling for Mint   'Breakdown: ' + datasetName
               };
 
 
@@ -384,23 +384,30 @@ class Lovefield  {
     }
 
     addWhere(select, _filters) {
-        if (_filters == null)
-          return;
+        var conditions = [];
+
+        var searchText = $("#search_description").val();
+        if (searchText)
+          conditions.push("this.fact['Description'].match(/" + searchText + "/i)");
+
+        if (_filters != null) {
 
         var filters = _filters.split(' AND ');
-        var conditions = [];
-        if (filters != '') {
-            filters.forEach(function(key, i) {
-               var re = /\`(.*)\`\s*=\s*'(.*)'/;
-               var matches = re.exec(key);
-               var key = matches[1];
-               var value = matches[2];
-               conditions.push("this.fact['" + key + "'].eq('" + value + "')");
-            });
+            if (filters != '') {
+                filters.forEach(function(key, i) {
+                   var re = /\`(.*)\`\s*=\s*'(.*)'/;
+                   var matches = re.exec(key);
+                   var key = matches[1];
+                   var value = matches[2];
+                   conditions.push("this.fact['" + key + "'].eq('" + value + "')");
+                });
 
-            var where = "lf.op.and(" + conditions.join(',') + ")";
+            }
+        }
 
-            this.select.where( eval(where) );
+        if (conditions.length != 0) {
+          var where = "lf.op.and(" + conditions.join(',') + ")";
+          this.select.where( eval(where) );
         }
     }
 
@@ -410,6 +417,7 @@ class Lovefield  {
 
         var groupBy = data.get('groupBy');
         var _filters = data.get('whereClause');
+
         var orderBy = data.get('orderBy');
         var aggregates = data.get('aggregates');
 
@@ -417,10 +425,13 @@ class Lovefield  {
         fields.push(this.fact[groupBy]);
 
 
+        var sortColName = '';
         if (aggregates != 'undefined' && aggregates != "") {
             var aggArray = aggregates.split(",");
             aggArray.forEach (function(key, i) {
               fields.push(lf.fn.sum(this.fact[key]).as(key));
+              if (i==0 && orderBy == "2 DESC")
+                orderBy = key + " DESC";
             }.bind(this));
         }
 
@@ -434,16 +445,16 @@ class Lovefield  {
         // this.select.orderBy(lf.fn.count(), lf.Order.DESC);
 
         var parts = orderBy.split(" ");
-        var colName = parts[0];
-        // colName = "SUM(" + colName + ")";
-        if (colName == '1')
-          colName = groupBy;
-
+        var sortColName = parts[0];
         var dir = parts[1];
 
-        var orderByColumn =  colName == '2' || colName == 'count'
+        // colName = "SUM(" + colName + ")";
+        if (sortColName == '1')
+          sortColName = groupBy;
+
+        var orderByColumn = sortColName == 'count'
           ? lf.fn.count()
-          : lf.fn.sum(this.fact[colName]);
+          : lf.fn.sum(this.fact[sortColName]);
 
         var direction = dir == 'DESC' ? lf.Order.DESC : lf.Order.ASC;
 
@@ -453,6 +464,7 @@ class Lovefield  {
           .exec()
           .then(function(results) {
             fnSuccess(results);
+            setTimeout(function() {$('body').removeClass('waiting')}, 1000);
            });
 
     }

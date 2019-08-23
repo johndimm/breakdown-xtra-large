@@ -1,0 +1,36 @@
+Breakdown is a tool to slice and dice financial data that you download from your Mint account.  In a few clicks, it can answer questions like:
+
+Where did all my money go?
+When did we start shopping more at Trader Joe's than Vons?
+Why did we spend more on vacation this year than usual?
+How have our favorite restaurants changed over the months and years?
+
+Breakdown works by loading your Mint data into Lovefield, the browser-based local database written in javascript by a team at Google.
+
+Your data stays on your machine.
+
+break down
+
+Click to break down your current selection of data by the dimension.
+
+Dimension buttons are in the left column.
+
+The best dimensions have a small number of distinct values.
+
+Description and Date are gray because at the top level there are too many.  Once you drill down enough to bring the number under 1000, they become active.
+
+drill down
+
+ Click to drill down by selecting a  value for the dimension.
+
+Tthe values of the current dimension are in the middle column.
+
+Select values for other dimensions to further reduce the dataset
+
+slide
+
+Click the arrows to “scroll” through the values of a dimension without switching to it.
+
+Here we're viewing Descriptions while moving sequentially through the Categories.
+
+The order for previous and next is determined by the order in the  list when the first value was selected.

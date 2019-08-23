@@ -17,6 +17,14 @@ function isEmpty(obj) {
 
 
 class Banner extends React.Component {
+   onCarriageReturn(event) {
+     	var keycode = (event.keyCode ? event.keyCode : event.which);
+     	 if(keycode == '13'){
+     		  this.props.refresh_search();
+     	 }
+  }
+
+
   render() {
 
     if (this.props.current_dataset == null)
@@ -30,7 +38,7 @@ class Banner extends React.Component {
         <div className='title_div'>{dataset.page_title}</div>
         <div className='subtitle_div'>{dataset.description}</div>
         <div className='about_div'>About:&nbsp;
-           <a target="_blank" href={dataset.url}>datadataset</a>
+           <a target="_blank" href="guide">Guide</a>
            &nbsp;|&nbsp;
            <a target="_blank" href="https://github.com/johndimm/breakdown">code</a>
          </div>
@@ -40,9 +48,21 @@ class Banner extends React.Component {
 
 
     var button_text = this.props.show_summary ? 'Detail' : 'Summary';
-    var cell3 = (<button onClick={
+    var cell3 = (
+      <div>
+         Description: <input id="search_description"
+         onKeyPress={this.onCarriageReturn.bind(this)}
+         type="text" width="25" />
+          &nbsp; <button id="search_text_button"
+          onClick={this.props.refresh_search}>
+          &#x1F50D;
+          </button>
+        &nbsp;
+        <button  onClick={
           this.props.toggleSummary
-      }>show {button_text}</button>);
+        }>show {button_text}</button>
+      </div>
+      );
 
     return (
       <table className='banner'>
@@ -83,7 +103,8 @@ class Breakdown extends React.Component {
            orderBy: '',
            filters: {},
            dimCounts: {},
-           show_summary: true
+           show_summary: true,
+           searchText: ''
       }
     };
 
@@ -166,7 +187,7 @@ class Breakdown extends React.Component {
     }.bind(this));
   }
 
-    getDimArray() {
+  getDimArray() {
       return   this.state.dataset.dimensions; // .split(',');
   }
 
@@ -182,8 +203,6 @@ class Breakdown extends React.Component {
 
      return filter_array.join(' AND ');
   }
-
-
 
   nextDimension(dim) {
     //
@@ -248,6 +267,19 @@ class Breakdown extends React.Component {
     var report = this.state.report;
     report.show_summary = ! report.show_summary;
     this.setState({ report: report });
+  }
+
+  refreshSearch() {
+    var searchText = $("#search_description").val();
+    if (searchText != this.state.report.searchText) {
+      var report = this.state.report;
+      report.searchText = searchText;
+      this.setState({report: report});
+      setTimeout(function() {this.getDimCounts()}.bind(this), 0);
+    }
+
+    // Set progress cursor.
+    $('body').addClass('waiting');
   }
 
   render() {
@@ -342,6 +374,7 @@ class Breakdown extends React.Component {
             dataset={this.props.dataset}
             toggleSummary={this.toggleSummary.bind(this)}
             show_summary={this.state.report.show_summary}
+            refresh_search={this.refreshSearch.bind(this)}
             />
 
           <table className="content"><tbody><tr>
