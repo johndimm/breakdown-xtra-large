@@ -95,6 +95,7 @@ class Catalog extends React.Component {
     this.state = {
       dataset: {},
       dataset_set: {},
+      datasetName: '',
       importedOwnData: false,
       displayImportInstructions: false
       };
@@ -111,13 +112,20 @@ class Catalog extends React.Component {
             r.database = 'mysql';
             this.registerSource(r);
 
-            if (r.dim_metadata_table != '')
-              this.getDimMetadata(r.name, r.dim_metadata_table)
+ //           if (r.dim_metadata_table != '')
+ //             this.getDimMetadata(r.name, r.dim_metadata_table)
+          }
+          
+          var requestedSource = getRequestedSource();
+          if (requestedSource == '' && this.state.datasetName == '')  {
+             Database = mysql;
+             this.toggleDatasetsDisplay();
+             this.setSourceName(r.name);
           }
 
     }.bind(this));
 
-    var lastSource = this.getLovefieldSources();
+     var lastSource = this.getLovefieldSources();
      var requestedSource = getRequestedSource();
 
      if (requestedSource == '' && lastSource != '') {
@@ -134,6 +142,8 @@ class Catalog extends React.Component {
            this.setSourceName(lastSource);
          }.bind(this));
      }
+
+
   }
 
   getLovefieldSources() {

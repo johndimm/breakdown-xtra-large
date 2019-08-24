@@ -61,6 +61,7 @@ class Catalog extends React.Component {
     this.state = {
       dataset: {},
       dataset_set: {},
+      datasetName: '',
       importedOwnData: false,
       displayImportInstructions: false
     };
@@ -74,8 +75,16 @@ class Catalog extends React.Component {
       for (var i = 0; i < result.length; i++) {
         var r = result[i];
         r.database = 'mysql';
-        this.registerSource(r);
-        if (r.dim_metadata_table != '') this.getDimMetadata(r.name, r.dim_metadata_table);
+        this.registerSource(r); //           if (r.dim_metadata_table != '')
+        //             this.getDimMetadata(r.name, r.dim_metadata_table)
+      }
+
+      var requestedSource = getRequestedSource();
+
+      if (requestedSource == '' && this.state.datasetName == '') {
+        Database = mysql;
+        this.toggleDatasetsDisplay();
+        this.setSourceName(r.name);
       }
     }.bind(this));
     var lastSource = this.getLovefieldSources();
