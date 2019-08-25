@@ -5,14 +5,12 @@
     const networkFilters = {
         urls: [
           "https://mint.intuit.com/*"
+          // "https://mint.intuit.com/transactionDownload.event"
         ]
     };
 
     chrome.webRequest.onCompleted.addListener((details) => {
         const { tabId, requestId } = details;
-
-        console.log("completed: ");
-        console.log(details);
 
         if (downloadBegun) {
 
@@ -23,7 +21,8 @@
               var filename = results[0].filename;
               if (filename != '') {
                 //
-                // This should be on a server, not localhost.
+                // The user downloaded transactions from Mint.  Time to pop up a new tab 
+                // for Breakdown.
                 //
                 var url = 'http://www.johndimm.com/breakdown/index.html?dataset=' + filename;
                 chrome.tabs.create({"url": url});

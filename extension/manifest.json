@@ -2,7 +2,8 @@
   "manifest_version": 2,
   "name": "Breakdown for Mint",
   "short_name": "Breakdown",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "description": "Breakdown slices and dices Mint transactions.",
   "background": {
     "scripts": ["background.js"]
   },
