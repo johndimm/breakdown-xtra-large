@@ -25,7 +25,7 @@
                 //
                 // This should be on a server, not localhost.
                 //
-                var url = 'http://localhost/projects/breakdown/app/index.html?dataset=' + filename;
+                var url = 'http://www.johndimm.com/breakdown/index.html?dataset=' + filename;
                 chrome.tabs.create({"url": url});
                 downloadBegun = false;
               }

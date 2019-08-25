@@ -1,6 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Breakdown for Mint",
+  "short_name": "Breakdown",
   "version": "0.0.1",
   "background": {
     "scripts": ["background.js"]
@@ -9,5 +10,6 @@
           "webRequest",
           "https://mint.intuit.com/",
           "downloads"
-        ]
+        ],
+  "icons": {"128": "icon128.png" }
 }
