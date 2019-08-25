@@ -69,30 +69,14 @@ class Catalog extends React.Component {
 
   componentDidMount() {
     //
-    // Get mysql datasets.
+    // Get Lovefield datasets.
     //
-    mysql.getBreakdownSources(function (result) {
-      for (var i = 0; i < result.length; i++) {
-        var r = result[i];
-        r.database = 'mysql';
-        this.registerSource(r); //           if (r.dim_metadata_table != '')
-        //             this.getDimMetadata(r.name, r.dim_metadata_table)
-      }
-
-      var requestedSource = getRequestedSource();
-
-      if (requestedSource == '' && this.state.datasetName == '') {
-        Database = mysql;
-        this.toggleDatasetsDisplay();
-        this.setSourceName(r.name);
-      }
-    }.bind(this));
     var lastSource = this.getLovefieldSources();
     var requestedSource = getRequestedSource();
 
     if (requestedSource == '' && lastSource != '') {
       // We're NOT supposed to open the newly downloaded Mint transaction file.
-      // So we can open the existing database if there is one.
+      // So we can open the existing Lovefield database if there is one.
       Database = lovefield;
       lovefield.datasets.init();
       lovefield.connect(null, null, function () {
@@ -100,7 +84,29 @@ class Catalog extends React.Component {
         this.toggleDatasetsDisplay();
         this.setSourceName(lastSource);
       }.bind(this));
-    }
+    } //
+    // Get mysql datasets.
+    //
+
+
+    mysql.getBreakdownSources(function (result) {
+      for (var i = 0; i < result.length; i++) {
+        var r = result[i];
+        r.database = 'mysql';
+        this.registerSource(r);
+      }
+
+      var requestedSource = getRequestedSource();
+
+      if (requestedSource == '' && lastSource == '') {
+        //
+        // If there's no request, and no Lovefield dataset, use the Olympics on the server.
+        //
+        Database = mysql;
+        this.toggleDatasetsDisplay();
+        this.setSourceName(r.name);
+      }
+    }.bind(this));
   }
 
   getLovefieldSources() {
