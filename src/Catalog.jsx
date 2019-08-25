@@ -115,7 +115,7 @@ class Catalog extends React.Component {
  //           if (r.dim_metadata_table != '')
  //             this.getDimMetadata(r.name, r.dim_metadata_table)
           }
-          
+
           var requestedSource = getRequestedSource();
           if (requestedSource == '' && this.state.datasetName == '')  {
              Database = mysql;

@@ -30,7 +30,8 @@ class Banner extends React.Component {
     if (this.props.current_dataset == null)
       return (<div></div>);
 
-    // var dataset = this.props.dataset_set[this.props.current_dataset];
+    // var dataset = this.props.dataset_set[this.props
+    .current_dataset];
     var dataset = this.props.dataset;
 
     var cell1 = (
@@ -38,7 +39,7 @@ class Banner extends React.Component {
         <div className='title_div'>{dataset.page_title}</div>
         <div className='subtitle_div'>{dataset.description}</div>
         <div className='about_div'>About:&nbsp;
-           <a target="_blank" href="guide">Guide</a>
+           <a target="_blank" href="guide.html">Guide</a>
            &nbsp;|&nbsp;
            <a target="_blank" href="https://github.com/johndimm/breakdown">code</a>
          </div>
