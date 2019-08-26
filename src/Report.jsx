@@ -172,29 +172,27 @@ class Report extends React.Component {
        //
        // Generate table cells for the measures in a line.
        //
-       var pc0Pos = -1;
-       var pc0Neg = -1;
-       var pcMaxPos = 0;
-       var pcMaxNeg = 0;
-
        var measure_columns = this.props.measures.map(function(measure, i) {
+
+         if (i > 0)
+           return null;
 
          var mval = row[measure];
 
-         //
-         // Calculate pc for first measure.
-         //
-         var pcPos = Math.max(0, 100 * mval / minmax[measure].max);
-         var pcNeg = 0;
-         if (row[measure] < 0)
-           pcNeg = Math.max(0, 100 * -1 * mval / (-1 * minmax[measure].min));
+         var neg = Math.max(0, -1 * minmax[measure].min);
+         var pos = Math.max(0, minmax[measure].max);
 
-         if (pc0Pos == -1)  {
-           pc0Pos = pcPos;
-           pc0Neg = pcNeg;
-           pcMaxPos = Math.max(1, 100 * minmax[measure].max / (minmax[measure].max - minmax[measure].min));
-           pcMaxNeg = 100 - pcMaxPos;
-         }
+         var pc0Pos = 0;
+         var pc0Neg = 0;
+
+         if (mval >= 0)
+           pc0Pos = Math.max(0, 100 * mval / pos);
+
+         if (mval < 0)
+           pc0Neg = Math.max(0, 100 * -1 * mval / neg);
+
+         pcMaxPos = 100 * pos / (pos + neg);
+         pcMaxNeg = 100 - pcMaxPos;
 
          pc0Pos = Math.round(pc0Pos, 2);
          pc0Neg = Math.round(pc0Neg, 2);
