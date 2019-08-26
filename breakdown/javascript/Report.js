@@ -185,6 +185,10 @@ class Report extends React.Component {
           pcMaxNeg = 100 - pcMaxPos;
         }
 
+        pc0Pos = Math.round(pc0Pos, 2);
+        pc0Neg = Math.round(pc0Neg, 2);
+        pcMaxPos = Math.round(pcMaxPos, 2);
+        pcMaxNeg = Math.round(pcMaxNeg, 2);
         return React.createElement("td", {
           className: "measure_cell",
           key: i
