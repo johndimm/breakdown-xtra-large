@@ -5,7 +5,7 @@ function isNumeric(n) {
 function pad(n){return n<10 ? '0'+n : n}
 
 function clean(s) {
-  return s.replace(/[^a-zA-Z0-9]/gmi, "");
+  return s.replace(/[^_a-zA-Z0-9]/gmi, "");
 }
 
 var displayName = {};

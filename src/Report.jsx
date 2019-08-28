@@ -172,6 +172,9 @@ class Report extends React.Component {
        //
        // Generate table cells for the measures in a line.
        //
+
+       var pcMaxPos, pcMaxNeg, pc0Pos, pc0Neg;
+
        var measure_columns = this.props.measures.map(function(measure, i) {
 
          if (i > 0)
@@ -182,8 +185,8 @@ class Report extends React.Component {
          var neg = Math.max(0, -1 * minmax[measure].min);
          var pos = Math.max(0, minmax[measure].max);
 
-         var pc0Pos = 0;
-         var pc0Neg = 0;
+         pc0Pos = 0;
+         pc0Neg = 0;
 
          if (mval >= 0)
            pc0Pos = Math.max(0, 100 * mval / pos);
