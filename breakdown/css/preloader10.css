@@ -1,4 +1,7 @@
 .preloader10 {
+   position: absolute;
+   left: 200px;
+   top: 100px;
    width:40px;
    height:20px;
    display:inline-block;

@@ -259,7 +259,10 @@ class Catalog extends React.Component {
   }
 
   render() {
-    var ds = React.createElement("div", null);
+    var ds = React.createElement("div", {
+      className: "preloader10"
+    }, React.createElement("span", null), React.createElement("span", null));
+    if (this.state.dataset.database != null) ds = React.createElement("div", null);
 
     if (urlparam('dataset', '') != '') {
       ds = React.createElement("div", {

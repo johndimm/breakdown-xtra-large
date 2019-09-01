@@ -143,6 +143,7 @@ class Lovefield  {
         out["Account"] = obj["Account Name"];
         out["Category"] = obj["Category"];
         out["Description"] = obj["Description"];
+        out["Original_Description"] = obj["Original Description"];
         out["Year"] = year.toString();
         out["Month"] = year + '-' + month;
         out["Date"] = year + '-' + month + '-' + day;
@@ -328,9 +329,9 @@ class Lovefield  {
       //
       var mintCols = ["Date","Description","Original Description","Amount","Transaction Type","Category","Account Name","Labels","Notes"];
       if (mintCols.join(",") == this.import_header.join(",")) {
-        var cols = "Account,Category,Description,Year,Month,Date,Labels,Notes,Amount";
+        var cols = "Account,Category,Description,Original_Description,Year,Month,Date,Labels,Notes,Amount";
         this.import_header = cols.split(",");
-        var types = "STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,NUMBER";
+        var types = "STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,NUMBER";
         this.types = types.split(",");
         this.isMint = true;
       } else {
