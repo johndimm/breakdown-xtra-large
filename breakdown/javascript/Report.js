@@ -189,6 +189,9 @@ class Report extends React.Component {
         var mval = row[measure];
 
         if (i == 0) {
+          //
+          // Bars are for the first measure only.
+          //
           var neg = Math.max(0, -1 * minmax[measure].min);
           var pos = Math.max(0, minmax[measure].max);
           pc0Pos = 0;

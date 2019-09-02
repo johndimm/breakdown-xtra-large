@@ -34,6 +34,20 @@ function formatNumber(num) {
     return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
+function formatDollars(num) {
+  if (num == null)
+    return 0;
+  else {
+    var commas = num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    if (num > 0)  {
+      return "+ $" + commas;
+    } else {
+      return "- $" + commas.substr(1, commas.length - 1);
+    }
+  }
+
+}
+
 class Bar extends React.Component {
   render() {
 
@@ -94,6 +108,10 @@ class Report extends React.Component {
     data.append( 'groupBy', newProps.groupBy);
     data.append( 'dataset', newProps.dataset);
     data.append( 'aggregates', newProps.aggregates);
+
+    if (this.state.orderBy == '2') {
+      this.setState({orderBy: newProps.measures[0]});
+    }
 
     var orderBy = this.state.orderBy;
     if (orderBy != '')
@@ -177,41 +195,57 @@ class Report extends React.Component {
 
        var measure_columns = this.props.measures.map(function(measure, i) {
 
-         if (i > 0)
-           return null;
-
          var mval = row[measure];
 
-         var neg = Math.max(0, -1 * minmax[measure].min);
-         var pos = Math.max(0, minmax[measure].max);
+         if (i == 0) {
+             //
+             // Bars are for the first measure only.
+             //
+             var neg = Math.max(0, -1 * minmax[measure].min);
+             var pos = Math.max(0, minmax[measure].max);
 
-         pc0Pos = 0;
-         pc0Neg = 0;
+             pc0Pos = 0;
+             pc0Neg = 0;
 
-         if (mval >= 0)
-           pc0Pos = Math.max(0, 100 * mval / pos);
+             if (mval >= 0)
+               pc0Pos = Math.max(0, 100 * mval / pos);
 
-         if (mval < 0)
-           pc0Neg = Math.max(0, 100 * -1 * mval / neg);
+             if (mval < 0)
+               pc0Neg = Math.max(0, 100 * -1 * mval / neg);
 
-         pcMaxPos = 100 * pos / (pos + neg);
-         pcMaxNeg = 100 - pcMaxPos;
+             pcMaxPos = 100 * pos / (pos + neg);
+             pcMaxNeg = 100 - pcMaxPos;
 
-         pc0Pos = Math.round(pc0Pos, 2);
-         pc0Neg = Math.round(pc0Neg, 2);
-         pcMaxPos = Math.round(pcMaxPos, 2);
-         pcMaxNeg = Math.round(pcMaxNeg, 2);
+             pc0Pos = Math.round(pc0Pos, 2);
+             pc0Neg = Math.round(pc0Neg, 2);
+             pcMaxPos = Math.round(pcMaxPos, 2);
+             pcMaxNeg = Math.round(pcMaxNeg, 2);
+         }
+
+         var style;
+         var num;
+         if (measure == 'Amount') {
+           num = formatDollars(mval);
+           style = {'color': mval > 0 ? 'darkgreen' : 'black'};
+         } else {
+           style = {'color': 'black' };
+           num = formatNumber(mval);
+         };
+
+         if (mval == 0) {
+           num = '$0';
+           style = {};
+         }
 
          return (
-           <td className='measure_cell' key={i}>{formatNumber(mval)}</td>
-         )
+           <td className='measure_cell' key={i} style={style}>{num}</td>
+         );
        });
 
        //
        // Store list of values for next/prev in dimension bar.
        //
        this.props.storeDimValues(this.props.groupBy, row[this.props.groupBy]);
-
 
        //
        // Assemble a line of the report.
@@ -239,10 +273,24 @@ class Report extends React.Component {
 
        if (measure == '')
          return ( <td key={i}></td> )
-       else
+       else {
+
+         var style;
+         var num;
+         if (measure == 'Amount') {
+
+           var val = minmax[measure].total;
+           num = formatDollars(val);
+           style = {'color': val > 0 ? 'darkgreen' : 'black'};
+         } else {
+           var style = {'color': 'black' };
+           var num = formatNumber(minmax[measure].total);
+         }
+
          return (
-         <td className='measure_cell' key={i}>{formatNumber(minmax[measure].total)}</td>
-       )
+           <td className='measure_cell' key={i} style={style}>{num}</td>
+         );
+       }
      }.bind(this));
 
      return (

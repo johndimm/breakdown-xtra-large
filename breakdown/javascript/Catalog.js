@@ -266,26 +266,27 @@ class Catalog extends React.Component {
 
     if (urlparam('dataset', '') != '') {
       ds = React.createElement("div", {
-        id: "datasets",
-        className: "upload-btn-wrapper"
+        id: "datasets"
       }, React.createElement("div", {
         id: "catalog_title"
       }, "Breakdown for Mint"), React.createElement("div", {
         id: "datasets_intro"
-      }, React.createElement("i", null, "Import the transactions.csv file you just downloaded from Mint")), React.createElement("label", {
+      }, React.createElement("i", null, "Import the transactions.csv file you just downloaded from Mint")), React.createElement("div", {
         className: "btn"
+      }, React.createElement("label", {
+        title: "Import your csv file into your local database Lovefield"
       }, React.createElement("input", {
         type: "file",
         name: "files[]",
         id: "fileUpload",
         onChange: this.handleFileUpload.bind(this)
-      }), "Import"), React.createElement("div", {
+      }), "Import")), React.createElement("div", null, " -- or -- "), React.createElement("div", null, React.createElement("a", {
+        href: window.location.href.replace(window.location.search, '')
+      }, "Skip the file import, just use my existing data.")), React.createElement("div", {
         id: "datasets_diagram"
       }, React.createElement("img", {
         src: "images/lovefield.png"
-      })), React.createElement("div", null, React.createElement("a", {
-        href: window.location.href.replace(window.location.search, '')
-      }, "Skip the file load, use my existing data.")));
+      })));
     }
 
     return React.createElement("div", null, ds, React.createElement(Breakdown, {

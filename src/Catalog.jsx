@@ -315,27 +315,41 @@ class Catalog extends React.Component {
 
    render() {
 
-     var ds = (<div></div>);
+     var ds = (<div className="preloader10">
+            <span></span>
+            <span></span>
+     </div>);
+     if (this.state.dataset.database != null)
+       ds = (<div></div>);
+
+
      if (urlparam('dataset', '') != '') {
        ds = (
-        <div id="datasets" className="upload-btn-wrapper">
+        <div id="datasets">
+
           <div id='catalog_title'>Breakdown for Mint</div>
+
           <div id="datasets_intro">
             <i>Import the transactions.csv file you just downloaded from Mint</i>
           </div>
 
-            <label className='btn'>
+          <div className='btn' >
+            <label title='Import your csv file into your local database Lovefield'>
                <input type="file" name="files[]" id="fileUpload" onChange={this.handleFileUpload.bind(this)}/>
                Import
-             </label>
+            </label>
+          </div>
+
+          <div> -- or -- </div>
+          <div>
+            <a href={window.location.href.replace(window.location.search, '')}>Skip the file import, just use my existing data.</a>
+          </div>
 
           <div id="datasets_diagram">
             <img src="images/lovefield.png" />
           </div>
 
-          <div>
-            <a href={window.location.href.replace(window.location.search, '')}>Skip the file load, use my existing data.</a>
-          </div>
+
         </div>
 
        )
