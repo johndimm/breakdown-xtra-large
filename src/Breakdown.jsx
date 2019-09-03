@@ -37,10 +37,12 @@ class Banner extends React.Component {
       <div>
         <div className='title_div'>{dataset.page_title}</div>
         <div className='subtitle_div'>{dataset.description}</div>
-        <div className='about_div'>About:&nbsp;
-           <a target="_blank" href="guide.html">Guide</a>
+        <div className='about_div'>
+           <a target="_blank" href="guide.html">guide</a>
            &nbsp;|&nbsp;
            <a target="_blank" href="https://github.com/johndimm/breakdown">code</a>
+           &nbsp;|&nbsp;
+           <a href="index.html?dataset=foo">import</a>
          </div>
       </div>
     );

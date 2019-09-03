@@ -329,18 +329,19 @@ class Catalog extends React.Component {
 
           <div id='catalog_title'>Breakdown for Mint</div>
 
-          <div id="datasets_intro">
-            <i>Import the transactions.csv file you just downloaded from Mint</i>
+         <div id="datasets_intro">
+            <i>Import a csv file</i>
           </div>
 
           <div className='btn' >
-            <label title='Import your csv file into your local database Lovefield'>
+            <label title='Import a csv file into your local Lovefield database'>
                <input type="file" name="files[]" id="fileUpload" onChange={this.handleFileUpload.bind(this)}/>
                Import
             </label>
           </div>
 
           <div> -- or -- </div>
+          <br />
           <div>
             <a href={window.location.href.replace(window.location.search, '')}>Skip the file import, just use my existing data.</a>
           </div>
@@ -360,7 +361,7 @@ class Catalog extends React.Component {
        <div>
           {ds}
 
-          <Breakdown dataset={this.state.dataset}/>
+          <Breakdown dataset={this.state.dataset} />
        </div>
      );
    }
@@ -413,7 +414,7 @@ class Catalog extends React.Component {
 
         </div>
 
-        <Breakdown dataset={this.state.dataset}/>
+        <Breakdown dataset={this.state.dataset} />
       </div>
       );
    }

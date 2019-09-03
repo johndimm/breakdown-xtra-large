@@ -117,7 +117,7 @@ function detail($db, $dataset) {
 
 
 function outputCSV ($sth) {
-  $lines = [];
+  $lines = array();
 
   while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
      // echo json_encode($row) . "\n";
