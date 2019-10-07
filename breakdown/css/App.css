@@ -43,7 +43,7 @@ td.measure {
 }
 
 .title_cell {
-  font-size:32pt;
+  font-size:24pt;
 }
 
 .source_title {
@@ -191,3 +191,5 @@ input[type="file"] {
 #import_button {
   cursor: pointer;
 }
+
+

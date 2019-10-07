@@ -233,22 +233,16 @@ class Catalog extends React.Component {
   }
 
   handleFileRead(event) {
-    var content = event.target.result; // console.log(save); // {hp: 32, maxHp: 50, mp: 11, maxMp: 23}
-    // window.localStorage.setItem('save.json', data);
-    // var data = $.csv.toObjects(content);
+    var content = event.target.result; //
+    // Replace the same table each time.  You can't have more than 1 dataset at a time.
+    // Could be extended later.  Limit of 50 Meg for IndexedDB.
+    //
 
-    var name = this.filename.name;
-    var datasetName = name.substring(0, name.indexOf('.')); // MMMM special handling for Mint.
-
-    datasetName = 'MintTransactions'; //        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
-
-    lovefield.addSource(datasetName, content, function () {
-      //lovefield.init();
+    var datasetName = 'MyData';
+    lovefield.addSource(datasetName, this.filename.name, content, function () {
       this.getLovefieldSources();
       this.toggleDatasetsDisplay();
-      this.setSourceName(datasetName); //this.registerSource(lovefield.datasets.ds[datasetName]);
-      //this.toggleDatasetsDisplay();
-      //this.setSourceName(datasetName);
+      this.setSourceName(datasetName);
     }.bind(this));
   }
 
@@ -264,12 +258,16 @@ class Catalog extends React.Component {
     }, React.createElement("span", null), React.createElement("span", null));
     if (this.state.dataset.database != null) ds = React.createElement("div", null);
 
+    var _dataset = urlparam('dataset', '');
+
+    var lovefieldDiagram = _dataset == 'mint' ? 'mint/1-lovefield.png' : 'personal_capital/1-lovefield.png';
+
     if (urlparam('dataset', '') != '') {
       ds = React.createElement("div", {
         id: "datasets"
       }, React.createElement("div", {
         id: "catalog_title"
-      }, "Breakdown for Mint"), React.createElement("div", {
+      }, "Breakdown"), React.createElement("div", {
         id: "datasets_intro"
       }, React.createElement("i", null, "Import a csv file")), React.createElement("div", {
         className: "btn"
@@ -282,10 +280,10 @@ class Catalog extends React.Component {
         onChange: this.handleFileUpload.bind(this)
       }), "Import")), React.createElement("div", null, " -- or -- "), React.createElement("br", null), React.createElement("div", null, React.createElement("a", {
         href: window.location.href.replace(window.location.search, '')
-      }, "Skip the file import, just use my existing data.")), React.createElement("div", {
+      }, "Skip the file import, just use my existing data.")), React.createElement("br", null), React.createElement("div", {
         id: "datasets_diagram"
       }, React.createElement("img", {
-        src: "images/lovefield.png"
+        src: lovefieldDiagram
       })));
     }
 

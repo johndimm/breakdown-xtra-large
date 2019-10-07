@@ -50,7 +50,7 @@
   max-width: 200px;
   margin-top: 6px;
   min-height: 20px;
-  margin-left:0px;
+  margin-left:10px;
   margin-right:5px;
   background-color: #EFEFEF;
   font-weight:bold;
@@ -65,8 +65,34 @@
 }
 
 .next_dim {
-  padding-top: 7px;
+  padding-top: 4px;
 }
 .prev_dim {
-  margin-right: 7px;
+  padding-right: 3px;
+}
+
+td {
+ // border: 1px solid red;
+}
+
+.arrow {
+  font-size:16pt;
+  width: 26px;
+  height: 26px;
+  margin: -5px;
+}
+
+.arrow:hover{
+ // border-width:0 `px 2px 0;
+ // margin-right:1px;
+  position:relative;
+  left:2px;
+  top:3px;
+  color: white;
+  background-color: darkblue;
+  border-radius: 10px;
+}
+
+button:focus {
+  outline:0;
 }

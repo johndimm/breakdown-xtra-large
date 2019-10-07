@@ -39,15 +39,15 @@ class Dimension extends React.Component {
         prevNext = (
            <td className="arrows_div">
            <table className='prev_dim_div'><tbody><tr>
-               <td className='prev_dim' onClick={ function() {
+               <td><div className='arrow prev_dim' onClick={ function() {
                    this.props.slideDim(this.props.name, this.props.selectedValue, -1);
                  }.bind(this)
-                }>{leftArrow}</td>
+                }>{leftArrow}</div></td>
 
-               <td className='next_dim' onClick={ function() {
+               <td><div className='arrow next_dim' onClick={ function() {
                    this.props.slideDim(this.props.name, this.props.selectedValue, 1);
                  }.bind(this)
-                }>{rightArrow}</td>
+                }>{rightArrow}</div></td>
            </tr></tbody></table>
            </td>
         );

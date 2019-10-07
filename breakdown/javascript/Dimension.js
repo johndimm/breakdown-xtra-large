@@ -41,17 +41,17 @@ class Dimension extends React.Component {
         className: "arrows_div"
       }, React.createElement("table", {
         className: "prev_dim_div"
-      }, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", {
-        className: "prev_dim",
+      }, React.createElement("tbody", null, React.createElement("tr", null, React.createElement("td", null, React.createElement("div", {
+        className: "arrow prev_dim",
         onClick: function () {
           this.props.slideDim(this.props.name, this.props.selectedValue, -1);
         }.bind(this)
-      }, leftArrow), React.createElement("td", {
-        className: "next_dim",
+      }, leftArrow)), React.createElement("td", null, React.createElement("div", {
+        className: "arrow next_dim",
         onClick: function () {
           this.props.slideDim(this.props.name, this.props.selectedValue, 1);
         }.bind(this)
-      }, rightArrow)))));
+      }, rightArrow))))));
     }
 
     var selectedValueDiv = React.createElement("div", null);

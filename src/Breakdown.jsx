@@ -33,12 +33,16 @@ class Banner extends React.Component {
     // var dataset = this.props.dataset_set[this.props.current_dataset];
     var dataset = this.props.dataset;
 
+    var guideLink = this.props.dataset.page_title.indexOf('Breakdown for Mint') != -1
+      ? "mint.html"
+      : "personal_capital.html";
+
     var cell1 = (
       <div>
         <div className='title_div'>{dataset.page_title}</div>
         <div className='subtitle_div'>{dataset.description}</div>
         <div className='about_div'>
-           <a target="_blank" href="guide.html">guide</a>
+           <a target="_blank" href={guideLink}>guide</a>
            &nbsp;|&nbsp;
            <a target="_blank" href="https://github.com/johndimm/breakdown">code</a>
            &nbsp;|&nbsp;

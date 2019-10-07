@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Breakdown for Mint",
+  "name": "Breakdown, for Mint and Personal Capital",
   "short_name": "Breakdown",
-  "version": "0.0.8",
-  "description": "Breakdown slices and dices Mint transactions.",
+  "version": "0.0.12",
+  "description": "Breakdown slices and dices transactions downloaded from Mint and Personal Capital.",
   "background": {
     "scripts": ["background.js"]
   },

@@ -3,13 +3,39 @@
  * You may use, distribute and modify this code under the
  * terms of the MIT license.
  */
+function base64ToArrayBuffer(base64) {
+  var binaryString = window.atob(base64);
+  var binaryLen = binaryString.length;
+  var bytes = new Uint8Array(binaryLen);
+
+  for (var i = 0; i < binaryLen; i++) {
+    var ascii = binaryString.charCodeAt(i);
+    bytes[i] = ascii;
+  }
+
+  return bytes;
+}
+
+function saveByteArray(reportName, byte) {
+  var blob = new Blob([byte], {
+    type: "application/pdf"
+  });
+  var link = document.createElement('a');
+  link.href = window.URL.createObjectURL(blob);
+  var fileName = reportName;
+  link.download = fileName;
+  link.click();
+}
+
+;
+
 class Detail extends React.Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
       header: [],
       body: [],
-      limit: 30,
+      limit: 100,
       orderBy: '',
       sortDir: 'DESC'
     };
@@ -52,7 +78,8 @@ class Detail extends React.Component {
     var link = document.createElement('a');
     link.setAttribute('href', data);
     link.setAttribute('download', filename);
-    link.click();
+    link.click(); //   var sampleArr = base64ToArrayBuffer(csv);
+    //   saveByteArray(filename, sampleArr);
   }
 
   getData(newProps, fnSuccess) {
@@ -73,7 +100,11 @@ class Detail extends React.Component {
     this.setState({
       limit: this.state.limit + 100
     }, function () {
-      this.getData(this.props);
+      this.getData(this.props, function () {
+        this.setState({
+          limit: this.state.limit + 1
+        });
+      }.bind(this));
     }.bind(this));
   }
 

@@ -11,6 +11,90 @@ function clean(s) {
 var displayName = {};
 
 
+class PersonalCapital {
+  columns() {
+    return "Date,Account,Description,Category,Tags,Amount";
+  }
+  
+  cols() {
+    return "Account,Category,Description,Year,Month,Date,Tags,Amount";
+  }
+
+  types() {
+    return "STRING,STRING,STRING,STRING,STRING,STRING,STRING,NUMBER";
+  }
+
+    convert(obj) {
+        var dateStr = obj["Date"];
+        if (dateStr == null)
+          return obj;
+
+        var date = new Date(dateStr);
+        var year = date.getFullYear();
+        var month = pad(date.getMonth() + 1);
+        var day = pad(date.getDate());
+
+        var out = {};
+        out["Account"] = obj["Account"];
+        out["Category"] = obj["Category"];
+        out["Description"] = obj["Description"];
+
+        out["Year"] = year.toString();
+        out["Month"] = year + '-' + month;
+        out["Date"] = year + '-' + month + '-' + day;
+
+        out["Tags"] = obj["Tags"];
+        out["Amount"] = obj["Amount"] * (obj["Transaction Type"] == 'debit' ? -1 : 1);
+
+        return out;
+    }
+}
+
+class Mint {
+  columns() {
+    return "Date,Description,Original Description,Amount,Transaction Type,Category,Account Name,Labels,Notes";
+  }
+
+  cols() {
+    return "Account,Category,Description,Original_Description,Year,Month,Date,Labels,Notes,Amount";
+  }
+
+  types() {
+    return  "STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,NUMBER";
+  }
+
+  convert(obj) {
+        var dateStr = obj["Date"];
+        if (dateStr == null)
+          return obj;
+
+        var date = new Date(dateStr);
+        var year = date.getFullYear();
+        var month = pad(date.getMonth() + 1);
+        var day = pad(date.getDate());
+
+        var out = {};
+        out["Account"] = obj["Account Name"];
+        out["Category"] = obj["Category"];
+        out["Description"] = obj["Description"];
+        out["Original_Description"] = obj["Original Description"];
+
+        out["Year"] = year.toString();
+        out["Month"] = year + '-' + month;
+        out["Date"] = year + '-' + month + '-' + day;
+
+        out["Labels"] = obj["Labels"];
+        out["Notes"] = obj["Notes"];
+        out["Amount"] = obj["Amount"] * (obj["Transaction Type"] == 'debit' ? -1 : 1);
+
+        return out;
+    }
+
+}
+
+var mint = new Mint();
+var personalCapital = new PersonalCapital();
+
 class Datasets {
 
     init() {
@@ -126,33 +210,13 @@ class Lovefield  {
         }.bind(this));
     }
 
-    xformMint(obj) {
-      // "Date","Description","Original Description","Amount","Transaction Type","Category","Account Name","Labels","Notes"
-      //      var cols = "Account,Category,Description,Year,Month,Date,Labels,Notes,Amount";
+    expandDateField(obj) {
 
-        if (!this.isMint) {
-          return obj;
-        }
 
-        var date = new Date(obj["Date"]);
-        var year = date.getFullYear();
-        var month = pad(date.getMonth() + 1);
-        var day = pad(date.getDate());
 
-        var out = {};
-        out["Account"] = obj["Account Name"];
-        out["Category"] = obj["Category"];
-        out["Description"] = obj["Description"];
-        out["Original_Description"] = obj["Original Description"];
-        out["Year"] = year.toString();
-        out["Month"] = year + '-' + month;
-        out["Date"] = year + '-' + month + '-' + day;
-        out["Labels"] = obj["Labels"];
-        out["Notes"] = obj["Notes"];
-        out["Amount"] = obj["Amount"] * (obj["Transaction Type"] == 'debit' ? -1 : 1);
-
-        return out;
+        return obj;
     }
+
 
      load(factTable, data, aggregates, fnSuccess) {
        this.db.delete().from(factTable).exec();
@@ -168,10 +232,13 @@ class Lovefield  {
               }
             });
 
-            var obj_fixed = this.xformMint(obj);
+            if (this.isMint)
+              obj = mint.convert(obj);
+             else if (this.isPersonalCapital)
+               obj = personalCapital.convert(obj);
 
             //  obj.Funding = parseFloat(obj.Funding);
-            return factTable.createRow(obj_fixed);
+            return factTable.createRow(obj);
           }, this);
 
         var q1 = this.db.
@@ -232,7 +299,7 @@ class Lovefield  {
         }.bind(this));
     }
 
-    addBreakdownSource (datasetName, headerArray, lineArray) {
+    addBreakdownSource (datasetName, filename, headerArray, lineArray) {
        displayName[clean(datasetName)] = datasetName;
 
        var tableName = clean(datasetName) + "_fact";
@@ -275,9 +342,9 @@ class Lovefield  {
        var datasetObj = {
                    database: 'lovefield',
                    name: datasetName,
-                   fact_table: tableName, // this.datasetName, // 'fact',
-                   summary_table: tableName, // 'fact',
-                   dimensions: dimensions.join(','), // 'Sport,Discipline,Athlete,Event,Country,Medal,Year,Season,Gender,City',
+                   fact_table: tableName,
+                   summary_table: tableName,
+                   dimensions: dimensions.join(','),
                    measures: measures.join(','),
 
                    fields: fields.join(','),
@@ -286,7 +353,11 @@ class Lovefield  {
                    dim_metadata_table: '',
                    dim_metadata: {},
                    aggregates: aggregates.join(','),
-                   page_title: 'Breakdown for Mint' // MMMM special handling for Mint   'Breakdown: ' + datasetName
+                   page_title: this.isMint
+                     ? 'Breakdown for Mint'
+                     : this.isPersonalCapital
+                       ? 'Breakdown for Personal Capital'
+                       : 'Breakdown: ' + filename
               };
 
 
@@ -317,36 +388,44 @@ class Lovefield  {
     }
 
 
-    addSource(datasetName, content, fnSuccess) {
+    addSource(datasetName, filename, content, fnSuccess) {
       this.import_dataset = datasetName;
       this.import_data = $.csv.toObjects(content);
       this.import_fnSuccess = fnSuccess;
       this.import_header = Object.keys(this.import_data[0]);
-      this.isMint = false;
 
       //
       // Special handling for data from Mint.
       //
-      var mintCols = ["Date","Description","Original Description","Amount","Transaction Type","Category","Account Name","Labels","Notes"];
-      if (mintCols.join(",") == this.import_header.join(",")) {
-        var cols = "Account,Category,Description,Original_Description,Year,Month,Date,Labels,Notes,Amount";
-        this.import_header = cols.split(",");
-        var types = "STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,STRING,NUMBER";
-        this.types = types.split(",");
-        this.isMint = true;
+      var headerStr = this.import_header.join(",")
+      this.isMint = mint.columns() == headerStr;
+      this.isPersonalCapital = personalCapital.columns() == headerStr;
+
+      if (this.isMint) {
+        this.import_header = mint.cols().split(",");
+        this.types = mint.types().split(",");
+      } else if (this.isPersonalCapital) {
+        this.import_header = personalCapital.cols().split(",");
+        this.types = personalCapital.types().split(",");
       } else {
+        //
+        // Get a sample value from the first line of data.
+        //
         this.import_line = this.import_header.map(function(key, i) {
-          return this.import_data[1][key];
+            return this.import_data[1][key];
         }.bind(this));
 
-//        this.import_header.forEach(function(key,i) {
-//            this.import_header[i] = this.import_header[i].replace(/[^a-zA-Z0-9]/gmi, "");
-//        }.bind(this));
+        //
+        // Fix column names that won't work for lovefield.
+        //
+        this.import_header.forEach(function(key,i) {
+            this.import_header[i] = this.import_header[i].replace(/[^a-zA-Z0-9_]/gmi, "");
+        }.bind(this));
 
         this.guessColumnTypes(this.import_line, this.import_header);
       }
 
-      this.import_dataset = this.addBreakdownSource(this.import_dataset, this.import_header, this.import_line);
+      this.import_dataset = this.addBreakdownSource(this.import_dataset, filename, this.import_header, this.import_line);
       this.init();
       this.connect(this.import_data, this.import_dataset, this.import_fnSuccess);
     }
@@ -483,14 +562,14 @@ class Lovefield  {
         // this.select.orderBy(this.fact['Sport'], params.sortDir='DESC' ? lf.Order.DESC : lf.Order.ASC);
 
         this.select
-          .limit(1000)
+          .limit(params.limit)
           .exec()
           .then(function(results) {
             var rows = [];
             var header = Object.keys(results[0]);
             rows.push(header.join("\t"));
 
-            for (var i=0; i<Math.min(100,results.length); i++) {
+            for (var i=0; i<Math.min(params.limit,results.length); i++) {
               var row = [];
               var r = results[i];
               header.forEach(function(key, j) {
@@ -498,7 +577,8 @@ class Lovefield  {
               });
               rows.push(row.join("\t"));
             }
-            fnSuccess(rows);
+            if (fnSuccess != null)
+              fnSuccess(rows);
            });
     }
 

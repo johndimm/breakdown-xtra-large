@@ -285,27 +285,17 @@ class Catalog extends React.Component {
     handleFileRead(event) {
         var content = event.target.result;
 
-        // console.log(save); // {hp: 32, maxHp: 50, mp: 11, maxMp: 23}
-        // window.localStorage.setItem('save.json', data);
-        // var data = $.csv.toObjects(content);
+        //
+        // Replace the same table each time.  You can't have more than 1 dataset at a time.
+        // Could be extended later.  Limit of 50 Meg for IndexedDB.
+        //
+        var datasetName = 'MyData';
 
-        var name = this.filename.name;
-        var datasetName = name.substring(0, name.indexOf('.'));
 
-        // MMMM special handling for Mint.
-        datasetName = 'MintTransactions';
-
-//        lovefield.addSource(datasetName, content, this.getLovefieldSources.bind(this));
-        lovefield.addSource(datasetName, content,  function() {
-          //lovefield.init();
+        lovefield.addSource(datasetName, this.filename.name, content,  function() {
           this.getLovefieldSources();
           this.toggleDatasetsDisplay();
           this.setSourceName(datasetName);
-
-
-          //this.registerSource(lovefield.datasets.ds[datasetName]);
-          //this.toggleDatasetsDisplay();
-          //this.setSourceName(datasetName);
         }.bind(this))
     }
 
@@ -322,12 +312,18 @@ class Catalog extends React.Component {
      if (this.state.dataset.database != null)
        ds = (<div></div>);
 
+     var _dataset = urlparam('dataset', '');
+
+     var lovefieldDiagram = _dataset == 'mint'
+       ? 'mint/1-lovefield.png'
+       : 'personal_capital/1-lovefield.png';
+
 
      if (urlparam('dataset', '') != '') {
        ds = (
         <div id="datasets">
 
-          <div id='catalog_title'>Breakdown for Mint</div>
+          <div id='catalog_title'>Breakdown</div>
 
          <div id="datasets_intro">
             <i>Import a csv file</i>
@@ -345,9 +341,10 @@ class Catalog extends React.Component {
           <div>
             <a href={window.location.href.replace(window.location.search, '')}>Skip the file import, just use my existing data.</a>
           </div>
+          <br />
 
           <div id="datasets_diagram">
-            <img src="images/lovefield.png" />
+            <img src={lovefieldDiagram} />
           </div>
 
 
