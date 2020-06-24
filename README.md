@@ -23,7 +23,7 @@ Under the hood
 
 The online demo with olympic medals and oscars:
 
-  [breakdown](http://35.231.58.42/breakdown/app/)
+  [breakdown](http://104.196.23.166/breakdown/breakdown/)
 
 Video demo:
 
