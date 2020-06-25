@@ -151,7 +151,7 @@ function  outputX($sth) {
 function main() {
   // echo "mysql php starts";
   $db = dbInit();
-  $proc = postParam('proc', 'dim_counts');
+  $proc = postParam('proc', 'get_breakdown_datasets');
   $dataset = postParam('dataset', 'oscars');
 
   switch ($proc) {
