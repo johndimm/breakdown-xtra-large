@@ -33,7 +33,7 @@ Video demo:
 ### 1. clone the repo
 
 ```
-git clone https://github.com/johndimm/DrillDown.git
+git clone https://github.com/johndimm/breakdown.git
 ```
 
 ### 2. install mysql
@@ -66,6 +66,27 @@ https://gist.github.com/jgravois/5e73b56fa7756fd00b89
 
 Point the server to the breakdown directory.
 
-### 7. navigate to
+### 7. configure the app to connect to your database
+
+Edit the file breakdown/php/mysql_connect.php.
+
+```
+<?php
+    // Installation:  supply the missing credentials
+    $mysql_host = "";
+    $mysql_user = "";
+    $mysql_password = "";
+    $mysql_database = "";
+?>
+```
+
+Test from the command line to see that the data is ready.
+
+```
+$php mysql.php
+[{"name":"olympics","fact_table":"olympics_fact","summary_table":"olympics_summary","dimensions":"Sport,Discipline,Athlete,Event,Country,Medal,Year,Season,Gender,City","measures":"Medals","aggregates":"count(*) as Medals","detail_columns":"*","page_title":"Olympic Medals","description":"up to the 2014 Winter Games","url":"https:\/\/www.kaggle.com\/the-guardian\/olympic-games","dim_metadata_table":"","google_sheet":"https:\/\/docs.google.com\/spreadsheets\/d\/1obx8JHesu-FGVUKsm6cX-Use9V8PZx-yqJmJHu095DE\/edit?usp=sharing"}]Johns-MBP:php johndimm$
+```
+
+### 8. navigate to the index.html file
 
 http://localhost/breakdown/
