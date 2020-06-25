@@ -1,5 +1,3 @@
-use breakdown;
-
 insert into breakdown_datasets
 (name, fact_table, summary_table, dimensions, measures, aggregates, detail_columns, page_title, description, url, google_sheet)
 values
